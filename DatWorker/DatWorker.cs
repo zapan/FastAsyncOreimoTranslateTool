@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using CppPorts;
@@ -12,7 +13,6 @@ public class DatWorker(string workingDir) {
     private readonly JsonSerializerSettings settings = new() {
         NullValueHandling = NullValueHandling.Ignore,
         DefaultValueHandling = DefaultValueHandling.Ignore,
-        //Formatting = Formatting.Indented
     };
     
     public async Task Process(string[] args) {
@@ -38,7 +38,6 @@ public class DatWorker(string workingDir) {
             await File.WriteAllTextAsync(arg + "-LstOrder.lst", JsonConvert.SerializeObject(datTree, settings));
             Console.WriteLine($"Done unpacking {arg}");
         }
-        //Console.ReadLine();
     }
     
     public class DatTree(string name) {
@@ -51,7 +50,7 @@ public class DatWorker(string workingDir) {
 
     private async Task<DatTree> OpenDat(string dat, DatTree parent) {
         try {
-            _ = Console.Out.WriteLineAsync($"Extracting: {dat}"); // Don't wait for me guys
+            _ = Console.Out.WriteLineAsync($"Extracting: {dat}");
             var files = await ExtractDatContent(dat);
             if (files == null) return new DatTree(null);
             List<Task<DatTree>> taskList = [];
@@ -73,7 +72,6 @@ public class DatWorker(string workingDir) {
         catch (Exception e) {
             Console.WriteLine(e);
             throw;
-            //return false;
         }
     }
 
@@ -112,7 +110,7 @@ public class DatWorker(string workingDir) {
 
         string realpath = Path.Join(workingDir, datTree.Name);
         if (!File.Exists(realpath)) return false; 
-        _ = Console.Out.WriteLineAsync($"Repacking: {realpath}"); // It's okay! il catch you guys later
+        _ = Console.Out.WriteLineAsync($"Repacking: {realpath}");
         await RepackDat(workingDir, realpath);
         return true;
     }
@@ -128,13 +126,17 @@ public class DatWorker(string workingDir) {
 
             string file = lstDir + Path.GetFileNameWithoutExtension(lst);
             
+            // Use platform-specific MakeGpda
+#if __UNIX__
+            await MakeGpdaMacOS.Process(file, lstDir);
+#else
             await MakeGpda.Process(file, lstDir);
+#endif
             return true;
         }
         catch (Exception e) {
             Console.WriteLine(e);
             throw;
-            //return false;
         }
     }
 

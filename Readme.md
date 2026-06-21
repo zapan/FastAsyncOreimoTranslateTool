@@ -86,3 +86,57 @@ for arch you have to run `pacman -S cdrtools` to install because its cool.
 ## Screenshots
 ![Main window](https://i.imgur.com/QxW8w5a.png)
 ![Translation window](https://i.imgur.com/ZOm8WEy.png)
+
+## macOS Support
+
+This tool has been adapted to work natively on macOS. Here's what you need to know:
+
+### Prerequisites for macOS
+
+1. **Install required tools:**
+   ```bash
+   brew install cdrtools
+   ```
+
+2. **Install .NET 8.0 SDK:**
+   ```bash
+   brew install --cask dotnet-sdk
+   ```
+
+3. **Make scripts executable:**
+   ```bash
+   chmod +x Resources/!!Tools/DatWorker/gzip
+   ```
+
+### Building for macOS
+
+```bash
+# Restore packages
+dotnet restore
+
+# Build the solution
+dotnet build -c Release
+
+# Or build just the CLI
+dotnet build ToradoraTranslateToolCLI -c Release
+```
+
+### Running on macOS
+
+```bash
+# Run the CLI
+dotnet run --project ToradoraTranslateToolCLI
+```
+
+### Platform-specific Files
+
+- `mkisofs.conf`: Contains the path to mkisofs executable (default: `mkisofs`)
+- `DatWorker/macOS/`: Contains macOS-specific implementations
+- `Resources/!!Tools/DatWorker/gzip`: Shell script wrapper for macOS gzip
+
+### Differences from Windows Version
+
+- Uses native macOS tools (gzip, mkisofs) instead of Windows executables
+- Platform-specific conditional compilation for CppPorts
+- Native file dialog via NativeFileDialogSharp (works on macOS)
+- No dependency on Windows CRT (msvcp110d.dll, msvcr110d.dll)

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using NativeFileDialogSharp;
 
@@ -11,6 +12,13 @@ public static class Cli {
     
     static void Main(string[] args) {
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        
+        // Check platform and warn if not supported
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+            Console.WriteLine("This CLI is designed for macOS but detected Windows platform.");
+        } else if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
+            Console.WriteLine($"Warning: This CLI was designed for macOS but detected {RuntimeInformation.OSDescription}");
+        }
         
         while (true) {
             Console.Clear();
@@ -104,6 +112,9 @@ public static class Cli {
                 Console.WriteLine("\n\nThere was a non-fatal error trying to start a file picker,\n" 
 #if _WINDOWS
                                     + "Make sure you have the c++ visual redistributable installed,\n"
+#endif
+#if __APPLE__
+                                    + "Make sure you have the native dependencies installed (Homebrew: brew install libffi libplist),\n"
 #endif
                                   + "Press Y to show the error, anything else to skip.");
                 if (Console.ReadKey(true).KeyChar.ToString().ToLowerInvariant() is "y") Console.WriteLine(e);

@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+        <EnableWindowsTargeting>true</EnableWindowsTargeting>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,7 +17,23 @@
       <ProjectReference Include="..\RyuujiApi\RyuujiApi.csproj" />
     </ItemGroup>
 
-    <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+    <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
         <DefineConstants>$(DefineConstants);_WINDOWS</DefineConstants>
     </PropertyGroup>
+    
+    <PropertyGroup Condition="'$(OS)' == 'Unix'">
+        <DefineConstants>$(DefineConstants);__UNIX__</DefineConstants>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(OS)' == 'Unix'">
+        <None Update="Resources\!!Tools\DatWorker\gzip">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+    
+    <ItemGroup Condition="'$(OS)' == 'Unix'">
+        <None Update="Resources\!!Tools\Mkisofs\mkisofs">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 </Project>
