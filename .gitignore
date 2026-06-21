@@ -7,6 +7,17 @@
 *.userosscache
 *.sln.docstates
 
+RES.DAT
+oreimo
+toradora
+*.iso
+*.dat
+oreimo_contents
+toradora_contents
+Resources
+Images
+
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
