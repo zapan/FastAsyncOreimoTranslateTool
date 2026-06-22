@@ -103,8 +103,8 @@ public class DatWorker(string workingDir) {
         string[] allFiles = Directory.GetFiles(newDir, "*", SearchOption.AllDirectories);
         foreach (string file in allFiles) {
             if (string.IsNullOrEmpty(Path.GetExtension(file))) {
-                string newPath = file + ".dat";
-                File.Move(file, newPath);
+                File.Copy(file, file + ".dat");
+                File.Move(file, file + ".dat2");
             }
         }
 

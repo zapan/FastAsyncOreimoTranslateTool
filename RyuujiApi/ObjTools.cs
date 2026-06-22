@@ -69,8 +69,7 @@ class ObjTools {
         await gzip.CopyToAsync(output);
     }
 
-    public static async Task ProcessSeekmap(string startupPath, string firstDirectory) {
-        string sourcePath = Path.Combine(firstDirectory, "seekmap.dat");
+    public static async Task ProcessSeekmap(string startupPath, string sourcePath) {
         Directory.CreateDirectory(TempDirectory(startupPath));
         string outPath = Path.Combine(TempDirectory(startupPath), "seekmap.txt");
 

@@ -15,14 +15,36 @@ public class RyuujiApi(string startUpPath) {
     public Task ExtractGame(string dataDir) =>
         Task.WhenAll(
              Task.Run(() => { // resource
-                DatTools.ExtractDat(startUpPath, Path.Combine(dataDir, "Iso", "PSP_GAME", "INSDIR", "RES.DAT")).Wait();
-//                 ObjTools.ProcessTxtGz(startUpPath, Path.Combine(dataDir, "Extracted", "RES")).Wait();
-                ObjTools.ProcessObjGz(startUpPath, Path.Combine( dataDir, "Extracted", "RES")).Wait();
+                string extractionPath = Path.Combine(dataDir, "Iso", "PSP_GAME", "INSDIR", "RES.DAT");
+                if (File.Exists(extractionPath)) {
+                    DatTools.ExtractDat(startUpPath, extractionPath).Wait();
+                    foreach (var file in Directory.EnumerateFiles(Path.Combine(dataDir, "Extracted", "RES"), "*.dat2")) {
+                        string newFile = Path.ChangeExtension(file, ".dat");
+                        if (!File.Exists(newFile))
+                            File.Move(file, newFile);
+                    }
+                    ObjTools.ProcessObjGz(startUpPath, Path.Combine(dataDir, "Extracted", "RES")).Wait();
+                }
+                if (File.Exists(Path.Combine(dataDir, "Iso", "PSP_GAME", "USRDIR", "resource.dat"))) {
+                    DatTools.ExtractDat(startUpPath, Path.Combine(dataDir, "Iso", "PSP_GAME", "USRDIR", "resource.dat")).Wait();
+                    ObjTools.ProcessObjGz(startUpPath, Path.Combine( dataDir, "Extracted", "resource")).Wait();
+                }
             }),
             Task.Run(() => { // first
                 DatTools.ExtractDat(startUpPath, Path.Combine(dataDir, "Iso", "PSP_GAME", "USRDIR", "first.dat")).Wait();
-//                 ObjTools.ProcessTxtGz(startUpPath, Path.Combine(dataDir, "Extracted", "first")).Wait();
-//                 ObjTools.ProcessSeekmap(startUpPath, Path.Combine(dataDir, "Extracted", "first")).Wait();
+                foreach (var file in Directory.EnumerateFiles(Path.Combine(dataDir, "Extracted", "first"), "*.dat2")) {
+                    string newFile = Path.ChangeExtension(file, ".dat");
+                    if (!File.Exists(newFile))
+                        File.Move(file, newFile);
+                }
+                if (File.Exists(Path.Combine(dataDir, "Extracted", "first", "text", "utf16.txt.gz"))) {
+                    ObjTools.ProcessTxtGz(startUpPath, Path.Combine(dataDir, "Extracted", "first")).Wait();
+                }
+                if (File.Exists(Path.Combine(dataDir, "Extracted", "first", "seekmap", "res.map.gz"))) {
+                    ObjTools.ProcessSeekmap(startUpPath, Path.Combine(dataDir, "Extracted", "first", "seekmap", "res.map.gz")).Wait();
+                }else{
+                    ObjTools.ProcessSeekmap(startUpPath, Path.Combine(dataDir, "Extracted", "first", "seekmap.dat")).Wait();
+                }
             })
         );
 
