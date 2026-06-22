@@ -15,24 +15,25 @@ public class RyuujiApi(string startUpPath) {
     public Task ExtractGame(string dataDir) =>
         Task.WhenAll(
              Task.Run(() => { // resource
-                DatTools.ExtractDat(startUpPath, Path.Combine(dataDir, "Iso", "PSP_GAME", "USRDIR", "resource.dat")).Wait();
-                ObjTools.ProcessObjGz(startUpPath, Path.Combine( dataDir, "Extracted", "resource")).Wait();
+                DatTools.ExtractDat(startUpPath, Path.Combine(dataDir, "Iso", "PSP_GAME", "INSDIR", "RES.DAT")).Wait();
+//                 ObjTools.ProcessTxtGz(startUpPath, Path.Combine(dataDir, "Extracted", "RES")).Wait();
+                ObjTools.ProcessObjGz(startUpPath, Path.Combine( dataDir, "Extracted", "RES")).Wait();
             }),
             Task.Run(() => { // first
                 DatTools.ExtractDat(startUpPath, Path.Combine(dataDir, "Iso", "PSP_GAME", "USRDIR", "first.dat")).Wait();
-                ObjTools.ProcessTxtGz(startUpPath, Path.Combine(dataDir, "Extracted", "first")).Wait();
-                ObjTools.ProcessSeekmap(startUpPath, Path.Combine(dataDir, "Extracted", "first")).Wait();
+//                 ObjTools.ProcessTxtGz(startUpPath, Path.Combine(dataDir, "Extracted", "first")).Wait();
+//                 ObjTools.ProcessSeekmap(startUpPath, Path.Combine(dataDir, "Extracted", "first")).Wait();
             })
         );
 
     public async Task RepackGame(string dataDir, bool debugMode = false) {
         await Task.Run(() => ObjTools.RepackObjs(startUpPath, debugMode));
         await Task.Run(() => ObjTools.RepackTxts(startUpPath));
-        await Task.Run(() => DatTools.RepackDat(startUpPath, Path.Combine(dataDir, "Extracted", "resource.dat-LstOrder.lst")));
-        await Task.Run(() => ObjTools.RepackSeekmap(startUpPath, Path.Combine(dataDir, "Extracted", "resource.dat"), Path.Combine(dataDir, "Extracted", "first")));
+        await Task.Run(() => DatTools.RepackDat(startUpPath, Path.Combine(dataDir, "Extracted", "RES.DAT-LstOrder.lst")));
+        await Task.Run(() => ObjTools.RepackSeekmap(startUpPath, Path.Combine(dataDir, "Extracted", "RES.DAT"), Path.Combine(dataDir, "Extracted", "first")));
         await Task.Run(() => DatTools.RepackDat(startUpPath, Path.Combine(dataDir, "Extracted", "first.dat-LstOrder.lst")));
         await File.Create(Path.Combine(dataDir, "Extracted", "-")).DisposeAsync();
-        await Task.Run(() => File.Copy(Path.Combine(dataDir, "Extracted", "resource.dat"), Path.Combine(dataDir, "Iso", "PSP_GAME", "USRDIR", "resource.dat"), true));
+        await Task.Run(() => File.Copy(Path.Combine(dataDir, "Extracted", "RES.DAT"), Path.Combine(dataDir, "Iso", "PSP_GAME", "INSDIR", "RES.DAT"), true));
         await Task.Run(() => File.Copy(Path.Combine(dataDir, "Extracted", "first.dat"), Path.Combine(dataDir, "Iso", "PSP_GAME", "USRDIR", "first.dat"), true));
     }
 

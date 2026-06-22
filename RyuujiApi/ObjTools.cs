@@ -101,11 +101,11 @@ class ObjTools {
         await Task.WhenAll(taskList);
 
         if (debugMode) {
-            File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "_0000ESS1.obj.gz"), Path.Combine(startupPath, "Data", "Extracted", "resource", "script", "_0000ESS1", "_0000ESS1.0001", "_0000ESS1.obj.gz"), true); // This file enables debug mode
-            File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "STARTPOINT.obj.gz"), Path.Combine(startupPath, "Data", "Extracted", "resource", "script", "STARTPOINT", "STARTPOINT.0001", "STARTPOINT.obj.gz"), true); // This is pretranslated debug menu 
+            File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "_0000ESS1.obj.gz"), Path.Combine(startupPath, "Data", "Extracted", "RES", "script", "_0000ESS1", "_0000ESS1.0001", "_0000ESS1.obj.gz"), true); // This file enables debug mode
+            File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "STARTPOINT.obj.gz"), Path.Combine(startupPath, "Data", "Extracted", "RES", "script", "STARTPOINT", "STARTPOINT.0001", "STARTPOINT.obj.gz"), true); // This is pretranslated debug menu
         }
         else
-            File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "original_STARTPOINT.obj.gz"), Path.Combine(startupPath, "Data", "Extracted", "resource", "script", "STARTPOINT", "STARTPOINT.0001", "STARTPOINT.obj.gz"), true); // Restore original debug menu        
+            File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "original_STARTPOINT.obj.gz"), Path.Combine(startupPath, "Data", "Extracted", "RES", "script", "STARTPOINT", "STARTPOINT.0001", "STARTPOINT.obj.gz"), true); // Restore original debug menu
     }
 
     public static async Task RepackObj(string startupPath, string name, JToken translation, Dictionary<string, string> translatedNames) {

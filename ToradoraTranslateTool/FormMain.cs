@@ -38,7 +38,7 @@ public partial class FormMain : Form {
 
     private void EnableButtons() {
         buttonExtractIso.Enabled = true;
-        if (File.Exists(Path.Combine(dataDir, "Iso", "PSP_GAME", "USRDIR", "resource.dat"))) { // If iso already extracted, enable available steps
+        if (File.Exists(Path.Combine(dataDir, "Iso", "PSP_GAME", "INSDIR", "RES.DAT"))) { // If iso already extracted, enable available steps
             buttonExtractGame.Enabled = true;
             buttonStartGame.Enabled = true;
         }
