@@ -40,9 +40,10 @@ public class DatWorker(string workingDir) {
         }
     }
     
-    public class DatTree(string name) {
+    public class DatTree(string name, bool wasNoExtension = false) {
         [JsonProperty("n")] public string Name = name;
         [JsonProperty("c")] public List<DatTree> Children;
+        [JsonProperty("e")] public bool WasNoExtension = wasNoExtension; // True if file originally had no extension
     }
     
     
@@ -54,9 +55,15 @@ public class DatWorker(string workingDir) {
             var files = await ExtractDatContent(dat);
             if (files == null) return new DatTree(null);
             List<Task<DatTree>> taskList = [];
-            foreach (string file in files)
-                if (Path.GetExtension(file).ToLower().Trim(' ', '.') == "dat")
-                    taskList.Add(OpenDat(file, new (GetDatLstDir(file)[workingDir.Length..])));
+            foreach (string file in files) {
+                string ext = Path.GetExtension(file).ToLower().Trim(' ', '.');
+                // For Oreimo: check for .dat extension OR no extension (we added .dat temporarily)
+                bool wasNoExtension = ext != "dat" && string.IsNullOrEmpty(Path.GetExtension(file).Trim(' ', '.'));
+                if (ext == "dat" || wasNoExtension) {
+                    string originalName = GetDatLstDir(file)[workingDir.Length..];
+                    taskList.Add(OpenDat(file, new DatTree(originalName, wasNoExtension)));
+                }
+            }
 
             await Task.WhenAll(taskList);
 
@@ -92,6 +99,15 @@ public class DatWorker(string workingDir) {
         if (File.Exists(lst)) File.Delete(lst);
         await File.WriteAllTextAsync(lst, processReturn.MakeGpdaFileContent);
 
+        // Get all files and add .dat extension to files without extension (for Oreimo)
+        string[] allFiles = Directory.GetFiles(newDir, "*", SearchOption.AllDirectories);
+        foreach (string file in allFiles) {
+            if (string.IsNullOrEmpty(Path.GetExtension(file))) {
+                string newPath = file + ".dat";
+                File.Move(file, newPath);
+            }
+        }
+
         return Directory.GetFiles(newDir, "*", SearchOption.AllDirectories);
     }
 
@@ -102,14 +118,22 @@ public class DatWorker(string workingDir) {
     #region REPACK
     private static async Task<bool> SaveDat(string workingDir, DatTree datTree) {
         if (datTree.Children != null) {
-            List<Task> tasks = [];
+            List<Task<bool>> tasks = [];
             foreach (DatTree tree in datTree.Children)
                 tasks.Add(SaveDat(workingDir, tree));
             await Task.WhenAll(tasks);
         }
 
         string realpath = Path.Join(workingDir, datTree.Name);
-        if (!File.Exists(realpath)) return false; 
+        if (!File.Exists(realpath)) return false;
+
+        // For Oreimo files that originally had no extension, rename them back
+        if (datTree.WasNoExtension && realpath.EndsWith(".dat")) {
+            string originalPath = realpath.Substring(0, realpath.Length - 4); // Remove .dat
+            File.Move(realpath, originalPath, true);
+            realpath = originalPath;
+        }
+
         _ = Console.Out.WriteLineAsync($"Repacking: {realpath}");
         await RepackDat(workingDir, realpath);
         return true;
