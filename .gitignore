@@ -16,7 +16,8 @@ oreimo_contents
 toradora_contents
 Resources
 Images
-
+Data/Iso
+Data/Extracted
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

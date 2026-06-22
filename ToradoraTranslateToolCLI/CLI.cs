@@ -103,13 +103,40 @@ public static class Cli {
         string? path = null;
         while (true) {
             try {
-                DialogResult result = save? Dialog.FileSave() : Dialog.FileOpen(filterList);
-                if (!(canceled = result.IsCancelled) && !result.IsOk)
-                    throw new (result.ErrorMessage);
-                path = result.Path;
+                if(save){
+                    string posix =  "POSIX path of (choose file name with prompt \"Guardar como\")";
+                } else {
+                    string posix = "POSIX path of (choose file with prompt \"Selecciona un archivo\")";
+                }
+
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "osascript",
+                    ArgumentList =
+                    {
+                        "-e",
+                        "POSIX path of (choose file with prompt \"Selecciona un archivo\")"
+                    },
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false
+                };
+
+                using var p = Process.Start(psi)!;
+                string stdout = p.StandardOutput.ReadToEnd().Trim();
+                string stderr = p.StandardError.ReadToEnd().Trim();
+                p.WaitForExit();
+
+                if (p.ExitCode != 0)
+                    throw new Exception(string.IsNullOrWhiteSpace(stderr) ? "Cancelado" : stderr);
+
+                path = stdout;
+
+                Console.WriteLine($"path is {path}");
             }
             catch (Exception e) {
-                Console.WriteLine("\n\nThere was a non-fatal error trying to start a file picker,\n" 
+                Console.WriteLine("Exception");
+                Console.WriteLine("\n\nThere was a non-fatal error trying to start a file picker,\n"
 #if _WINDOWS
                                     + "Make sure you have the c++ visual redistributable installed,\n"
 #endif
