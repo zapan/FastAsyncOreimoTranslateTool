@@ -2,6 +2,8 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using NativeFileDialogSharp;
+using OBJEditor;
+using Newtonsoft.Json.Linq;
 
 namespace ToradoraTranslateToolCLI;
 
@@ -9,7 +11,8 @@ public static class Cli {
     public static string StartupPath { get; private set; } = Directory.GetCurrentDirectory();
     public static string DataDir = Path.Combine(StartupPath, "Data");
     public static RyuujiApi.RyuujiApi Api = new(StartupPath);
-    
+    public static string mainFilePath = Path.Combine(StartupPath, "Data", "Translation.json");
+
     static void Main(string[] args) {
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
         
@@ -86,10 +89,18 @@ public static class Cli {
                 if (File.Exists("mkisofs.conf")) mkisofs = File.ReadAllText("mkisofs.conf");
                 Api.RepackIso(mkisofs, isoPath, selectedPath);
                 break;
-            
+
+
+            case '7':
+//                 LoadFile("/Users/zapan/RandomProjects/Oreimo/FastAsyncToradoraTranslateTool/Data/Obj/_0000ESS1.obj/_0000ESS1.obj");
+//                 LoadFile("/Users/zapan/RandomProjects/Oreimo/FastAsyncToradoraTranslateTool/Data/Obj/000scriptAKYO_0000A.obj/000scriptAKYO_0000A.obj");
+                LoadFile("/Users/zapan/RandomProjects/Oreimo/FastAsyncToradoraTranslateTool/Data/Obj/000scriptMGIM_0000.obj/000scriptMGIM_0000.obj");
+                break;
+
+
             case '6': // Exit app
                 throw new("Goodbye!");
-            
+
             default:
                 return false;
         }
@@ -97,6 +108,61 @@ public static class Cli {
         Console.WriteLine($"Completed in {meow.ElapsedMilliseconds} ms");
         return true;
     }
+
+
+    static void LoadFile(string filename)
+    {
+        Console.WriteLine();
+        Console.WriteLine($"LoadFile {filename}");
+
+        string currentFile = filename;
+        string[] myStrings;
+        Dictionary<int, string> myNames = new();
+        if (Path.GetExtension(currentFile) == ".obj")
+        {
+            string filepath = Path.Combine(StartupPath, "Data", "Obj", currentFile, currentFile);
+            ObjHelper myHelper = new(File.ReadAllBytes(filepath));
+            myStrings = myHelper.Import();
+            myNames = myHelper.Actors;
+        }
+        else // Else it is .txt file
+        {
+            string filepath = Path.Combine(StartupPath, "Data", "Txt", currentFile, currentFile);
+            myStrings = File.ReadAllLines(filepath, new UnicodeEncoding(false, false)); // Txt file has encoding UTF-16 LE (Unicode without BOM)
+        }
+
+        JObject mainFile = JObject.Parse(File.ReadAllText(mainFilePath));
+        bool haveTranslation = mainFile[currentFile] != null;
+
+        for (int i = 0; i < myStrings.Length; i++)
+        {
+            string name = "";
+            string sentence;
+            string translated = "";
+            if (myStrings[i].StartsWith("「") && myStrings[i].EndsWith("」"))
+            {
+                name = myNames[i];
+                sentence = myStrings[i].TrimStart('「').TrimEnd('」'); // Remove brackets from the beginning and end of the original sentence
+            }
+            else
+                sentence = myStrings[i];
+            sentence = sentence.Replace("＿", " ");
+
+
+            if (haveTranslation && mainFile[currentFile][i.ToString()] is { } translationToken) {
+                translated = translationToken.ToString();
+
+                if (translated.StartsWith('「') && translated.EndsWith('」'))
+                    translated = translated.TrimStart('「').TrimEnd('」'); // Remove brackets from the beginning and end of the original sentence
+
+                if (translated.StartsWith('（') && translated.EndsWith('）'))
+                    translated = translated.TrimStart('（').TrimEnd('）'); // Remove brackets from the beginning and end of the original sentence
+            }
+
+            Console.WriteLine($"[{i}] {name} : {sentence} : {translated}");
+        }
+    }
+
 
     static string? OpenFilePicker(string filterList = "", bool save = false) {
         bool canceled = false;

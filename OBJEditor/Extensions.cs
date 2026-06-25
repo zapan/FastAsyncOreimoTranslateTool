@@ -13,11 +13,13 @@ internal static class Extensions {
         int strLen = arr.GetInt32(at);
         at += 4;
 
+        Console.WriteLine($"GetString: strLen={strLen}, at={at}, arr.Length={arr.Length}");
         byte[] buffer = new byte[strLen * 2];
         for (int i = 0; i < strLen; i++) {
             buffer[i * 2] = arr[i * 2 + at];
             buffer[i * 2 + 1] = arr[i * 2 + at + 1];
         }
+        Console.WriteLine(Encoding.GetString(buffer));
         return Encoding.GetString(buffer);
     }
 
