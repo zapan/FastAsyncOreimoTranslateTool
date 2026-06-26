@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -30,7 +30,7 @@ public class Obj(byte[] script) {
             {
                 case Dialogue2:
                 case Dialogue:
-                    strings.Add(script.GetString(i + 10));
+                    strings.Add(script.GetNullTerminatedString(i + 15, blockLen - 15));
                     break;
 
                 case Choice:
@@ -112,7 +112,7 @@ public class Obj(byte[] script) {
                 case Dialogue2:
                 case Dialogue:
                     newBlock = new MemoryStream();
-                    script.CopyTo(newBlock, i + 4, 0x6);
+                    script.CopyTo(newBlock, i + 4, 11);
 
                     string phrase = strings[id++];
                     string secondPhrase = null;
@@ -134,16 +134,15 @@ public class Obj(byte[] script) {
                         if (phrase.EndsWith("」"))
                             secondPhrase = phrase.Substring(0, phrase.IndexOf("「") + 1) + secondPhrase + "」";
                     }
-                    phrase.WriteTo(newBlock);
+                    phrase.WriteNullTerminatedTo(newBlock);
 
                     WriteBlock(newBlock, output);
                     if (secondPhrase != null)
                     {
                         newBlock = new MemoryStream();
-                        script.CopyTo(newBlock, i + 4, 0x2);
-                        newBlock.Write([0xFF, 0xFF, 0xFF, 0xFF], 0, 4);
+                        script.CopyTo(newBlock, i + 4, 11);
 
-                        secondPhrase.WriteTo(newBlock);
+                        secondPhrase.WriteNullTerminatedTo(newBlock);
                         WriteBlock(newBlock, output);
 
                         List<int> jumpInfo = [x, 1];
@@ -297,9 +296,6 @@ public class Obj(byte[] script) {
 
         while ((newLen + blank) % 0x10 != 0x00)
             blank++;
-
-        if (blank <= 0x8)
-            blank += 0x10;
 
         newLen += blank;
         BitConverter.GetBytes(newLen).CopyTo(output, 0, 4);

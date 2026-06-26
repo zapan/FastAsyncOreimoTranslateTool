@@ -33,7 +33,8 @@ public static class Cli {
                 4. Start game
                 5. Save iso
                 6. Exit app
-                
+                7. Parse Objs
+
                 Type the index of the action you want to do
                 """);
 
