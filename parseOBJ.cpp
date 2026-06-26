@@ -3,6 +3,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cstdint>
+#include <vector>
 
 using namespace std;
 
@@ -16,6 +17,7 @@ void WriteBGM(char, ofstream&);
 void WriteCutin(char, ofstream&);
 void WriteSE(char, ofstream&);
 void WriteTsukkomi(char, ofstream&);
+void WriteDialogue(char*, int, ofstream&);
 
 int main(int argc, const char* argv[])
 {
@@ -42,18 +44,18 @@ int main(int argc, const char* argv[])
 		cout << "Unable to write log file " << LogName << endl;
 		return -1;
 	}
-	
+
 	//Skip header
 	char Header[0x30];
 	InFile.read(Header, 0x30);
 
 	int TotalLines = 0;
 
-	
+
 	while(InFile)
 	{
 		uint32_t Size = 0;
-				
+
 		InFile.read((char*)&Size, 4);
 		//Cheating end condition here
 		if (Size == 0)
@@ -76,37 +78,37 @@ int main(int argc, const char* argv[])
 		switch(Type)
 		{
 			case 0x00:
-			{
+ {
 				OutFile << "00 - set\t";
 				DumpRemain(Buffer, OutFile, 27);
 				break;
 			}
 
 			case 0x01:
-			{
+ {
 				OutFile << "01 - if\t";
 				DumpRemain(Buffer, OutFile, 27);
 				break;
 			}
 
 			case 0x08:
-			{
+ {
 				OutFile << "08\t";
 				DumpRemain(Buffer, OutFile, 11);
 				break;
 			}
 
 			case 0x14:
-			{
+ {
 				OutFile << "14 - ORE get\t";
 				// I've seen 10 and 20 of these lines
 				if (Size == 0x10)
-				{
+	 {
 					WriteORE(Buffer[0xA], OutFile);
 					OutFile << '\t';
 				}
 				else
-				{
+	 {
 					OutFile << "20 size\t";
 					DumpRemain(Buffer, OutFile, 27);
 				}
@@ -114,7 +116,7 @@ int main(int argc, const char* argv[])
 			}
 
 			case 0x15:
-			{
+ {
 				OutFile << "15 - ORE prompt\t";
 				// I've seen 20 and 30 of these lines
 				WriteORE(Buffer[0xA], OutFile);
@@ -135,7 +137,7 @@ int main(int argc, const char* argv[])
 
 				OutFile << "Dialogue 0x" << hex << *Entry << '\t';
 				if (Size == 0x30)
-				{
+	 {
 					WriteORE(Buffer[0x16], OutFile);
 					OutFile << '\t';
 
@@ -157,35 +159,35 @@ int main(int argc, const char* argv[])
 			}
 
 			case 0x2C:
-			{
+ {
 				OutFile << "2C - show textbox\t";
 				DumpRemain(Buffer, OutFile, 11);
 				break;
 			}
 
 			case 0x2D:
-			{
+ {
 				OutFile << "2D - hide textbox\t";
 				DumpRemain(Buffer, OutFile, 11);
 				break;
 			}
-		
+
 			case 0x58:
-			{
+ {
 				OutFile << "58 - start BGM\t";
 				WriteBGM(Buffer[6], OutFile);
 				OutFile << '\t';
 				break;
 			}
-		
+
 			case 0x59:
-			{
+ {
 				OutFile << "59 - stop BGM\t";
 				break;
 			}
 
 			case 0x5C:
-			{
+ {
 				OutFile << "5C - SE\t";
 				WriteSE(Buffer[5], OutFile);
 				OutFile << '\t';
@@ -193,27 +195,29 @@ int main(int argc, const char* argv[])
 			}
 
 			case 0x64:
-			{
+ {
 				OutFile << "64 - dialogue\t";
+// 				DumpRemain(Buffer, OutFile, Size);
+				WriteDialogue(Buffer, Size, OutFile);
 				break;
 			}
 
 			case 0x68:
-			{
+ {
 				OutFile << "68 - DEBUG?\t";
-				DumpRemain(Buffer, OutFile, 27);
+				WriteDialogue(Buffer, Size, OutFile);
 				break;
 			}
 
 			case 0x6A:
-			{
+ {
 				OutFile << "6A\t";
 				DumpRemain(Buffer, OutFile, 11);
 				break;
 			}
 
 			case 0x78:
-			{
+ {
 				OutFile << "78 - tsukkomi\t";
 				WriteTsukkomi(Buffer[6], OutFile);
 				OutFile << "\tChose ";
@@ -236,45 +240,45 @@ int main(int argc, const char* argv[])
 			}
 
 			case 0x90:
-			{
+ {
 				OutFile << "90 - shake screen\t";
 				break;
 			}
 
 			case 0x91:
-			{
+ {
 				OutFile << "91 - cut fade out\t";
 				break;
 			}
 
 			case 0x92:
-			{
+ {
 				OutFile << "92 - cut fade in\t";
 				break;
 			}
 
 			case 0x97:
-			{
+ {
 				OutFile << "97\t";
 				DumpRemain(Buffer, OutFile, 27);
 				break;
 			}
 
 			case 0xBC:
-			{
+ {
 				OutFile << "BC - Scene name\t";
 				break;
 			}
 
 			case 0xBD:
-			{
+ {
 				OutFile << "BD\t";
 				DumpRemain(Buffer, OutFile, 11);
 				break;
 			}
 
 			case 0xBE:
-			{
+ {
 				OutFile << "BE - branch internal\t";
 				char TempEntry[4] = {0x00, 0x00};
 				for(int x=0; x<4; x++)
@@ -287,7 +291,7 @@ int main(int argc, const char* argv[])
 			}
 
 			case 0xBF:
-			{
+ {
 				OutFile << "BF - branch file\t";
 				char TempScript[2] = {0x00, 0x00};
 				TempScript[0] = Buffer[6];
@@ -298,14 +302,14 @@ int main(int argc, const char* argv[])
 			}
 
 			case 0xC0:
-			{
+ {
 				OutFile << "C0\t";
 				DumpRemain(Buffer, OutFile, 11);
 				break;
 			}
 
 			case 0xC2:
-			{
+ {
 				OutFile << "C2 - video\t";
 				unsigned char Size = Buffer[6];
 				OutFile << "namesize= " << (int)Size << '\t';
@@ -319,107 +323,107 @@ int main(int argc, const char* argv[])
 			}
 
 			case 0xC8:
-			{
+ {
 				OutFile << "C8\t";
 				DumpRemain(Buffer, OutFile, 11);
 				break;
 			}
 
 			case 0xC9:
-			{
+ {
 				OutFile << "C9\t";
 				DumpRemain(Buffer, OutFile, 11);
 				break;
 			}
 
 			case 0xCA:
-			{
+ {
 				OutFile << "CA - fade in/out\t";
 				DumpRemain(Buffer, OutFile, 27);
 				break;
 			}
 
 			case 0xCC:
-			{
+ {
 				OutFile << "CC - BG\t";
 				WriteBGName(Buffer[6], OutFile);
 				break;
 			}
 
 			case 0xCD:
-			{
+ {
 				OutFile << "CD - BG\t";
 				WriteBGName(Buffer[6], OutFile);
 				break;
 			}
 
 			case 0xD0:
-			{
+ {
 				OutFile << "D0 - BG\t";
 				WriteBGName(Buffer[6], OutFile);
 				break;
 			}
 
 			case 0xD1:
-			{
+ {
 				OutFile << "D1 - BG\t";
 				WriteBGName(Buffer[6], OutFile);
 				break;
 			}
 
 			case 0xD4:
-			{
+ {
 				OutFile << "D4 - CG\t";
 				WriteCG(Buffer[6], OutFile);
 				break;
 			}
 
 			case 0xD5:
-			{
+ {
 				OutFile << "D5 - CG\t";
 				WriteCG(Buffer[6], OutFile);
 				break;
 			}
 
 			case 0xD6:
-			{
+ {
 				OutFile << "D6\t";
 				DumpRemain(Buffer, OutFile, 27);
 				break;
 			}
 
 			case 0xDC:
-			{
+ {
 				OutFile << "DC\t";
 				DumpRemain(Buffer, OutFile, 27);
 				break;
 			}
 
 			case 0xE8:
-			{
+ {
 				OutFile << "E8 - image cutin\t";
 				WriteCutin(Buffer[6], OutFile);
 				OutFile << '\t';
 				break;
 			}
 
-			
+
 			case 0xEA:
-			{
+ {
 				OutFile << "EA\t";
 				DumpRemain(Buffer, OutFile, 27);
 				break;
 			}
 
 			case 0xEB:
-			{
+ {
 				OutFile << "EB\t";
 				DumpRemain(Buffer, OutFile, 11);
 				break;
 			}
 
 			case 0xF4:
-			{
+ {
 				OutFile << "F4 - character\t";
 				OutFile << hex << int(Buffer[6]) << '\t';
 				WriteCharacterName(Buffer[6], OutFile);
@@ -429,7 +433,7 @@ int main(int argc, const char* argv[])
 			}
 
 			case 0xF5:
-			{
+ {
 				OutFile << "F5 - character\t";
 				OutFile << hex << int(Buffer[6]) << '\t';
 				WriteCharacterName(Buffer[6], OutFile);
@@ -439,7 +443,7 @@ int main(int argc, const char* argv[])
 			}
 
 			case 0xF6:
-			{
+ {
 				OutFile << "F6 - character\t";
 				OutFile << hex << int(Buffer[6]) << '\t';
 				WriteCharacterName(Buffer[6], OutFile);
@@ -449,7 +453,7 @@ int main(int argc, const char* argv[])
 			}
 
 			case 0xF7:
-			{
+ {
 				OutFile << "F7 - character\t";
 				OutFile << hex << int(Buffer[6]) << '\t';
 				WriteCharacterName(Buffer[6], OutFile);
@@ -459,7 +463,7 @@ int main(int argc, const char* argv[])
 			}
 
 			case 0xF8:
-			{
+ {
 				OutFile << "F8 - character\t";
 				OutFile << hex << int(Buffer[6]) << '\t';
 				WriteCharacterName(Buffer[6], OutFile);
@@ -469,7 +473,7 @@ int main(int argc, const char* argv[])
 			}
 
 			case 0xF9:
-			{
+ {
 				OutFile << "F9 - character\t";
 				OutFile << hex << int(Buffer[6]) << '\t';
 				WriteCharacterName(Buffer[6], OutFile);
@@ -479,7 +483,7 @@ int main(int argc, const char* argv[])
 			}
 
 			case 0xFA:
-			{
+ {
 				OutFile << "FA - character\t";
 				OutFile << hex << int(Buffer[6]) << '\t';
 				WriteCharacterName(Buffer[6], OutFile);
@@ -489,7 +493,7 @@ int main(int argc, const char* argv[])
 			}
 
 			case 0xFC:
-			{
+ {
 				OutFile << "FC - character\t";
 				OutFile << hex << int(Buffer[6]) << '\t';
 				WriteCharacterName(Buffer[6], OutFile);
@@ -499,7 +503,7 @@ int main(int argc, const char* argv[])
 			}
 
 			default:
-			{
+ {
 				OutFile << "unknown: " << hex << (int)Type << '\t';
 				break;
 			}
@@ -512,7 +516,7 @@ int main(int argc, const char* argv[])
 	}
 
 	OutFile << "Total Lines = " << dec << TotalLines << " 0x" << hex << TotalLines << endl;
-	
+
 	return 0;
 }
 
@@ -537,7 +541,7 @@ void WriteBGName(char BG, ofstream& OutFile)
 	case 0x01:
 		OutFile << "Kyousuke's room (sunset) - BG00B";
 		break;
-	case 0x02: 
+	case 0x02:
 		OutFile << "Kyousuke's room (blinds shut) - BG00C";
 		break;
 	case 0x03:
@@ -772,151 +776,151 @@ void WriteCharacterName(char Character, ofstream& OutFile)
 		case 0x00:
 			OutFile << "00 Character?";
 			break;
-		case 0x01:	
+		case 0x01:
 			OutFile << "? - AK_1L.gim";
 			break;
-		case 0x02:	
+		case 0x02:
 			OutFile << "? - AK_2C.gim";
 			break;
-		case 0x03:	
+		case 0x03:
 			OutFile << "? - AK_2L.gim";
 			break;
-		case 0x04:	
+		case 0x04:
 			OutFile << "Ayase - AY_1C.gim";
 			break;
-		case 0x05:	
+		case 0x05:
 			OutFile << "Ayase - AY_1L.gim";
 			break;
-		case 0x06:	
+		case 0x06:
 			OutFile << "Ayase - AY_1R.gim";
 			break;
-		case 0x07:	
+		case 0x07:
 			OutFile << "Ayase - AY_2C.gim";
 			break;
-		case 0x08:	
+		case 0x08:
 			OutFile << "Ayase - AY_2L.gim";
 			break;
-		case 0x09:	
+		case 0x09:
 			OutFile << "Ayase - AY_2R.gim";
 			break;
-		case 0x0A:	
+		case 0x0A:
 			OutFile << "Ayase - AY_5C.gim";
 			break;
-		case 0x0B:	
+		case 0x0B:
 			OutFile << "Ayase - AY_5L.gim";
 			break;
-		case 0x0C:	
+		case 0x0C:
 			OutFile << "Ayase - AY_5R.gim";
 			break;
-		case 0x0D:	
+		case 0x0D:
 			OutFile << "Ayase - AY_6C.gim";
 			break;
-		case 0x0E:	
+		case 0x0E:
 			OutFile << "Ayase - AY_6L.gim";
 			break;
-		case 0x0F:	
+		case 0x0F:
 			OutFile << "Ayase - AY_6R.gim";
 			break;
-		case 0x10:	
+		case 0x10:
 			OutFile << "Daisuke - DA_1C.gim";
 			break;
-		case 0x11:	
+		case 0x11:
 			OutFile << "? - KA_1C.gim";
 			break;
-		case 0x12:	
+		case 0x12:
 			OutFile << "? - KA_1R.gim";
 			break;
-		case 0x13:	
+		case 0x13:
 			OutFile << "? - KA_2C.gim";
 			break;
-		case 0x14:	
+		case 0x14:
 			OutFile << "? - KA_2R.gim";
 			break;
-		case 0x15:	
+		case 0x15:
 			OutFile << "? - KA_3C.gim";
 			break;
-		case 0x16:	
+		case 0x16:
 			OutFile << "Kirino - KI_1C.gim";
 			break;
-		case 0x17:	
+		case 0x17:
 			OutFile << "Kirino - KI_1L.gim";
 			break;
-		case 0x18:	
+		case 0x18:
 			OutFile << "Kirino - KI_1R.gim";
 			break;
-		case 0x19:	
+		case 0x19:
 			OutFile << "Kirino - KI_2C.gim";
 			break;
-		case 0x1A:	
+		case 0x1A:
 			OutFile << "Kirino - KI_2L.gim";
 			break;
-		case 0x1B:	
+		case 0x1B:
 			OutFile << "Kirino - KI_2R.gim";
 			break;
-		case 0x1C:	
+		case 0x1C:
 			OutFile << "Kirino - KI_3C.gim";
 			break;
-		case 0x1D:	
+		case 0x1D:
 			OutFile << "Kirino - KI_3L.gim";
 			break;
-		case 0x1E:	
+		case 0x1E:
 			OutFile << "Kirino - KI_3R.gim";
 			break;
-		case 0x1F:	
+		case 0x1F:
 			OutFile << "Kuroneko - KU_1C.gim";
 			break;
-		case 0x20:	
+		case 0x20:
 			OutFile << "Kuroneko - KU_1L.gim";
 			break;
-		case 0x21:	
+		case 0x21:
 			OutFile << "Kuroneko - KU_1R.gim";
 			break;
-		case 0x22:	
+		case 0x22:
 			OutFile << "Kuroneko - KU_2C.gim";
 			break;
-		case 0x23:	
+		case 0x23:
 			OutFile << "Kuroneko - KU_2L.gim";
 			break;
-		case 0x24:	
+		case 0x24:
 			OutFile << "Kuroneko - KU_2R.gim";
 			break;
-		case 0x25:	
+		case 0x25:
 			OutFile << "Manami - MA_1C.gim";
 			break;
-		case 0x26:	
+		case 0x26:
 			OutFile << "Manami - MA_1L.gim";
 			break;
-		case 0x27:	
+		case 0x27:
 			OutFile << "Manami - MA_1R.gim";
 			break;
-		case 0x28:	
+		case 0x28:
 			OutFile << "Manami - MA_2C.gim";
 			break;
-		case 0x29:	
+		case 0x29:
 			OutFile << "Manami - MA_2L.gim";
 			break;
-		case 0x2A:	
+		case 0x2A:
 			OutFile << "Manami - MA_2R.gim";
 			break;
-		case 0x2B:	
+		case 0x2B:
 			OutFile << "Rock - RO_1C.gim";
 			break;
-		case 0x2C:	
+		case 0x2C:
 			OutFile << "Rock - RO_1R.gim";
 			break;
-		case 0x2D:	
+		case 0x2D:
 			OutFile << "Saori - SA_1C.gim";
 			break;
-		case 0x2E:	
+		case 0x2E:
 			OutFile << "Saori - SA_1L.gim";
 			break;
-		case 0x2F:	
+		case 0x2F:
 			OutFile << "Saori - SA_1R.gim";
 			break;
-		case 0x30:	
+		case 0x30:
 			OutFile << "Saori - SA_2L.gim";
 			break;
-		case 0x31:	
+		case 0x31:
 			OutFile << "? - YO_1C.gim";
 			break;
 		default:
@@ -933,244 +937,244 @@ void WriteCG(char CG, ofstream& OutFile)
 		case 0x00:
 			OutFile << "CG001A";
 			break;
-		case 0x01:	
+		case 0x01:
 			OutFile << "CG002A";
 			break;
-		case 0x02:	
+		case 0x02:
 			OutFile << "CG002B";
 			break;
-		case 0x03:	
+		case 0x03:
 			OutFile << "CG003A";
 			break;
-		case 0x04:	
+		case 0x04:
 			OutFile << "CG003B";
 			break;
-		case 0x05:	
+		case 0x05:
 			OutFile << "CG004A";
 			break;
-		case 0x06:	
+		case 0x06:
 			OutFile << "CG005A";
 			break;
-		case 0x07:	
+		case 0x07:
 			OutFile << "CG006A";
 			break;
-		case 0x08:	
+		case 0x08:
 			OutFile << "CG007A";
 			break;
-		case 0x09:	
+		case 0x09:
 			OutFile << "CG008A";
 			break;
-		case 0x0A:	
+		case 0x0A:
 			OutFile << "CG009A";
 			break;
-		case 0x0B:	
+		case 0x0B:
 			OutFile << "CG010A";
 			break;
-		case 0x0C:	
+		case 0x0C:
 			OutFile << "CG010B";
 			break;
-		case 0x0D:	
+		case 0x0D:
 			OutFile << "CG011A";
 			break;
-		case 0x0E:	
+		case 0x0E:
 			OutFile << "CG011B";
 			break;
-		case 0x0F:	
+		case 0x0F:
 			OutFile << "CG012A";
 			break;
-		case 0x10:	
+		case 0x10:
 			OutFile << "CG012B";
 			break;
-		case 0x11:	
+		case 0x11:
 			OutFile << "CG013A";
 			break;
-		case 0x12:	
+		case 0x12:
 			OutFile << "CG013B";
 			break;
-		case 0x13:	
+		case 0x13:
 			OutFile << "CG014A";
 			break;
-		case 0x14:	
+		case 0x14:
 			OutFile << "CG014B";
 			break;
-		case 0x15:	
+		case 0x15:
 			OutFile << "CG014C";
 			break;
-		case 0x16:	
+		case 0x16:
 			OutFile << "CG014D";
 			break;
-		case 0x17:	
+		case 0x17:
 			OutFile << "CG015A";
 			break;
-		case 0x18:	
+		case 0x18:
 			OutFile << "CG015B";
 			break;
-		case 0x19:	
+		case 0x19:
 			OutFile << "CG015C";
 			break;
-		case 0x1A:	
+		case 0x1A:
 			OutFile << "CG016A";
 			break;
-		case 0x1B:	
+		case 0x1B:
 			OutFile << "CG016B";
 			break;
-		case 0x1C:	
+		case 0x1C:
 			OutFile << "CG017A";
 			break;
-		case 0x1D:	
+		case 0x1D:
 			OutFile << "CG017B";
 			break;
-		case 0x1E:	
+		case 0x1E:
 			OutFile << "CG018A";
 			break;
-		case 0x1F:	
+		case 0x1F:
 			OutFile << "CG018B";
 			break;
-		case 0x20:	
+		case 0x20:
 			OutFile << "CG019A";
 			break;
-		case 0x21:	
+		case 0x21:
 			OutFile << "CG019B";
 			break;
-		case 0x22:	
+		case 0x22:
 			OutFile << "CG019C";
 			break;
-		case 0x23:	
+		case 0x23:
 			OutFile << "CG019D";
 			break;
-		case 0x24:	
+		case 0x24:
 			OutFile << "CG020A";
 			break;
-		case 0x25:	
+		case 0x25:
 			OutFile << "CG020B";
 			break;
-		case 0x26:	
+		case 0x26:
 			OutFile << "CG020C";
 			break;
-		case 0x27:	
+		case 0x27:
 			OutFile << "CG021A";
 			break;
-		case 0x28:	
+		case 0x28:
 			OutFile << "CG022A";
 			break;
-		case 0x29:	
+		case 0x29:
 			OutFile << "CG022B";
 			break;
-		case 0x2A:	
+		case 0x2A:
 			OutFile << "CG022C";
 			break;
-		case 0x2B:	
+		case 0x2B:
 			OutFile << "CG023A";
 			break;
-		case 0x2C:	
+		case 0x2C:
 			OutFile << "CG023B";
 			break;
-		case 0x2D:	
+		case 0x2D:
 			OutFile << "CG024A";
 			break;
-		case 0x2E:	
+		case 0x2E:
 			OutFile << "CG024B";
 			break;
-		case 0x2F:	
+		case 0x2F:
 			OutFile << "CG024C";
 			break;
-		case 0x30:	
+		case 0x30:
 			OutFile << "CG025A";
 			break;
-		case 0x31:	
+		case 0x31:
 			OutFile << "CG025B";
 			break;
-		case 0x32:	
+		case 0x32:
 			OutFile << "CG025C";
 			break;
-		case 0x33:	
+		case 0x33:
 			OutFile << "CG026A";
 			break;
-		case 0x34:	
+		case 0x34:
 			OutFile << "CG027A";
 			break;
-		case 0x35:	
+		case 0x35:
 			OutFile << "CG027B";
 			break;
-		case 0x36:	
+		case 0x36:
 			OutFile << "CG028A";
 			break;
-		case 0x37:	
+		case 0x37:
 			OutFile << "CG028B";
 			break;
-		case 0x38:	
+		case 0x38:
 			OutFile << "CG029A";
 			break;
-		case 0x39:	
+		case 0x39:
 			OutFile << "CG029B";
 			break;
-		case 0x3A:	
+		case 0x3A:
 			OutFile << "CG029C";
 			break;
-		case 0x3B:	
+		case 0x3B:
 			OutFile << "CG030A";
 			break;
-		case 0x3C:	
+		case 0x3C:
 			OutFile << "CG030B";
 			break;
-		case 0x3D:	
+		case 0x3D:
 			OutFile << "CG030C";
 			break;
-		case 0x3E:	
+		case 0x3E:
 			OutFile << "CG030D";
 			break;
-		case 0x3F:	
+		case 0x3F:
 			OutFile << "CG031A";
 			break;
-		case 0x40:	
+		case 0x40:
 			OutFile << "CG032A";
 			break;
-		case 0x41:	
+		case 0x41:
 			OutFile << "CG033A";
 			break;
-		case 0x42:	
+		case 0x42:
 			OutFile << "CG034A";
 			break;
-		case 0x43:	
+		case 0x43:
 			OutFile << "CG035A";
 			break;
-		case 0x44:	
+		case 0x44:
 			OutFile << "CG036A";
 			break;
-		case 0x45:	
+		case 0x45:
 			OutFile << "CG036B";
 			break;
-		case 0x46:	
+		case 0x46:
 			OutFile << "CG037A";
 			break;
-		case 0x47:	
+		case 0x47:
 			OutFile << "CG037B";
 			break;
-		case 0x48:	
+		case 0x48:
 			OutFile << "CG037C";
 			break;
-		case 0x49:	
+		case 0x49:
 			OutFile << "CG038A";
 			break;
-		case 0x4A:	
+		case 0x4A:
 			OutFile << "CG039A";
 			break;
-		case 0x4B:	
+		case 0x4B:
 			OutFile << "CG039B";
 			break;
-		case 0x4C:	
+		case 0x4C:
 			OutFile << "CG039C";
 			break;
-		case 0x4D:	
+		case 0x4D:
 			OutFile << "CG040A";
 			break;
-		case 0x4E:	
+		case 0x4E:
 			OutFile << "CG041A";
 			break;
-		case 0x4F:	
+		case 0x4F:
 			OutFile << "CG042A";
 			break;
-		case 0x50:	
+		case 0x50:
 			OutFile << "CG043A";
 			break;
 
@@ -1193,193 +1197,193 @@ void WriteORE(char ORE, ofstream& OutFile)
 		case 0x00:
 			OutFile << "1 - Siscaly Tournament";
 			break;
-		case 0x01:	
+		case 0x01:
 			OutFile << "2 - Tournament goods";
 			break;
-		case 0x02:	
+		case 0x02:
 			OutFile << "3 - National class";
 			break;
-		case 0x03:	
+		case 0x03:
 			OutFile << "4 - Keep calm!";
 			break;
-		case 0x04:	
+		case 0x04:
 			OutFile << "5";
 			break;
-		case 0x05:	
+		case 0x05:
 			OutFile << "6";
 			break;
-		case 0x06:	
+		case 0x06:
 			OutFile << "7";
 			break;
-		case 0x07:	
+		case 0x07:
 			OutFile << "8";
 			break;
-		case 0x08:	
+		case 0x08:
 			OutFile << "9";
 			break;
-		case 0x09:	
+		case 0x09:
 			OutFile << "10";
 			break;
-		case 0x0A:	
+		case 0x0A:
 			OutFile << "11";
 			break;
-		case 0x0B:	
+		case 0x0B:
 			OutFile << "12";
 			break;
-		case 0x0C:	
+		case 0x0C:
 			OutFile << "13";
 			break;
-		case 0x0D:	
+		case 0x0D:
 			OutFile << "14";
 			break;
-		case 0x0E:	
+		case 0x0E:
 			OutFile << "15";
 			break;
-		case 0x0F:	
+		case 0x0F:
 			OutFile << "16";
 			break;
-		case 0x10:	
+		case 0x10:
 			OutFile << "17";
 			break;
-		case 0x11:	
+		case 0x11:
 			OutFile << "18";
 			break;
-		case 0x12:	
+		case 0x12:
 			OutFile << "19";
 			break;
-		case 0x13:	
+		case 0x13:
 			OutFile << "20";
 			break;
-		case 0x14:	
+		case 0x14:
 			OutFile << "21";
 			break;
-		case 0x15:	
+		case 0x15:
 			OutFile << "22";
 			break;
-		case 0x16:	
+		case 0x16:
 			OutFile << "23";
 			break;
-		case 0x17:	
+		case 0x17:
 			OutFile << "24";
 			break;
-		case 0x18:	
+		case 0x18:
 			OutFile << "25";
 			break;
-		case 0x19:	
+		case 0x19:
 			OutFile << "26";
 			break;
-		case 0x1A:	
+		case 0x1A:
 			OutFile << "27";
 			break;
-		case 0x1B:	
+		case 0x1B:
 			OutFile << "28";
 			break;
-		case 0x1C:	
+		case 0x1C:
 			OutFile << "29";
 			break;
-		case 0x1D:	
+		case 0x1D:
 			OutFile << "30";
 			break;
-		case 0x1E:	
+		case 0x1E:
 			OutFile << "31";
 			break;
-		case 0x1F:	
+		case 0x1F:
 			OutFile << "32";
 			break;
-		case 0x20:	
+		case 0x20:
 			OutFile << "33";
 			break;
-		case 0x21:	
+		case 0x21:
 			OutFile << "34";
 			break;
-		case 0x22:	
+		case 0x22:
 			OutFile << "35";
 			break;
-		case 0x23:	
+		case 0x23:
 			OutFile << "36";
 			break;
-		case 0x24:	
+		case 0x24:
 			OutFile << "37";
 			break;
-		case 0x25:	
+		case 0x25:
 			OutFile << "38";
 			break;
-		case 0x26:	
+		case 0x26:
 			OutFile << "39";
 			break;
-		case 0x27:	
+		case 0x27:
 			OutFile << "40";
 			break;
-		case 0x28:	
+		case 0x28:
 			OutFile << "41";
 			break;
-		case 0x29:	
+		case 0x29:
 			OutFile << "42";
 			break;
-		case 0x2A:	
+		case 0x2A:
 			OutFile << "43";
 			break;
-		case 0x2B:	
+		case 0x2B:
 			OutFile << "44";
 			break;
-		case 0x2C:	
+		case 0x2C:
 			OutFile << "45";
 			break;
-		case 0x2D:	
+		case 0x2D:
 			OutFile << "46";
 			break;
-		case 0x2E:	
+		case 0x2E:
 			OutFile << "47";
 			break;
-		case 0x2F:	
+		case 0x2F:
 			OutFile << "48";
 			break;
-		case 0x30:	
+		case 0x30:
 			OutFile << "49";
 			break;
-		case 0x31:	
+		case 0x31:
 			OutFile << "50";
 			break;
-		case 0x32:	
+		case 0x32:
 			OutFile << "51";
 			break;
-		case 0x33:	
+		case 0x33:
 			OutFile << "52";
 			break;
-		case 0x34:	
+		case 0x34:
 			OutFile << "53";
 			break;
-		case 0x35:	
+		case 0x35:
 			OutFile << "54";
 			break;
-		case 0x36:	
+		case 0x36:
 			OutFile << "55";
 			break;
-		case 0x37:	
+		case 0x37:
 			OutFile << "56";
 			break;
-		case 0x38:	
+		case 0x38:
 			OutFile << "57";
 			break;
-		case 0x39:	
+		case 0x39:
 			OutFile << "58";
 			break;
-		case 0x3A:	
+		case 0x3A:
 			OutFile << "59";
 			break;
-		case 0x3B:	
+		case 0x3B:
 			OutFile << "60";
 			break;
-		case 0x3C:	
+		case 0x3C:
 			OutFile << "61";
 			break;
-		case 0x3D:	
+		case 0x3D:
 			OutFile << "62 - other side";
 			break;
-		case 0x3E:	
+		case 0x3E:
 			OutFile << "63";
 			break;
-		case 0x3F:	
+		case 0x3F:
 			OutFile << "64 - Ore no Imouto ga Konna ni Kawaii Wake ga Nai";
 			break;
 		case -1:
@@ -2309,52 +2313,52 @@ void WriteBGM(char BGM, ofstream& OutFile)
 		case 0x00:
 			OutFile << "1 - oRE No IMoUTo";
 			break;
-		case 0x01:	
+		case 0x01:
 			OutFile << "2 - GOOD MORNING";
 			break;
-		case 0x02:	
+		case 0x02:
 			OutFile << "3 - Immediate Approach";
 			break;
-		case 0x03:	
+		case 0x03:
 			OutFile << "4 - SOFT BREEZEEEEEE";
 			break;
-		case 0x04:	
+		case 0x04:
 			OutFile << "5 - Merry Go Round";
 			break;
-		case 0x05:	
+		case 0x05:
 			OutFile << "6 - Roller Coaster";
 			break;
-		case 0x06:	
+		case 0x06:
 			OutFile << "7 - downpour";
 			break;
-		case 0x07:	
+		case 0x07:
 			OutFile << "8 - Ferris wheel";
 			break;
-		case 0x08:	
+		case 0x08:
 			OutFile << "9 - STONiSHMENT HOUSE";
 			break;
-		case 0x09:	
+		case 0x09:
 			OutFile << "10 - After a storm comes a calm";
 			break;
-		case 0x0A:	
+		case 0x0A:
 			OutFile << "11 - street performer";
 			break;
-		case 0x0B:	
+		case 0x0B:
 			OutFile << "12 - Real Substantiality";
 			break;
-		case 0x0C:	
+		case 0x0C:
 			OutFile << "13 - rendezvous";
 			break;
-		case 0x0D:	
+		case 0x0D:
 			OutFile << "14 - AKiHABARA, CHiYODA-KU";
 			break;
-		case 0x0E:	
+		case 0x0E:
 			OutFile << "15 - Super Approach!!";
 			break;
-		case 0x0F:	
+		case 0x0F:
 			OutFile << "16 - DESTROY GAME STORY";
 			break;
-		case 0x10:	
+		case 0x10:
 			OutFile << "17 - SECRETX2";
 			break;
 		default:
@@ -2370,193 +2374,193 @@ void WriteCutin(char Cutin, ofstream& OutFile)
 		case 0x00:
 			OutFile << "1 - Siscaly Tournament GET";
 			break;
-		case 0x01:	
+		case 0x01:
 			OutFile << "2 - Tournament goods GET";
 			break;
-		case 0x02:	
+		case 0x02:
 			OutFile << "3 - National class GET";
 			break;
-		case 0x03:	
+		case 0x03:
 			OutFile << "4 - Keep calm! GET";
 			break;
-		case 0x04:	
+		case 0x04:
 			OutFile << "5";
 			break;
-		case 0x05:	
+		case 0x05:
 			OutFile << "6";
 			break;
-		case 0x06:	
+		case 0x06:
 			OutFile << "7";
 			break;
-		case 0x07:	
+		case 0x07:
 			OutFile << "8";
 			break;
-		case 0x08:	
+		case 0x08:
 			OutFile << "9";
 			break;
-		case 0x09:	
+		case 0x09:
 			OutFile << "10";
 			break;
-		case 0x0A:	
+		case 0x0A:
 			OutFile << "11";
 			break;
-		case 0x0B:	
+		case 0x0B:
 			OutFile << "12";
 			break;
-		case 0x0C:	
+		case 0x0C:
 			OutFile << "13";
 			break;
-		case 0x0D:	
+		case 0x0D:
 			OutFile << "14";
 			break;
-		case 0x0E:	
+		case 0x0E:
 			OutFile << "15";
 			break;
-		case 0x0F:	
+		case 0x0F:
 			OutFile << "16";
 			break;
-		case 0x10:	
+		case 0x10:
 			OutFile << "17";
 			break;
-		case 0x11:	
+		case 0x11:
 			OutFile << "18";
 			break;
-		case 0x12:	
+		case 0x12:
 			OutFile << "19";
 			break;
-		case 0x13:	
+		case 0x13:
 			OutFile << "20";
 			break;
-		case 0x14:	
+		case 0x14:
 			OutFile << "21";
 			break;
-		case 0x15:	
+		case 0x15:
 			OutFile << "22";
 			break;
-		case 0x16:	
+		case 0x16:
 			OutFile << "23";
 			break;
-		case 0x17:	
+		case 0x17:
 			OutFile << "24";
 			break;
-		case 0x18:	
+		case 0x18:
 			OutFile << "25";
 			break;
-		case 0x19:	
+		case 0x19:
 			OutFile << "26";
 			break;
-		case 0x1A:	
+		case 0x1A:
 			OutFile << "27";
 			break;
-		case 0x1B:	
+		case 0x1B:
 			OutFile << "28";
 			break;
-		case 0x1C:	
+		case 0x1C:
 			OutFile << "29";
 			break;
-		case 0x1D:	
+		case 0x1D:
 			OutFile << "30";
 			break;
-		case 0x1E:	
+		case 0x1E:
 			OutFile << "31";
 			break;
-		case 0x1F:	
+		case 0x1F:
 			OutFile << "32";
 			break;
-		case 0x20:	
+		case 0x20:
 			OutFile << "33";
 			break;
-		case 0x21:	
+		case 0x21:
 			OutFile << "34";
 			break;
-		case 0x22:	
+		case 0x22:
 			OutFile << "35";
 			break;
-		case 0x23:	
+		case 0x23:
 			OutFile << "36";
 			break;
-		case 0x24:	
+		case 0x24:
 			OutFile << "37";
 			break;
-		case 0x25:	
+		case 0x25:
 			OutFile << "38";
 			break;
-		case 0x26:	
+		case 0x26:
 			OutFile << "39";
 			break;
-		case 0x27:	
+		case 0x27:
 			OutFile << "40";
 			break;
-		case 0x28:	
+		case 0x28:
 			OutFile << "41";
 			break;
-		case 0x29:	
+		case 0x29:
 			OutFile << "42";
 			break;
-		case 0x2A:	
+		case 0x2A:
 			OutFile << "43";
 			break;
-		case 0x2B:	
+		case 0x2B:
 			OutFile << "44";
 			break;
-		case 0x2C:	
+		case 0x2C:
 			OutFile << "45";
 			break;
-		case 0x2D:	
+		case 0x2D:
 			OutFile << "46";
 			break;
-		case 0x2E:	
+		case 0x2E:
 			OutFile << "47";
 			break;
-		case 0x2F:	
+		case 0x2F:
 			OutFile << "48";
 			break;
-		case 0x30:	
+		case 0x30:
 			OutFile << "49";
 			break;
-		case 0x31:	
+		case 0x31:
 			OutFile << "50";
 			break;
-		case 0x32:	
+		case 0x32:
 			OutFile << "51";
 			break;
-		case 0x33:	
+		case 0x33:
 			OutFile << "52";
 			break;
-		case 0x34:	
+		case 0x34:
 			OutFile << "53";
 			break;
-		case 0x35:	
+		case 0x35:
 			OutFile << "54";
 			break;
-		case 0x36:	
+		case 0x36:
 			OutFile << "55";
 			break;
-		case 0x37:	
+		case 0x37:
 			OutFile << "56";
 			break;
-		case 0x38:	
+		case 0x38:
 			OutFile << "57";
 			break;
-		case 0x39:	
+		case 0x39:
 			OutFile << "58";
 			break;
-		case 0x3A:	
+		case 0x3A:
 			OutFile << "59";
 			break;
-		case 0x3B:	
+		case 0x3B:
 			OutFile << "60";
 			break;
-		case 0x3C:	
+		case 0x3C:
 			OutFile << "61";
 			break;
-		case 0x3D:	
+		case 0x3D:
 			OutFile << "62 - other side GET";
 			break;
-		case 0x3E:	
+		case 0x3E:
 			OutFile << "63";
 			break;
-		case 0x3F:	
+		case 0x3F:
 			OutFile << "64 - Ore no Imouto ga Konna ni Kawaii Wake ga Nai GET";
 			break;
 		case 0x40:
@@ -3819,5 +3823,102 @@ void WriteTsukkomi(char Tsukkomi, ofstream& OutFile)
 			OutFile << "Unknown tsukkomi";
 			break;
 
+	}
+}
+
+std::string UTF16LE_to_UTF8(const uint16_t* utf16, size_t len)
+{
+	std::string utf8;
+	for (size_t i = 0; i < len; )
+	{
+		uint32_t cp = utf16[i++];
+		if (cp >= 0xD800 && cp <= 0xDBFF && i < len)
+		{
+			uint32_t trail = utf16[i];
+			if (trail >= 0xDC00 && trail <= 0xDFFF)
+			{
+				cp = ((cp - 0xD800) << 10) + (trail - 0xDC00) + 0x10000;
+				i++;
+			}
+		}
+
+		if (cp <= 0x7F)
+		{
+			utf8.push_back(static_cast<char>(cp));
+		}
+		else if (cp <= 0x7FF)
+		{
+			utf8.push_back(static_cast<char>(0xC0 | ((cp >> 6) & 0x1F)));
+			utf8.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
+		}
+		else if (cp <= 0xFFFF)
+		{
+			utf8.push_back(static_cast<char>(0xE0 | ((cp >> 12) & 0x0F)));
+			utf8.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
+			utf8.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
+		}
+		else if (cp <= 0x10FFFF)
+		{
+			utf8.push_back(static_cast<char>(0xF0 | ((cp >> 18) & 0x07)));
+			utf8.push_back(static_cast<char>(0x80 | ((cp >> 12) & 0x3F)));
+			utf8.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
+			utf8.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
+		}
+	}
+	return utf8;
+}
+
+void WriteDialogue(char* Buffer, int Size, ofstream& OutFile)
+{
+	// Text is UTF-16 LE starting at offset 0xF (byte 15)
+	// Pattern: low_byte high_byte for each character
+	// Separator: U+300C (「) between character name and dialogue
+	int textOffset = 0xF;
+	int textLength = Size - textOffset;
+
+	if (textLength <= 0)
+		return;
+
+	// Extract text into a UTF-16 code units buffer
+	std::vector<uint16_t> utf16_chars;
+	for (int i = 0; i + 1 < textLength; i += 2)
+	{
+		uint8_t low = static_cast<uint8_t>(Buffer[textOffset + i]);
+		uint8_t high = static_cast<uint8_t>(Buffer[textOffset + i + 1]);
+
+		// Check for null terminator (00 00)
+		if (low == 0 && high == 0)
+			break;
+
+		uint16_t unicodeChar = low | (high << 8);
+		utf16_chars.push_back(unicodeChar);
+	}
+
+	// Search for U+300C (「) separator
+	size_t separatorPos = std::string::npos;
+	for (size_t i = 0; i < utf16_chars.size(); ++i)
+	{
+		if (utf16_chars[i] == 0x300C)
+		{
+			separatorPos = i;
+			break;
+		}
+	}
+
+	if (separatorPos != std::string::npos)
+	{
+		// Found separator - split into name and dialogue
+		// Character name is before U+300C
+		std::string characterName = UTF16LE_to_UTF8(utf16_chars.data(), separatorPos);
+		// Dialogue starts at U+300C (includes 「 and ends with 」)
+		std::string dialogueText = UTF16LE_to_UTF8(utf16_chars.data() + separatorPos, utf16_chars.size() - separatorPos);
+
+		OutFile << "[textLength: " << std::setw(4) << std::setfill('0') << std::to_string(textLength) << "] Character: " << characterName << "\tDialogue: " << dialogueText;
+	}
+	else
+	{
+		// No separator found - print the whole text
+		std::string fullText = UTF16LE_to_UTF8(utf16_chars.data(), utf16_chars.size());
+		OutFile << "[textLength: " << std::setw(4) << std::setfill('0') << std::to_string(textLength) << "] " << fullText;
 	}
 }
