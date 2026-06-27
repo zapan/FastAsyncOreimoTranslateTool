@@ -18,9 +18,6 @@ namespace TranslateCLI;
 public static class Program {
 
     public static string StartupPath { get; private set; } = Directory.GetCurrentDirectory();
-    public static string DataDir = Path.Combine(StartupPath, "Data");
-    public static RyuujiApi.RyuujiApi Api = new(StartupPath);
-    public static string mainFilePath = Path.Combine(StartupPath, "Data", "Translation.json");
 
     static void ShowUsage()
     {
@@ -54,7 +51,7 @@ public static class Program {
             {
                 case "list-files":
                 {
-                    string? basePath = args.Length >= 2 ? args[1] : null;
+                    string? basePath = args.Length >= 2 ? args[1] : StartupPath;
                     var app = new TranslationProjectCli(basePath);
                     Console.WriteLine($"Total: {app.GetTotalPercent():0.0}%");
                     foreach (var file in app.Files)
@@ -65,7 +62,7 @@ public static class Program {
                 case "load":
                 {
                     if (args.Length < 2) throw new ArgumentException("Usage: load <fileName> [basePath]");
-                    string? basePath = args.Length >= 3 ? args[2] : null;
+                    string? basePath = args.Length >= 3 ? args[2] : StartupPath;
                     var app = new TranslationProjectCli(basePath);
                     app.LoadFile(args[1]);
                     app.PrintCurrentStrings(Console.Out, 50);
@@ -75,7 +72,7 @@ public static class Program {
                 case "export":
                 {
                     if (args.Length < 3) throw new ArgumentException("Usage: export <fileName> <xlsxPath> [basePath]");
-                    string? basePath = args.Length >= 4 ? args[3] : null;
+                    string? basePath = args.Length >= 4 ? args[3] : StartupPath;
                     var app = new TranslationProjectCli(basePath);
                     app.LoadFile(args[1]);
                     app.ExportText(args[2]);
@@ -86,7 +83,7 @@ public static class Program {
                 case "export-all":
                 {
                     if (args.Length < 2) throw new ArgumentException("Usage: export-all <folderPath> [basePath]");
-                    string? basePath = args.Length >= 3 ? args[2] : null;
+                    string? basePath = args.Length >= 3 ? args[2] : StartupPath;
                     var app = new TranslationProjectCli(basePath);
                     app.ExportAll(args[1]);
                     Console.WriteLine("Export all completed.");
@@ -96,7 +93,7 @@ public static class Program {
                 case "import":
                 {
                     if (args.Length < 5) throw new ArgumentException("Usage: import <fileName> <xlsxPath> <column> <cell> [basePath]");
-                    string? basePath = args.Length >= 6 ? args[5] : null;
+                    string? basePath = args.Length >= 6 ? args[5] : StartupPath;
                     var app = new TranslationProjectCli(basePath);
                     app.LoadFile(args[1]);
                     app.ImportText(args[2], int.Parse(args[3]), int.Parse(args[4]));
@@ -108,7 +105,7 @@ public static class Program {
                 case "import-all":
                 {
                     if (args.Length < 4) throw new ArgumentException("Usage: import-all <folderPath> <column> <cell> [basePath]");
-                    string? basePath = args.Length >= 5 ? args[4] : null;
+                    string? basePath = args.Length >= 5 ? args[4] : StartupPath;
                     var app = new TranslationProjectCli(basePath);
                     app.ImportAll(args[1], int.Parse(args[2]), int.Parse(args[3]));
                     Console.WriteLine("Import all completed.");
@@ -118,7 +115,7 @@ public static class Program {
                 case "linebreaks":
                 {
                     if (args.Length < 3) throw new ArgumentException("Usage: linebreaks <fileName> <dumpedFontFile> [basePath]");
-                    string? basePath = args.Length >= 4 ? args[3] : null;
+                    string? basePath = args.Length >= 4 ? args[3] : StartupPath;
                     var app = new TranslationProjectCli(basePath);
                     app.LoadFile(args[1]);
                     var inserter = new LineBreaksInserterCLI(args[2], 455);
@@ -131,7 +128,7 @@ public static class Program {
                 case "linebreaks-all":
                 {
                     if (args.Length < 2) throw new ArgumentException("Usage: linebreaks-all <dumpedFontFile> [basePath]");
-                    string? basePath = args.Length >= 3 ? args[2] : null;
+                    string? basePath = args.Length >= 3 ? args[2] : StartupPath;
                     var app = new TranslationProjectCli(basePath);
                     app.InsertLineBreaksAll(args[1]);
                     Console.WriteLine("Line breaks inserted for all files.");
@@ -141,7 +138,7 @@ public static class Program {
                 case "remove-linebreaks":
                 {
                     if (args.Length < 2) throw new ArgumentException("Usage: remove-linebreaks <fileName> [basePath]");
-                    string? basePath = args.Length >= 3 ? args[2] : null;
+                    string? basePath = args.Length >= 3 ? args[2] : StartupPath;
                     var app = new TranslationProjectCli(basePath);
                     app.LoadFile(args[1]);
                     app.RemoveLineBreaks();
@@ -152,7 +149,7 @@ public static class Program {
 
                 case "remove-linebreaks-all":
                 {
-                    string? basePath = args.Length >= 2 ? args[1] : null;
+                    string? basePath = args.Length >= 2 ? args[1] : StartupPath;
                     var app = new TranslationProjectCli(basePath);
                     app.RemoveLineBreaksAll();
                     Console.WriteLine("Line breaks removed for all files.");
@@ -161,7 +158,7 @@ public static class Program {
 
                 case "names":
                 {
-                    string? basePath = args.Length >= 2 ? args[1] : null;
+                    string? basePath = args.Length >= 2 ? args[1] : StartupPath;
                     var app = new TranslationProjectCli(basePath);
                     foreach (var name in app.GetAllNames())
                         Console.WriteLine(name);
