@@ -93,9 +93,9 @@ public static class Cli {
 
 
             case '7':
-//                 LoadFile("/Users/zapan/RandomProjects/Oreimo/FastAsyncToradoraTranslateTool/Data/Obj/_0000ESS1.obj/_0000ESS1.obj");
+                LoadFile("/Users/zapan/RandomProjects/Oreimo/FastAsyncToradoraTranslateTool/Data/Obj/_0000ESS1.obj/_0000ESS1.obj");
                 LoadFile("/Users/zapan/RandomProjects/Oreimo/FastAsyncToradoraTranslateTool/Data/Obj/000scriptAKYO_0000A.obj/000scriptAKYO_0000A.obj");
-//                 LoadFile("/Users/zapan/RandomProjects/Oreimo/FastAsyncToradoraTranslateTool/Data/Obj/000scriptMGIM_0000.obj/000scriptMGIM_0000.obj");
+                LoadFile("/Users/zapan/RandomProjects/Oreimo/FastAsyncToradoraTranslateTool/Data/Obj/000scriptMGIM_0000.obj/000scriptMGIM_0000.obj");
                 break;
 
 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -21,6 +21,8 @@ public class Obj(byte[] script) {
         List<string> strings = [];
         int blockCount = script.GetInt32(0x00);
         int blockLen = script.GetInt32(0x04);
+//         Console.WriteLine($"Import: blockCount={blockCount}, blockLen={blockLen}");
+
         for (int i = blockLen, x = 0; x < blockCount; x++, i += blockLen)
         {
             blockLen = script.GetInt32(i);
@@ -30,7 +32,24 @@ public class Obj(byte[] script) {
             {
                 case Dialogue2:
                 case Dialogue:
-                    strings.Add(script.GetNullTerminatedString(i + 15, blockLen - 15));
+                    int textOffsetToradora = 10; // Toradora
+                    int textOffsetOreimo = 11;	 // Oreimo
+
+//                     Console.WriteLine("********************************************");
+//                     Console.WriteLine($"{script[i + textOffsetOreimo + 1]:x2}");
+//                     Console.WriteLine($"{script[i + textOffsetOreimo + 2]:x2}");
+//                     Console.WriteLine($"{script[i + textOffsetOreimo + 3]:x2}");
+//                     Console.WriteLine("********************************************");
+
+                    int textOffset = 0;
+                    if (script[i + textOffsetOreimo + 1] == 0 && script[i + textOffsetOreimo + 2] == 0 && script[i + textOffsetOreimo + 3] == 0)	{
+                        textOffset = textOffsetOreimo;
+//                         Console.WriteLine($"Import: Detected Oreimo format, using textOffset={textOffset}");
+                    } else {
+                        textOffset = textOffsetToradora;
+//                         Console.WriteLine($"Import: Detected Toradora format, using textOffset={textOffset}");
+                    }
+                    strings.Add(script.GetString(i + textOffset));
                     break;
 
                 case Choice:
@@ -112,7 +131,7 @@ public class Obj(byte[] script) {
                 case Dialogue2:
                 case Dialogue:
                     newBlock = new MemoryStream();
-                    script.CopyTo(newBlock, i + 4, 11);
+                    script.CopyTo(newBlock, i + 4, 0x6);
 
                     string phrase = strings[id++];
                     string secondPhrase = null;
@@ -134,15 +153,16 @@ public class Obj(byte[] script) {
                         if (phrase.EndsWith("」"))
                             secondPhrase = phrase.Substring(0, phrase.IndexOf("「") + 1) + secondPhrase + "」";
                     }
-                    phrase.WriteNullTerminatedTo(newBlock);
+                    phrase.WriteTo(newBlock);
 
                     WriteBlock(newBlock, output);
                     if (secondPhrase != null)
                     {
                         newBlock = new MemoryStream();
-                        script.CopyTo(newBlock, i + 4, 11);
+                        script.CopyTo(newBlock, i + 4, 0x2);
+                        newBlock.Write([0xFF, 0xFF, 0xFF, 0xFF], 0, 4);
 
-                        secondPhrase.WriteNullTerminatedTo(newBlock);
+                        secondPhrase.WriteTo(newBlock);
                         WriteBlock(newBlock, output);
 
                         List<int> jumpInfo = [x, 1];
@@ -296,6 +316,9 @@ public class Obj(byte[] script) {
 
         while ((newLen + blank) % 0x10 != 0x00)
             blank++;
+
+        if (blank <= 0x8)
+            blank += 0x10;
 
         newLen += blank;
         BitConverter.GetBytes(newLen).CopyTo(output, 0, 4);
