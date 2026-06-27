@@ -17,6 +17,10 @@
       <ProjectReference Include="..\RyuujiApi\RyuujiApi.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\TranslateCLI\TranslateCLI.csproj" />
+    </ItemGroup>
+
     <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
         <DefineConstants>$(DefineConstants);_WINDOWS</DefineConstants>
     </PropertyGroup>

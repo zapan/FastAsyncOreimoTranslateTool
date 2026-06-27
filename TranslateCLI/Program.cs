@@ -37,6 +37,9 @@ public static class Program {
     }
 
     static void Main(string[] args) {
+
+        Console.WriteLine($"StartupPath: {StartupPath}");
+
         if (args.Length == 0)
         {
             ShowUsage();

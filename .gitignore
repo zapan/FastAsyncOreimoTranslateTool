@@ -17,6 +17,7 @@ Resources
 Images
 Data/Iso
 Data/Extracted
+Data/Xlsx
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

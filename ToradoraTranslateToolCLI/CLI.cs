@@ -25,6 +25,7 @@ public static class Cli {
         
         while (true) {
             Console.Clear();
+            Console.WriteLine($"StartupPath: {StartupPath}");
             Console.WriteLine(
                 """
                 1. Extract iso
@@ -34,6 +35,7 @@ public static class Cli {
                 5. Save iso
                 6. Exit app
                 7. Parse Objs
+                8. Translate
 
                 Type the index of the action you want to do
                 """);
@@ -91,14 +93,21 @@ public static class Cli {
                 Api.RepackIso(mkisofs, isoPath, selectedPath);
                 break;
 
-
             case '7':
                 LoadFile("/Users/zapan/RandomProjects/Oreimo/FastAsyncToradoraTranslateTool/Data/Obj/_0000ESS1.obj/_0000ESS1.obj");
                 LoadFile("/Users/zapan/RandomProjects/Oreimo/FastAsyncToradoraTranslateTool/Data/Obj/000scriptAKYO_0000A.obj/000scriptAKYO_0000A.obj");
                 LoadFile("/Users/zapan/RandomProjects/Oreimo/FastAsyncToradoraTranslateTool/Data/Obj/000scriptMGIM_0000.obj/000scriptMGIM_0000.obj");
-//                 SaveProgress();
                 break;
 
+            case '8':
+                var app = new TranslateCLI.TranslationProjectCli(StartupPath);
+                Console.WriteLine($"Total: {app.GetTotalPercent():0.0}%");
+                foreach (var file in app.Files){
+                    Console.WriteLine($"{file.FileName} | {file.TranslationPercent:0.0}%");
+                }
+                app.ExportAll(Path.Combine(DataDir, "Xlsx"));
+                app.SaveProgress();
+                break;
 
             case '6': // Exit app
                 throw new("Goodbye!");
