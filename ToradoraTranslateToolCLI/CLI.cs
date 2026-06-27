@@ -96,6 +96,7 @@ public static class Cli {
                 LoadFile("/Users/zapan/RandomProjects/Oreimo/FastAsyncToradoraTranslateTool/Data/Obj/_0000ESS1.obj/_0000ESS1.obj");
                 LoadFile("/Users/zapan/RandomProjects/Oreimo/FastAsyncToradoraTranslateTool/Data/Obj/000scriptAKYO_0000A.obj/000scriptAKYO_0000A.obj");
                 LoadFile("/Users/zapan/RandomProjects/Oreimo/FastAsyncToradoraTranslateTool/Data/Obj/000scriptMGIM_0000.obj/000scriptMGIM_0000.obj");
+//                 SaveProgress();
                 break;
 
 
@@ -116,6 +117,9 @@ public static class Cli {
         Console.WriteLine();
         Console.WriteLine($"LoadFile {filename}");
 
+//         if (currentFile != null)
+//             SaveProgress();
+
         string currentFile = filename;
         string[] myStrings;
         Dictionary<int, string> myNames = new();
@@ -135,6 +139,7 @@ public static class Cli {
         JObject mainFile = JObject.Parse(File.ReadAllText(mainFilePath));
         bool haveTranslation = mainFile[currentFile] != null;
 
+//         dataGridViewStrings.Rows.Clear();
         for (int i = 0; i < myStrings.Length; i++)
         {
             string name = "";
@@ -161,9 +166,9 @@ public static class Cli {
             }
 
             Console.WriteLine($"[{i}] {name} : {sentence} : {translated}");
+//             dataGridViewStrings.Rows.Add(name, sentence, translated);
         }
     }
-
 
     static string? OpenFilePicker(string filterList = "", bool save = false) {
         bool canceled = false;
