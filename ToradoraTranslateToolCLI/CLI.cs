@@ -35,7 +35,7 @@ public static class Cli {
                 4. Start game
                 5. Save iso
                 6. Exit app
-                7. Parse Objs
+                7. xxxxxxx
                 8. Export Translations
                 9. Import Translations
 
