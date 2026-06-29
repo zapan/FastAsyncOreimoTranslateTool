@@ -133,39 +133,30 @@ public static class IsoTools {
         });
     }*/
 
-    public static async Task ExtractIso(string isoPath, string outputDir, Action<string>? fileCallback = null, Action<byte>? progressCallback = null, CancellationToken ct = default) {
-        if (string.IsNullOrWhiteSpace(isoPath))
-            throw new ArgumentException("ISO path cannot be null or empty", nameof(isoPath));
-        
-        if (string.IsNullOrWhiteSpace(outputDir))
-            throw new ArgumentException("Output directory cannot be null or empty", nameof(outputDir));
-
-        Directory.CreateDirectory(outputDir);
-        
-        await using FileStream stream = new(isoPath, FileMode.Open, FileAccess.Read, FileShare.Read, 1024 * 1024, FileOptions.SequentialScan);
+    public static async Task ExtractIso(string isoFilePath, string extractionDirectory, Action<string>? fileCallback = null, Action<byte>? progressCallback = null) {
+        await using FileStream stream = new(isoFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, 1024 * 1024, FileOptions.SequentialScan);
         using CDReader reader = new(stream, true);
 
-        int totalFiles = CountFiles("");
-        var progress = new ProgressCounter { ProcessedFiles = 0, TotalFiles = totalFiles };
-        
-        await Task.Run(() => {
-            ExtractDirectory("");
-        });
-        
+        long totalBytes = CalculateTotalSize("");
+        long writtenBytes = 0;
+
+        ExtractDirectory("");
+
         return;
-        
-        int CountFiles(string pathInIso) {
-            int count = 0;
+
+        long CalculateTotalSize(string pathInIso) {
+            long size = 0;
             foreach (string directory in reader.GetDirectories(pathInIso))
-                count += CountFiles(directory);
+                size += CalculateTotalSize(directory);
             foreach (string file in reader.GetFiles(pathInIso))
-                count++;
-            return count;
+                size += reader.GetFileInfo(file).Length;
+            return size;
         }
-        
+
         void ExtractDirectory(string pathInIso) {
             foreach (string directory in reader.GetDirectories(pathInIso)) {
-                string extractDir = Path.Join(outputDir, directory.Replace('\\', '/'));
+                string extractDir = Path.Join(extractionDirectory, directory.Replace('\\', '/'));
+                //Console.WriteLine(extractDir);
                 Directory.CreateDirectory(extractDir);
                 ExtractDirectory(directory);
             }
@@ -176,20 +167,20 @@ public static class IsoTools {
         }
 
         async Task ExtractFile(string file) {
-            ct.ThrowIfCancellationRequested();
             fileCallback?.Invoke(file);
-            string extractFilePath = Path.Join(outputDir, file.Replace('\\', '/'));
+            string extractFilePath = Path.Join(extractionDirectory, file.Replace('\\', '/'));
+            //Console.WriteLine(extractFilePath);
             Directory.CreateDirectory(Path.GetDirectoryName(extractFilePath)!);
 
             await using Stream isoStream = reader.OpenFile(file, FileMode.Open);
             await using FileStream outputFile = new(extractFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, FileOptions.SequentialScan);
-            
-            await isoStream.CopyToAsync(outputFile);
-            
-            progress.ProcessedFiles++;
-            if (progressCallback != null && progress.TotalFiles > 0) {
-                byte p = (byte)((float)progress.ProcessedFiles / progress.TotalFiles * 100);
-                progressCallback(p);
+
+            byte[] buffer = new byte[1024 * 1024];
+            int readCount;
+            while ((readCount = await isoStream.ReadAsync(buffer)) > 0) {
+                await outputFile.WriteAsync(buffer.AsMemory(0, readCount));
+                writtenBytes += readCount;
+                progressCallback?.Invoke((byte)(writtenBytes * 100 / totalBytes));
             }
         }
     }
@@ -224,66 +215,39 @@ public static class IsoTools {
         cdBuilder.Build(isoStream);
     }*/
 
-    public static void RepackIso(string mkisofsPath, string inputDir, string outputPath, Action<float>? progressCallback = null) {
-        if (!File.Exists(mkisofsPath)) {
-            // Try to find mkisofs in PATH
-            mkisofsPath = FindExecutable("mkisofs");
-            if (string.IsNullOrEmpty(mkisofsPath)) {
-                throw new FileNotFoundException("mkisofs not found. Install it with: brew install cdrtools on macOS", "mkisofs");
-            }
+    public static void RepackIso(string mkisofs, string isoDirectory, string outputPath, Action<float>? progressCallback = null) {
+        if (!Directory.Exists(isoDirectory)) {
+            throw new DirectoryNotFoundException($"iso directory not found: {isoDirectory}");
         }
-        
-        if (!Directory.Exists(inputDir)) {
-            throw new DirectoryNotFoundException($"Input directory not found: {inputDir}");
+
+        string command = "-iso-level 4 -xa -A \"PSP GAME\" -V \"Toradora\" -sysid \"PSP GAME\" -volset \"Toradora\" -p \"\" -publisher \"\" -o \"" + outputPath + "\" \"" + isoDirectory + "\"";
+        using Process myProc = new();
+        myProc.StartInfo.FileName = "mkisofs";
+        myProc.StartInfo.Arguments = command;
+        myProc.StartInfo.CreateNoWindow = true;
+        /*myProc.StartInfo.WorkingDirectory = mkisofs;*/
+        myProc.StartInfo.RedirectStandardError = progressCallback != null;
+        myProc.StartInfo.UseShellExecute = false;
+
+
+        Console.WriteLine("Repacking ISO with command: " + myProc.StartInfo.FileName + " " + myProc.StartInfo.Arguments);
+
+        if (progressCallback != null)
+            myProc.ErrorDataReceived += (_, args) => {
+                /*Console.WriteLine(args.Data);*/
+                if (args.Data == null) return;
+                if (float.TryParse(args.Data.Trim().Split(' ')[0].Trim('%'), out float result))
+                    progressCallback(Math.Clamp(100, 0, result));
+            };
+
+        try {
+            myProc.Start();
+            if (progressCallback != null) myProc.BeginErrorReadLine();
+            myProc.WaitForExit();
         }
-        
-        var psi = new ProcessStartInfo {
-            FileName = mkisofsPath,
-            Arguments = $"-f -J -l -no-pad -o \"{outputPath}\" \"{inputDir}\"",
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            CreateNoWindow = true
-        };
-        
-        using var process = new Process();
-        process.StartInfo = psi;
-        
-        process.OutputDataReceived += (s, e) => {
-            if (!string.IsNullOrEmpty(e.Data)) {
-                Console.WriteLine(e.Data);
-            }
-        };
-        
-        process.ErrorDataReceived += (s, e) => {
-            if (!string.IsNullOrEmpty(e.Data)) {
-                Console.WriteLine($"Error: {e.Data}");
-            }
-        };
-        
-        process.Start();
-        process.BeginOutputReadLine();
-        process.BeginErrorReadLine();
-        process.WaitForExit();
-        
-        if (process.ExitCode != 0) {
-            throw new InvalidOperationException($"mkisofs failed with exit code: {process.ExitCode}");
+        catch (Exception) {
+            Console.WriteLine("Chances are you dont have cdrtools installed, \n\nto rebuild the iso you need to provide the mkisofs path in mkisofs.conf in the root directory of the application.");
+            throw;
         }
-        
-        progressCallback?.Invoke(100f);
-    }
-    
-    private static string? FindExecutable(string executableName) {
-        // Check if it's in PATH
-        var paths = Environment.GetEnvironmentVariable("PATH")?.Split(Path.PathSeparator);
-        if (paths != null) {
-            foreach (var path in paths) {
-                var fullPath = Path.Combine(path, executableName);
-                if (File.Exists(fullPath)) {
-                    return fullPath;
-                }
-            }
-        }
-        return null;
     }
 }
