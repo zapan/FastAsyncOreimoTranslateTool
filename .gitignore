@@ -15,9 +15,7 @@ toradora
 seekmap.txt
 Resources
 Images
-Data/Iso
-Data/Extracted
-Data/Xlsx
+Data
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

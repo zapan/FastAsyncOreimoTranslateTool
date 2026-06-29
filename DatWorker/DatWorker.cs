@@ -13,6 +13,7 @@ public class DatWorker(string workingDir) {
     private readonly JsonSerializerSettings settings = new() {
         NullValueHandling = NullValueHandling.Ignore,
         DefaultValueHandling = DefaultValueHandling.Ignore,
+        //Formatting = Formatting.Indented
     };
     
     public async Task Process(string[] args) {
@@ -38,6 +39,7 @@ public class DatWorker(string workingDir) {
             await File.WriteAllTextAsync(arg + "-LstOrder.lst", JsonConvert.SerializeObject(datTree, settings));
             Console.WriteLine($"Done unpacking {arg}");
         }
+        //Console.ReadLine();
     }
     
     public class DatTree(string name, bool wasNoExtension = false) {
@@ -79,6 +81,7 @@ public class DatWorker(string workingDir) {
         catch (Exception e) {
             Console.WriteLine(e);
             throw;
+            //return false;
         }
     }
 
@@ -149,18 +152,13 @@ public class DatWorker(string workingDir) {
                 lstDir = Path.Combine(workingDir, lstDir.Substring(2, lstDir.Length - 2));
 
             string file = lstDir + Path.GetFileNameWithoutExtension(lst);
-            
-            // Use platform-specific MakeGpda
-#if __UNIX__
-            await MakeGpdaMacOS.Process(file, lstDir);
-#else
             await MakeGpda.Process(file, lstDir);
-#endif
             return true;
         }
         catch (Exception e) {
             Console.WriteLine(e);
             throw;
+            //return false;
         }
     }
 

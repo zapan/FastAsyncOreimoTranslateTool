@@ -10,8 +10,9 @@ namespace ToradoraTranslateToolCLI;
 public static class Cli {
     public static string StartupPath { get; private set; } = Directory.GetCurrentDirectory();
     public static string DataDir = Path.Combine(StartupPath, "Data");
-    public static RyuujiApi.RyuujiApi Api = new(StartupPath);
     public static string mainFilePath = Path.Combine(StartupPath, "Data", "Translation.json");
+    public static RyuujiApi.RyuujiApi Api = new(StartupPath);
+    public static TranslateCLI.TranslationProjectCli TranslationApp = new(StartupPath);
 
     static void Main(string[] args) {
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -35,7 +36,8 @@ public static class Cli {
                 5. Save iso
                 6. Exit app
                 7. Parse Objs
-                8. Translate
+                8. Export Translations
+                9. Import Translations
 
                 Type the index of the action you want to do
                 """);
@@ -100,13 +102,12 @@ public static class Cli {
                 break;
 
             case '8':
-                var app = new TranslateCLI.TranslationProjectCli(StartupPath);
-                Console.WriteLine($"Total: {app.GetTotalPercent():0.0}%");
-                foreach (var file in app.Files){
-                    Console.WriteLine($"{file.FileName} | {file.TranslationPercent:0.0}%");
-                }
-                app.ExportAll(Path.Combine(DataDir, "Xlsx"));
-                app.SaveProgress();
+                TranslationApp.ExportAll(Path.Combine(DataDir, "Xlsx"));
+                TranslationApp.SaveProgress();
+                break;
+
+             case '9':
+                TranslationApp.ImportAll(Path.Combine(DataDir, "Xlsx"), 3, 1);
                 break;
 
             case '6': // Exit app

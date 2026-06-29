@@ -29,6 +29,10 @@ class ObjTools {
             File.Copy(archive, Path.Combine(startupPath, "Resources", "DebugMode", "original_STARTPOINT.obj.gz"), true);
             return;
         }
+        if (Path.GetFileName(archive) == "AASTARTPOINT.obj.gz") { // Save the original debug menu because it will be replaced by the one I translated
+            File.Copy(archive, Path.Combine(startupPath, "Resources", "DebugMode", "original_AASTARTPOINT.obj.gz"), true);
+            return;
+        }
 
         string objFolder = Path.Combine(objDir, Path.GetFileNameWithoutExtension(archive));
         Directory.CreateDirectory(objFolder);
@@ -69,7 +73,8 @@ class ObjTools {
         await gzip.CopyToAsync(output);
     }
 
-    public static async Task ProcessSeekmap(string startupPath, string sourcePath) {
+    public static async Task ProcessSeekmap(string startupPath, string firstDirectory) {
+        string sourcePath = Path.Combine(firstDirectory, "seekmap.dat");
         Directory.CreateDirectory(TempDirectory(startupPath));
         string outPath = Path.Combine(TempDirectory(startupPath), "seekmap.txt");
 
@@ -99,12 +104,23 @@ class ObjTools {
 
         await Task.WhenAll(taskList);
 
+        string startPointPath = Path.Combine(startupPath, "Resources", "DebugMode", "original_AASTARTPOINT.obj.gz");
+        string startPointPathDestiny = Path.Combine(startupPath, "Data", "Extracted", "RES", "script", "AASTARTPOINT", "000", "000scriptAASTARTPOINT.obj.gz");
         if (debugMode) {
-            File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "_0000ESS1.obj.gz"), Path.Combine(startupPath, "Data", "Extracted", "RES", "script", "_0000ESS1", "_0000ESS1.0001", "_0000ESS1.obj.gz"), true); // This file enables debug mode
-            File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "STARTPOINT.obj.gz"), Path.Combine(startupPath, "Data", "Extracted", "RES", "script", "STARTPOINT", "STARTPOINT.0001", "STARTPOINT.obj.gz"), true); // This is pretranslated debug menu
+            if (File.Exists(startPointPathDestiny)) {
+                File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "000scriptAKYO_0000A.obj.gz"), Path.Combine(startupPath, "Data", "Extracted", "RES", "script", "000scriptAKYO_0000A", "000scriptAKYO_0000A.0001", "000scriptAKYO_0000A.obj.gz"), true); // This file enables debug mode
+                File.Copy(startPointPath, startPointPathDestiny, true); // Restore original debug menu
+            } else {
+                File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "_0000ESS1.obj.gz"), Path.Combine(startupPath, "Data", "Extracted", "resource", "script", "_0000ESS1", "_0000ESS1.0001", "_0000ESS1.obj.gz"), true); // This file enables debug mode
+                File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "STARTPOINT.obj.gz"), Path.Combine(startupPath, "Data", "Extracted", "resource", "script", "STARTPOINT", "STARTPOINT.0001", "STARTPOINT.obj.gz"), true); // This is pretranslated debug menu
+            }
+        } else {
+            if (File.Exists(startPointPathDestiny)) {
+                File.Copy(startPointPath, startPointPathDestiny, true); // Restore original debug menu
+            } else {
+                File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "original_STARTPOINT.obj.gz"), Path.Combine(startupPath, "Data", "Extracted", "resource", "script", "STARTPOINT", "STARTPOINT.0001", "STARTPOINT.obj.gz"), true); // Restore original debug menu
+            }
         }
-        else
-            File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "original_STARTPOINT.obj.gz"), Path.Combine(startupPath, "Data", "Extracted", "RES", "script", "STARTPOINT", "STARTPOINT.0001", "STARTPOINT.obj.gz"), true); // Restore original debug menu
     }
 
     public static async Task RepackObj(string startupPath, string name, JToken translation, Dictionary<string, string> translatedNames) {

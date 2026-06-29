@@ -64,12 +64,17 @@ public static class MakeGpda {
         uint totalFileSize = 0;
 
         foreach (FileNameStruct fn in fileNames) {
-            if (!File.Exists(fn.FileName)) {
-                _ = Console.Error.WriteLineAsync("Unable to open input file " + fn.FileName);
-                return;
+            string tmpFilename = fn.FileName;
+            if (!File.Exists(tmpFilename)) {
+               tmpFilename += ".dat";
+               if (!File.Exists(tmpFilename)) {
+                   tmpFilename += "2";
+                   _ = Console.Error.WriteLineAsync("Unable to open input file " + fn.FileName);
+                   return;
+               }
             }
 
-            byte[] fileData = await File.ReadAllBytesAsync(fn.FileName);
+            byte[] fileData = await File.ReadAllBytesAsync(tmpFilename);
             int bufferSize = CalculateBuffer((uint)fileData.Length);
             int totalEntrySize = fileData.Length + bufferSize;
 
