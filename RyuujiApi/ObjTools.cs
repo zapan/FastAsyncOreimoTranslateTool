@@ -73,8 +73,7 @@ class ObjTools {
         await gzip.CopyToAsync(output);
     }
 
-    public static async Task ProcessSeekmap(string startupPath, string firstDirectory) {
-        string sourcePath = Path.Combine(firstDirectory, "seekmap.dat");
+    public static async Task ProcessSeekmap(string startupPath, string sourcePath) {
         Directory.CreateDirectory(TempDirectory(startupPath));
         string outPath = Path.Combine(TempDirectory(startupPath), "seekmap.txt");
 
@@ -148,6 +147,10 @@ class ObjTools {
     }
 
     public static async Task RepackTxts(string startupPath) {
+        if (!File.Exists(Path.Combine(startupPath, "Data", "Txt"))) {
+            return;
+        }
+
         List<String> directories = [];
         foreach (string path in Directory.GetDirectories(Path.Combine(startupPath, "Data", "Txt")))
             directories.Add(Path.GetFileName(path));
