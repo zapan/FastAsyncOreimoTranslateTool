@@ -131,7 +131,7 @@ public class Obj(byte[] script) {
                 case Dialogue2:
                 case Dialogue:
                     newBlock = new MemoryStream();
-                    script.CopyTo(newBlock, i + 4, 0x6);
+                    script.CopyTo(newBlock, i + 4, 0x7);
 
                     string phrase = strings[id++];
                     string secondPhrase = null;
