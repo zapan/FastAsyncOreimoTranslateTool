@@ -42,8 +42,8 @@ public class RyuujiApi(string startUpPath) {
                 }
                 if (File.Exists(Path.Combine(dataDir, "Extracted", "first", "seekmap", "res.map.gz"))) {
                     ObjTools.ProcessSeekmap(startUpPath, Path.Combine(dataDir, "Extracted", "first", "seekmap", "res.map.gz")).Wait();
-                }else{
-                    ObjTools.ProcessSeekmap(startUpPath, Path.Combine(dataDir, "Extracted", "first", "seekmap.dat")).Wait();
+                } else {
+                    ObjTools.ProcessSeekmap(startUpPath, Path.Combine(dataDir, "Extracted", "first")).Wait();
                 }
             })
         );
