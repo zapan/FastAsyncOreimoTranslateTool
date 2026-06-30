@@ -53,7 +53,7 @@ public class DatWorker(string workingDir) {
 
     private async Task<DatTree> OpenDat(string dat, DatTree parent) {
         try {
-            _ = Console.Out.WriteLineAsync($"Extracting: {dat}");
+            _ = Console.Out.WriteLineAsync($"Extracting: {dat}"); // Don't wait for me guys
             var files = await ExtractDatContent(dat);
             if (files == null) return new DatTree(null);
             List<Task<DatTree>> taskList = [];
@@ -61,9 +61,14 @@ public class DatWorker(string workingDir) {
                 string ext = Path.GetExtension(file).ToLower().Trim(' ', '.');
                 // For Oreimo: check for .dat extension OR no extension (we added .dat temporarily)
                 bool wasNoExtension = ext != "dat" && string.IsNullOrEmpty(Path.GetExtension(file).Trim(' ', '.'));
+                string originalName = GetDatLstDir(file)[workingDir.Length..];
+                string datFile = file;
+                if(wasNoExtension){
+                    datFile = file + ".dat";
+                    File.Move(file, datFile);
+                }
                 if (ext == "dat" || wasNoExtension) {
-                    string originalName = GetDatLstDir(file)[workingDir.Length..];
-                    taskList.Add(OpenDat(file, new DatTree(originalName, wasNoExtension)));
+                    taskList.Add(OpenDat(datFile, new DatTree(originalName, wasNoExtension)));
                 }
             }
 
@@ -101,16 +106,6 @@ public class DatWorker(string workingDir) {
 
         if (File.Exists(lst)) File.Delete(lst);
         await File.WriteAllTextAsync(lst, processReturn.MakeGpdaFileContent);
-
-        // Get all files and add .dat extension to files without extension (for Oreimo)
-        string[] allFiles = Directory.GetFiles(newDir, "*", SearchOption.AllDirectories);
-        foreach (string file in allFiles) {
-            if (string.IsNullOrEmpty(Path.GetExtension(file))) {
-                File.Copy(file, file + ".dat");
-                File.Move(file, file + ".dat2");
-            }
-        }
-
         return Directory.GetFiles(newDir, "*", SearchOption.AllDirectories);
     }
 
@@ -137,7 +132,7 @@ public class DatWorker(string workingDir) {
             realpath = originalPath;
         }
 
-        _ = Console.Out.WriteLineAsync($"Repacking: {realpath}");
+        _ = Console.Out.WriteLineAsync($"Repacking: {realpath}"); // It's okay! il catch you guys later
         await RepackDat(workingDir, realpath);
         return true;
     }

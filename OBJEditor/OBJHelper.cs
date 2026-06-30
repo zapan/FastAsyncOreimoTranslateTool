@@ -12,7 +12,7 @@ public class ObjHelper(byte[] script) {
     {
         string[] strings = editor.Import();
 
-        Console.WriteLine($"Import: strings.Length={strings.Length}");
+//         Console.WriteLine($"Import: strings.Length={strings.Length}");
 
         Actors = new();
         for (int i = 0; i < strings.Length; i++)

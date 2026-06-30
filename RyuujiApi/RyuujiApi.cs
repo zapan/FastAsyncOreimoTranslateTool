@@ -18,11 +18,6 @@ public class RyuujiApi(string startUpPath) {
                 string extractionPath = Path.Combine(dataDir, "Iso", "PSP_GAME", "INSDIR", "RES.DAT");
                 if (File.Exists(extractionPath)) {
                     DatTools.ExtractDat(startUpPath, extractionPath).Wait();
-                    foreach (var file in Directory.EnumerateFiles(Path.Combine(dataDir, "Extracted", "RES"), "*.dat2")) {
-                        string newFile = Path.ChangeExtension(file, ".dat");
-                        if (!File.Exists(newFile))
-                            File.Move(file, newFile);
-                    }
                     ObjTools.ProcessObjGz(startUpPath, Path.Combine(dataDir, "Extracted", "RES")).Wait();
                 }
                 if (File.Exists(Path.Combine(dataDir, "Iso", "PSP_GAME", "USRDIR", "resource.dat"))) {
@@ -32,14 +27,10 @@ public class RyuujiApi(string startUpPath) {
             }),
             Task.Run(() => { // first
                 DatTools.ExtractDat(startUpPath, Path.Combine(dataDir, "Iso", "PSP_GAME", "USRDIR", "first.dat")).Wait();
-                foreach (var file in Directory.EnumerateFiles(Path.Combine(dataDir, "Extracted", "first"), "*.dat2")) {
-                    string newFile = Path.ChangeExtension(file, ".dat");
-                    if (!File.Exists(newFile))
-                        File.Move(file, newFile);
-                }
                 if (File.Exists(Path.Combine(dataDir, "Extracted", "first", "text", "utf16.txt.gz"))) {
                     ObjTools.ProcessTxtGz(startUpPath, Path.Combine(dataDir, "Extracted", "first")).Wait();
                 }
+
                 if (File.Exists(Path.Combine(dataDir, "Extracted", "first", "seekmap", "res.map.gz"))) {
                     ObjTools.ProcessSeekmap(startUpPath, Path.Combine(dataDir, "Extracted", "first", "seekmap", "res.map.gz")).Wait();
                 } else {

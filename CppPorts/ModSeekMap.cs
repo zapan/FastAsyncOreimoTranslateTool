@@ -30,7 +30,7 @@ public static class ModSeekMap {
             inputResReader = new BinaryReader(inputResStream);
             outputWriter = new StreamWriter(outputFile, false, Code);
 
-            outputWriter.Write("RES.DAT 0 ");
+            outputWriter.Write("resource.dat 0 ");
             ParseGpda(0, 1);
 
             inputResReader.Dispose();

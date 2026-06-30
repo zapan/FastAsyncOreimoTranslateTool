@@ -23,25 +23,10 @@ internal static class Extensions {
         return Encoding.GetString(buffer);
     }
 
-    internal static string GetNullTerminatedString(this byte[] arr, int at, int maxLen) {
-        int length = 0;
-        while (length + 1 < maxLen && (arr[at + length] != 0 || arr[at + length + 1] != 0)) {
-            length += 2;
-        }
-        return Encoding.GetString(arr, at, length);
-    }
-
     internal static void WriteTo(this string @string, Stream output) {
         byte[] data = Encoding.GetBytes(@string);
         BitConverter.GetBytes(data.Length / 2).CopyTo(output, 0, 4);
         output.Write(data, 0, data.Length);
-    }
-
-    internal static void WriteNullTerminatedTo(this string @string, Stream output) {
-        byte[] data = Encoding.GetBytes(@string);
-        output.Write(data, 0, data.Length);
-        output.WriteByte(0);
-        output.WriteByte(0);
     }
 
     internal static void CopyTo(this byte[] arr, Stream buffer, int readIndex, int length) => buffer.Write(arr, readIndex, length);

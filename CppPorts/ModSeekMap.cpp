@@ -44,7 +44,7 @@ int main(int argc, const char* argv[])
 		return -1;
 	}
 
-	OutFile << "RES.DAT 0 ";
+	OutFile << "resource.dat 0 ";
 	ParseGPDA(0, 1);
 
 	return 0;
