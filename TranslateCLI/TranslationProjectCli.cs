@@ -80,6 +80,8 @@ public class TranslationProjectCli
         if (CurrentFile != null)
             SaveProgress();
 
+        Console.WriteLine($"LoadFile {filename}");
+
         CurrentFile = filename;
         string[] myStrings;
         Dictionary<int, string> myNames = new();

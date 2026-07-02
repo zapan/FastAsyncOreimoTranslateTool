@@ -52,6 +52,9 @@ public class RyuujiApi(string startUpPath) {
         await Task.Run(() => ObjTools.RepackTxts(startUpPath));
         await Task.Run(() => DatTools.RepackDat(startUpPath, Path.Combine(dataDir, "Extracted", resourceFile + "-LstOrder.lst")));
         await Task.Run(() => ObjTools.RepackSeekmap(startUpPath, Path.Combine(dataDir, "Extracted", resourceFile), Path.Combine(dataDir, "Extracted", "first")));
+        if (File.Exists(Path.Combine(dataDir, "Extracted", "first", "seekmap", "res.map.gz"))) {
+            File.Move(Path.Combine(dataDir, "Extracted", "first", "seekmap.dat"), Path.Combine(dataDir, "Extracted", "first", "seekmap", "res.map.gz"), true);
+        }
         await Task.Run(() => DatTools.RepackDat(startUpPath, Path.Combine(dataDir, "Extracted", "first.dat-LstOrder.lst")));
         await File.Create(Path.Combine(dataDir, "Extracted", "-")).DisposeAsync();
         await Task.Run(() => File.Copy(Path.Combine(dataDir, "Extracted", resourceFile), Path.Combine(dataDir, "Iso", "PSP_GAME", resourceFolder, resourceFile), true));
