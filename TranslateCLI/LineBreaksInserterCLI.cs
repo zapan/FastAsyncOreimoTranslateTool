@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace TranslateCLI;
@@ -23,16 +24,71 @@ public class LineBreaksInserterCLI
     {
         string[] dumpedFontLines = File.ReadAllLines(pathToDumpedFont);
 
-        for (int i = 0; i < dumpedFontLines.Length; i+=2)
+        for (int i = 0; i < dumpedFontLines.Length; i++)
         {
-            int charCode = int.Parse(dumpedFontLines[i], NumberStyles.HexNumber);
-            char curChar = Char.ConvertFromUtf32(charCode).ToCharArray()[0];
+            string line = dumpedFontLines[i];
+            if (string.IsNullOrWhiteSpace(line))
+                continue;
+
+            if (TryParseJsonFontLine(line, out char curChar, out int charWidthAccurate))
+            {
+                glyphsWidth[curChar] = charWidthAccurate;
+                continue;
+            }
+
+            if (i + 1 >= dumpedFontLines.Length)
+                continue;
+
+            int charCode = int.Parse(line, NumberStyles.HexNumber);
+            char parsedChar = Char.ConvertFromUtf32(charCode).ToCharArray()[0];
 
             double charWidthInaccurate = double.Parse(dumpedFontLines[i + 1], CultureInfo.InvariantCulture);
-            int charWidthAccurate = (int)Math.Ceiling(charWidthInaccurate);
+            int parsedWidthAccurate = (int)Math.Ceiling(charWidthInaccurate);
 
-            glyphsWidth.Add(curChar, charWidthAccurate);
+            glyphsWidth[parsedChar] = parsedWidthAccurate;
+            i++;
         }
+    }
+
+    private static bool TryParseJsonFontLine(string line, out char curChar, out int charWidthAccurate)
+    {
+        curChar = '\0';
+        charWidthAccurate = 0;
+
+        int separatorIndex = line.IndexOf('=');
+        if (separatorIndex <= 0)
+            return false;
+
+        string prefix = line[..separatorIndex];
+        string jsonCandidate = line[(separatorIndex + 1)..];
+        if (string.IsNullOrWhiteSpace(jsonCandidate) || !jsonCandidate.StartsWith('{'))
+            return false;
+
+        curChar = prefix.Length > 0 ? prefix[0] : '\0';
+
+        try
+        {
+            using JsonDocument document = JsonDocument.Parse(jsonCandidate);
+            JsonElement root = document.RootElement;
+
+            if (root.TryGetProperty("advance", out JsonElement advance) && advance.TryGetProperty("x", out JsonElement advanceX))
+            {
+                charWidthAccurate = (int)Math.Ceiling(advanceX.GetDouble());
+                return true;
+            }
+
+            if (root.TryGetProperty("width", out JsonElement width))
+            {
+                charWidthAccurate = (int)Math.Ceiling(width.GetDouble());
+                return true;
+            }
+        }
+        catch (JsonException)
+        {
+            return false;
+        }
+
+        return false;
     }
 
     private int GetStringLength(string str, bool isSpeech)

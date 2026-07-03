@@ -34,10 +34,13 @@ public static class Cli {
                 3. Repack dat
                 4. Start game
                 5. Save iso
-                6. Exit app
-                7. xxxxxxx
+                6. Total Progress
+                7. Print Names
                 8. Export Translations
                 9. Import Translations
+                0. Insert Line Breaks
+                   ----
+                x. Exit app
 
                 Type the index of the action you want to do
                 """);
@@ -95,10 +98,17 @@ public static class Cli {
                 Api.RepackIso(mkisofs, isoPath, selectedPath);
                 break;
 
+            case '6':
+                double totalPercent = TranslationApp.GetTotalPercent();
+                Console.WriteLine($"Total Progress: {totalPercent}%");
+                break;
+
             case '7':
-                LoadFile("/Users/zapan/RandomProjects/Oreimo/FastAsyncToradoraTranslateTool/Data/Obj/_0000ESS1.obj/_0000ESS1.obj");
-                LoadFile("/Users/zapan/RandomProjects/Oreimo/FastAsyncToradoraTranslateTool/Data/Obj/000scriptAKYO_0000A.obj/000scriptAKYO_0000A.obj");
-                LoadFile("/Users/zapan/RandomProjects/Oreimo/FastAsyncToradoraTranslateTool/Data/Obj/000scriptMGIM_0000.obj/000scriptMGIM_0000.obj");
+                List<string> names = TranslationApp.GetAllNames();
+                Console.WriteLine($"Total Names: {names.Count}");
+                for (int i = 0; i < names.Count; i++)                {
+                    Console.WriteLine($"[{i}] {names[i]}");
+                }
                 break;
 
             case '8':
@@ -106,11 +116,16 @@ public static class Cli {
                 TranslationApp.SaveProgress();
                 break;
 
-             case '9':
+            case '9':
                 TranslationApp.ImportAll(Path.Combine(DataDir, "Xlsx"), 3, 1);
                 break;
 
-            case '6': // Exit app
+            case '0':
+                TranslationApp.RemoveLineBreaksAll();
+                TranslationApp.InsertLineBreaksAll(Path.Combine(StartupPath, "fontmap.txt"), 500);
+                break;
+
+            case 'x': // Exit app
                 throw new("Goodbye!");
 
             default:
@@ -119,65 +134,6 @@ public static class Cli {
         
         Console.WriteLine($"Completed in {meow.ElapsedMilliseconds} ms");
         return true;
-    }
-
-
-    static void LoadFile(string filename)
-    {
-        Console.WriteLine();
-        Console.WriteLine($"LoadFile {filename}");
-
-//         if (currentFile != null)
-//             SaveProgress();
-
-        string currentFile = filename;
-        string[] myStrings;
-        Dictionary<int, string> myNames = new();
-        if (Path.GetExtension(currentFile) == ".obj")
-        {
-            string filepath = Path.Combine(StartupPath, "Data", "Obj", currentFile, currentFile);
-            ObjHelper myHelper = new(File.ReadAllBytes(filepath));
-            myStrings = myHelper.Import();
-            myNames = myHelper.Actors;
-        }
-        else // Else it is .txt file
-        {
-            string filepath = Path.Combine(StartupPath, "Data", "Txt", currentFile, currentFile);
-            myStrings = File.ReadAllLines(filepath, new UnicodeEncoding(false, false)); // Txt file has encoding UTF-16 LE (Unicode without BOM)
-        }
-
-        JObject mainFile = JObject.Parse(File.ReadAllText(mainFilePath));
-        bool haveTranslation = mainFile[currentFile] != null;
-
-//         dataGridViewStrings.Rows.Clear();
-        for (int i = 0; i < myStrings.Length; i++)
-        {
-            string name = "";
-            string sentence;
-            string translated = "";
-            if (myStrings[i].StartsWith("「") && myStrings[i].EndsWith("」"))
-            {
-                name = myNames[i];
-                sentence = myStrings[i].TrimStart('「').TrimEnd('」'); // Remove brackets from the beginning and end of the original sentence
-            }
-            else
-                sentence = myStrings[i];
-            sentence = sentence.Replace("＿", " ");
-
-
-            if (haveTranslation && mainFile[currentFile][i.ToString()] is { } translationToken) {
-                translated = translationToken.ToString();
-
-                if (translated.StartsWith('「') && translated.EndsWith('」'))
-                    translated = translated.TrimStart('「').TrimEnd('」'); // Remove brackets from the beginning and end of the original sentence
-
-                if (translated.StartsWith('（') && translated.EndsWith('）'))
-                    translated = translated.TrimStart('（').TrimEnd('）'); // Remove brackets from the beginning and end of the original sentence
-            }
-
-            Console.WriteLine($"[{i}] {name} : {sentence} : {translated}");
-//             dataGridViewStrings.Rows.Add(name, sentence, translated);
-        }
     }
 
     static string? OpenFilePicker(string filterList = "", bool save = false) {
