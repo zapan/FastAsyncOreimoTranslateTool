@@ -7,7 +7,7 @@
         MinWidth="600" MinHeight="300"
         WindowStartupLocation="CenterScreen">
 
-    <Grid ColumnDefinitions="180,*" RowDefinitions="*">
+    <Grid ColumnDefinitions="310,*" RowDefinitions="*">
 
         <!-- Left: file list -->
         <Grid Grid.Column="0" RowDefinitions="*,Auto">
@@ -16,7 +16,7 @@
                       x:Name="dataGridFiles"
                       IsReadOnly="True"
                       CanUserReorderColumns="False"
-                      CanUserResizeColumns="False"
+                      CanUserResizeColumns="True"
                       CanUserSortColumns="False"
                       GridLinesVisibility="Horizontal"
                       DoubleTapped="DataGridFiles_DoubleTapped">
@@ -30,8 +30,8 @@
                     </ContextMenu>
                 </DataGrid.ContextMenu>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name"     Binding="{Binding FileName}" Width="*"/>
-                    <DataGridTextColumn Header="Progress" Binding="{Binding ProgressText}" Width="55"/>
+                    <DataGridTextColumn Header="Name"     Binding="{Binding FileName}" Width="240"/>
+                    <DataGridTextColumn Header="Progress" Binding="{Binding ProgressText}" Width="100"/>
                 </DataGrid.Columns>
             </DataGrid>
 
@@ -52,6 +52,7 @@
                       x:Name="dataGridStrings"
                       GridLinesVisibility="Horizontal"
                       CanUserReorderColumns="False"
+                      CanUserResizeColumns="True"
                       CanUserSortColumns="False"
                       CellEditEnding="DataGridStrings_CellEditEnding">
                 <DataGrid.ContextMenu>
@@ -63,7 +64,7 @@
                     </ContextMenu>
                 </DataGrid.ContextMenu>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name"       Binding="{Binding Name}"       IsReadOnly="True"  Width="Auto"/>
+                    <DataGridTextColumn Header="Name"       Binding="{Binding Name}"       IsReadOnly="True"  Width="140"/>
                     <DataGridTextColumn Header="Original"   Binding="{Binding Sentence}"   IsReadOnly="True"  Width="*"/>
                     <DataGridTextColumn Header="Translated" Binding="{Binding Translated}"  IsReadOnly="False" Width="*"/>
                 </DataGrid.Columns>
