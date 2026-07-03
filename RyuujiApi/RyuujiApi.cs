@@ -24,19 +24,19 @@ public class RyuujiApi(string startUpPath) {
                     DatTools.ExtractDat(startUpPath, Path.Combine(dataDir, "Iso", "PSP_GAME", "USRDIR", "resource.dat")).Wait();
                     ObjTools.ProcessObjGz(startUpPath, Path.Combine( dataDir, "Extracted", "resource")).Wait();
                 }
-            }),
-            Task.Run(() => { // first
-                DatTools.ExtractDat(startUpPath, Path.Combine(dataDir, "Iso", "PSP_GAME", "USRDIR", "first.dat")).Wait();
-                if (File.Exists(Path.Combine(dataDir, "Extracted", "first", "text", "utf16.txt.gz"))) {
-                    ObjTools.ProcessTxtGz(startUpPath, Path.Combine(dataDir, "Extracted", "first")).Wait();
-                }
+             }),
+             Task.Run(() => { // first
+                 DatTools.ExtractDat(startUpPath, Path.Combine(dataDir, "Iso", "PSP_GAME", "USRDIR", "first.dat")).Wait();
+                 if (File.Exists(Path.Combine(dataDir, "Extracted", "first", "text", "utf16.txt.gz"))) {
+                     ObjTools.ProcessTxtGz(startUpPath, Path.Combine(dataDir, "Extracted", "first")).Wait();
+                 }
 
-                if (File.Exists(Path.Combine(dataDir, "Extracted", "first", "seekmap", "res.map.gz"))) {
-                    ObjTools.ProcessSeekmap(startUpPath, Path.Combine(dataDir, "Extracted", "first", "seekmap", "res.map.gz")).Wait();
-                } else {
-                    ObjTools.ProcessSeekmap(startUpPath, Path.Combine(dataDir, "Extracted", "first", "seekmap.dat")).Wait();
-                }
-            })
+                 if (File.Exists(Path.Combine(dataDir, "Extracted", "first", "seekmap", "res.map.gz"))) {
+                     ObjTools.ProcessSeekmap(startUpPath, Path.Combine(dataDir, "Extracted", "first", "seekmap", "res.map.gz")).Wait();
+                 } else {
+                     ObjTools.ProcessSeekmap(startUpPath, Path.Combine(dataDir, "Extracted", "first", "seekmap.dat")).Wait();
+                 }
+             })
         );
 
     public async Task RepackGame(string dataDir, bool debugMode = false) {
@@ -82,6 +82,7 @@ public class RyuujiApi(string startUpPath) {
             FileName = fileContents[0],
             Arguments = args + " " + Path.Combine(startUpPath, "Data", "Iso")
         };
+        Console.WriteLine(process.StartInfo.FileName + " " + process.StartInfo.Arguments);
         process.Start();
         await process.WaitForExitAsync();
     }

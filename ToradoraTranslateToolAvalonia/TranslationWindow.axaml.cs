@@ -53,11 +53,11 @@ public partial class TranslationWindow : Window
 
     // ── Constructor ───────────────────────────────────────────────────────────
 
-    public TranslationWindow()
+    public TranslationWindow(string basePath)
     {
         InitializeComponent();
 
-        _project = new TranslationProjectCli(AppContext.BaseDirectory);
+        _project = new TranslationProjectCli(basePath);
 
         dataGridFiles.ItemsSource = _fileRows;
         dataGridStrings.ItemsSource = _stringRows;

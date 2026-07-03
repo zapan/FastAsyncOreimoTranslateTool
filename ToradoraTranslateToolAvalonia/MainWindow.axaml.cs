@@ -134,7 +134,10 @@ public partial class MainWindow : Window {
             MinWidth = 80
         };
         var tcs = new TaskCompletionSource();
-        okBtn.Click += (_, _) => { tcs.TrySetResult(); dialog.Close(); };
+        okBtn.Click += (_, _) => {
+            tcs.TrySetResult();
+            dialog.Close();
+        };
         panel.Children.Add(okBtn);
         dialog.Content = panel;
         await dialog.ShowDialog(this);
@@ -211,8 +214,7 @@ public partial class MainWindow : Window {
             DisableButtons();
 
             bool repacked = File.Exists(Path.Combine(DataDir, "Extracted", "-"));
-            var tasks = new Task[]
-            {
+            var tasks = new Task[] {
                 Task.Run(() => Directory.Delete(Path.Combine(DataDir, "Extracted"), true)),
                 Task.Run(() => Directory.Delete(Path.Combine(DataDir, "Obj"), true)),
                 Task.Run(() => {
@@ -238,7 +240,7 @@ public partial class MainWindow : Window {
     }
 
     private void ButtonTranslate_Click(object? sender, RoutedEventArgs e) {
-        var win = new TranslationWindow();
+        var win = new TranslationWindow(StartupPath);
         win.Show();
     }
 
@@ -320,7 +322,8 @@ public partial class MainWindow : Window {
         await ShowInfoAsync("This stage will extract selected ISO file to the \\Data\\Iso\\ folder");
 
     private async void ButtonExtractGameHelp_Click(object? sender, RoutedEventArgs e) =>
-        await ShowInfoAsync("This stage will extract and process .dat files from ISO.\nIt'll take ~40 seconds depending on the CPU");
+        await ShowInfoAsync(
+            "This stage will extract and process .dat files from ISO.\nIt'll take ~40 seconds depending on the CPU");
 
     private async void ButtonTranslateHelp_Click(object? sender, RoutedEventArgs e) =>
         await ShowInfoAsync("At this stage you will be able to translate the game text, including menus and settings");
@@ -362,8 +365,14 @@ public partial class MainWindow : Window {
         };
         var yesBtn = new Button { Content = "Yes", MinWidth = 70 };
         var noBtn = new Button { Content = "No", MinWidth = 70 };
-        yesBtn.Click += (_, _) => { result = true; dialog.Close(); };
-        noBtn.Click += (_, _) => { result = false; dialog.Close(); };
+        yesBtn.Click += (_, _) => {
+            result = true;
+            dialog.Close();
+        };
+        noBtn.Click += (_, _) => {
+            result = false;
+            dialog.Close();
+        };
         btnPanel.Children.Add(yesBtn);
         btnPanel.Children.Add(noBtn);
         panel.Children.Add(btnPanel);
@@ -379,6 +388,9 @@ public partial class MainWindow : Window {
         e.Cancel = true;
         bool close = await ShowConfirmAsync(
             "There's an ongoing task.\nAre you sure you want to close the app?");
-        if (close) { _isWorking = false; Close(); }
+        if (close) {
+            _isWorking = false;
+            Close();
+        }
     }
 }
