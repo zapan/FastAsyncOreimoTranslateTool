@@ -11,6 +11,17 @@
       ],
       "problemMatcher": "$msCompile",
       "group": "build"
+    },
+    {
+      "label": "build ToradoraTranslateToolAvalonia",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "${workspaceFolder}/ToradoraTranslateToolAvalonia/ToradoraTranslateToolAvalonia.csproj"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": "build"
     }
   ]
 }

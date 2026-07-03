@@ -1,0 +1,84 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="using:ToradoraTranslateToolAvalonia"
+        x:Class="ToradoraTranslateToolAvalonia.TranslationWindow"
+        Title="Translation"
+        Width="950" Height="570"
+        MinWidth="600" MinHeight="300"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid ColumnDefinitions="180,*" RowDefinitions="*">
+
+        <!-- Left: file list -->
+        <Grid Grid.Column="0" RowDefinitions="*,Auto">
+
+            <DataGrid Grid.Row="0"
+                      x:Name="dataGridFiles"
+                      IsReadOnly="True"
+                      CanUserReorderColumns="False"
+                      CanUserResizeColumns="False"
+                      CanUserSortColumns="False"
+                      GridLinesVisibility="Horizontal"
+                      DoubleTapped="DataGridFiles_DoubleTapped">
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Export all text..."       Click="MenuExportAll_Click"/>
+                        <MenuItem Header="Import all translated text..." Click="MenuImportAll_Click"/>
+                        <MenuItem Header="Translate names..."       Click="MenuTranslateNames_Click"/>
+                        <MenuItem Header="Insert line breaks everywhere"  Click="MenuLineBreaksAll_Click"/>
+                        <MenuItem Header="Remove line breaks everywhere"  Click="MenuRemoveLineBreaksAll_Click"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name"     Binding="{Binding FileName}" Width="*"/>
+                    <DataGridTextColumn Header="Progress" Binding="{Binding ProgressText}" Width="55"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- Help button bottom-left -->
+            <Button Grid.Row="1"
+                    Content="?"
+                    Width="22" Height="22"
+                    HorizontalAlignment="Right"
+                    Margin="0,2,2,2"
+                    Padding="0"
+                    Click="ButtonFilesHelp_Click"/>
+        </Grid>
+
+        <!-- Right: strings grid -->
+        <Grid Grid.Column="1" RowDefinitions="*,Auto">
+
+            <DataGrid Grid.Row="0"
+                      x:Name="dataGridStrings"
+                      GridLinesVisibility="Horizontal"
+                      CanUserReorderColumns="False"
+                      CanUserSortColumns="False"
+                      CellEditEnding="DataGridStrings_CellEditEnding">
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Automatically insert line breaks" Click="MenuLineBreaks_Click"/>
+                        <MenuItem Header="Remove all line breaks"            Click="MenuRemoveLineBreaks_Click"/>
+                        <MenuItem Header="Export all strings..."             Click="MenuExportStrings_Click"/>
+                        <MenuItem Header="Import translated strings..."      Click="MenuImportStrings_Click"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name"       Binding="{Binding Name}"       IsReadOnly="True"  Width="Auto"/>
+                    <DataGridTextColumn Header="Original"   Binding="{Binding Sentence}"   IsReadOnly="True"  Width="*"/>
+                    <DataGridTextColumn Header="Translated" Binding="{Binding Translated}"  IsReadOnly="False" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- Help button bottom-right -->
+            <Button Grid.Row="1"
+                    Content="?"
+                    Width="22" Height="22"
+                    HorizontalAlignment="Right"
+                    Margin="0,2,2,2"
+                    Padding="0"
+                    Click="ButtonStringsHelp_Click"/>
+        </Grid>
+
+    </Grid>
+
+</Window>

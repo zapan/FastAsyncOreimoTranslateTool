@@ -1,0 +1,32 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ToradoraTranslateToolAvalonia.NamesWindow"
+        Title="Names translation"
+        Width="800" Height="460"
+        MinWidth="250" MinHeight="150"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="*,Auto">
+
+        <DataGrid Grid.Row="0"
+                  x:Name="dataGridNames"
+                  CanUserReorderColumns="False"
+                  CanUserSortColumns="False"
+                  GridLinesVisibility="Horizontal">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Original"   Binding="{Binding Original}"   IsReadOnly="True"  Width="*"/>
+                <DataGridTextColumn Header="Translated" Binding="{Binding Translated}"  IsReadOnly="False" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Button Grid.Row="1"
+                Content="?"
+                Width="22" Height="22"
+                HorizontalAlignment="Right"
+                Margin="0,2,4,4"
+                Padding="0"
+                Click="ButtonHelp_Click"/>
+
+    </Grid>
+
+</Window>

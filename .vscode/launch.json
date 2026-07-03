@@ -11,6 +11,17 @@
       "cwd": "${workspaceFolder}",
       "stopAtEntry": false,
       "console": "integratedTerminal"
+    },
+    {
+      "name": ".NET Launch ToradoraTranslateToolAvalonia",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build ToradoraTranslateToolAvalonia",
+      "program": "${workspaceFolder}/ToradoraTranslateToolAvalonia/bin/Debug/net10.0/ToradoraTranslateToolAvalonia.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "stopAtEntry": false,
+      "console": "integratedTerminal"
     }
   ]
 }

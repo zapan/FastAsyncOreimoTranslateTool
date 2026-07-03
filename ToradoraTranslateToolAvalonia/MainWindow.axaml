@@ -1,0 +1,167 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ToradoraTranslateToolAvalonia.MainWindow"
+        Title="ToradoraTranslateTool"
+        Width="600" Height="460"
+        MinWidth="600" MinHeight="460"
+        CanResize="False"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Styles>
+        <Style Selector="Button.action">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="46"/>
+        </Style>
+        <Style Selector="Button.help">
+            <Setter Property="Width" Value="26"/>
+            <Setter Property="Height" Value="26"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid ColumnDefinitions="*,210" RowDefinitions="*,Auto">
+
+        <!-- Left: cat image -->
+        <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2"
+                BorderBrush="#CCCCCC" BorderThickness="1"
+                Margin="10,10,5,10">
+            <Image Source="avares://ToradoraTranslateToolAvalonia/Assets/Taiga.png"
+                   Stretch="Uniform"/>
+        </Border>
+
+        <!-- Right: control panel -->
+        <Border Grid.Column="1" Grid.Row="0"
+                BorderBrush="#CCCCCC" BorderThickness="1"
+                Margin="5,10,10,5">
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,*">
+
+                <!-- Status label -->
+                <TextBlock Grid.Row="0"
+                           x:Name="labelWork"
+                           Text="Ready"
+                           FontSize="16"
+                           HorizontalAlignment="Center"
+                           Margin="0,8,0,8"/>
+
+                <!-- Extract ISO row -->
+                <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="8,4,8,4">
+                    <Button Grid.Column="0" x:Name="buttonExtractIso"
+                            Classes="action"
+                            Content="Extract ISO"
+                            Click="ButtonExtractIso_Click"/>
+                    <Button Grid.Column="1" Classes="help"
+                            Content="?" Margin="4,0,0,0"
+                            Click="ButtonExtractIsoHelp_Click"/>
+                </Grid>
+
+                <!-- IsoProgress (hidden by default, replaces button while working) -->
+                <ProgressBar Grid.Row="1"
+                             x:Name="IsoProgress"
+                             Minimum="0" Maximum="100" Value="0"
+                             Height="46" Margin="8,4,42,4"
+                             IsVisible="False"/>
+
+                <!-- Extract game files row -->
+                <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="8,4,8,4">
+                    <Button Grid.Column="0" x:Name="buttonExtractGame"
+                            Classes="action"
+                            Content="Extract game files"
+                            IsEnabled="False"
+                            Click="ButtonExtractGame_Click"/>
+                    <Button Grid.Column="1" Classes="help"
+                            Content="?" Margin="4,0,0,0"
+                            Click="ButtonExtractGameHelp_Click"/>
+                </Grid>
+
+                <!-- Delete generated resources (hidden by default, overlays extract game button) -->
+                <Button Grid.Row="2"
+                        x:Name="buttonDeleteGenRes"
+                        Classes="action"
+                        Content="Delete generated resources"
+                        Foreground="Red"
+                        Margin="8,4,42,4"
+                        IsVisible="False"
+                        Click="ButtonDeleteGenRes_Click"/>
+
+                <!-- Translate strings row -->
+                <Grid Grid.Row="3" ColumnDefinitions="*,Auto" Margin="8,4,8,4">
+                    <Button Grid.Column="0" x:Name="buttonTranslate"
+                            Classes="action"
+                            Content="Translate strings"
+                            IsEnabled="False"
+                            Click="ButtonTranslate_Click"/>
+                    <Button Grid.Column="1" Classes="help"
+                            Content="?" Margin="4,0,0,0"
+                            Click="ButtonTranslateHelp_Click"/>
+                </Grid>
+
+                <!-- Repack game files row -->
+                <Grid Grid.Row="4" ColumnDefinitions="*,Auto" Margin="8,4,8,4">
+                    <Button Grid.Column="0" x:Name="buttonRepackGame"
+                            Classes="action"
+                            Content="Repack game files"
+                            IsEnabled="False"
+                            Click="ButtonRepackGame_Click"
+                            ContextMenu="{StaticResource RepackContextMenu}"/>
+                    <Button Grid.Column="1" Classes="help"
+                            Content="?" Margin="4,0,0,0"
+                            Click="ButtonRepackGameHelp_Click"/>
+                </Grid>
+
+                <!-- Start game row -->
+                <Grid Grid.Row="5" ColumnDefinitions="*,Auto" Margin="8,4,8,4">
+                    <Button Grid.Column="0" x:Name="buttonStartGame"
+                            Classes="action"
+                            Content="Start game"
+                            IsEnabled="False"
+                            Click="ButtonStartGame_Click"/>
+                    <Button Grid.Column="1" Classes="help"
+                            Content="?" Margin="4,0,0,0"
+                            Click="ButtonStartGameHelp_Click"/>
+                </Grid>
+
+                <!-- Export game row -->
+                <Grid Grid.Row="6" ColumnDefinitions="*,Auto" Margin="8,4,8,4">
+                    <Button Grid.Column="0" x:Name="buttonExportGame"
+                            Classes="action"
+                            Content="Export game"
+                            IsEnabled="False"
+                            Click="ButtonExportGame_Click"/>
+                    <Button Grid.Column="1" Classes="help"
+                            Content="?" Margin="4,0,0,0"
+                            Click="ButtonRepackIsoHelp_Click"/>
+                </Grid>
+
+                <!-- Export progress (hidden by default) -->
+                <ProgressBar Grid.Row="6"
+                             x:Name="ExtractProgress"
+                             Minimum="0" Maximum="100" Value="0"
+                             Height="46" Margin="8,4,42,4"
+                             IsVisible="False"/>
+
+            </Grid>
+        </Border>
+
+        <!-- Version label bottom-left -->
+        <TextBlock Grid.Column="0" Grid.Row="1"
+                   x:Name="labelVersion"
+                   Text="X.X.X"
+                   Foreground="#AAAAAA"
+                   FontSize="11"
+                   Margin="14,2,0,8"
+                   VerticalAlignment="Bottom"/>
+
+    </Grid>
+
+    <Window.Resources>
+        <ContextMenu x:Key="RepackContextMenu">
+            <MenuItem x:Name="itemDebugMode"
+                      Header="Debug mode"
+                      ToggleType="CheckBox"/>
+        </ContextMenu>
+    </Window.Resources>
+
+</Window>
