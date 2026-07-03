@@ -9,8 +9,7 @@ using Avalonia.Platform.Storage;
 
 namespace ToradoraTranslateToolAvalonia;
 
-public partial class MainWindow : Window
-{
+public partial class MainWindow : Window {
     public static string StartupPath { get; private set; } = Directory.GetCurrentDirectory();
     public static string DataDir = Path.Combine(StartupPath, "Data");
 
@@ -18,8 +17,7 @@ public partial class MainWindow : Window
     private readonly DispatcherTimer _timerWork;
     private bool _isWorking;
 
-    public MainWindow()
-    {
+    public MainWindow() {
         InitializeComponent();
         DataDir = Path.Combine(StartupPath, "Data");
         api = new RyuujiApi.RyuujiApi(StartupPath);
@@ -41,33 +39,31 @@ public partial class MainWindow : Window
 
     // ── Button state management ──────────────────────────────────────────────
 
-    private void EnableButtons()
-    {
+    private void EnableButtons() {
         buttonExtractIso.IsEnabled = true;
         bool isoExtracted = File.Exists(Path.Combine(DataDir, "Iso", "PSP_GAME", "USRDIR", "resource.dat")) ||
                             File.Exists(Path.Combine(DataDir, "Iso", "PSP_GAME", "INSDIR", "RES.DAT"));
 
-        if (isoExtracted)
-        {
+        if (isoExtracted) {
             buttonExtractGame.IsEnabled = true;
+            buttonExtractGame.IsVisible = true;
             buttonStartGame.IsEnabled = true;
         }
 
         bool gameExtracted = File.Exists(Path.Combine(DataDir, "Txt", "utf16.txt", "utf16.txt")) ||
                              File.Exists(Path.Combine(DataDir, "Extracted", "first", "seekmap", "res.map.gz"));
 
-        if (gameExtracted)
-        {
+        if (gameExtracted) {
             buttonDeleteGenRes.IsVisible = true;
-            buttonExtractGame.IsEnabled = true;
+            buttonExtractGame.IsVisible = false;
+
             buttonTranslate.IsEnabled = true;
             buttonRepackGame.IsEnabled = true;
             buttonExportGame.IsEnabled = true;
         }
     }
 
-    private void DisableButtons()
-    {
+    private void DisableButtons() {
         buttonExtractIso.IsEnabled = false;
         buttonExtractGame.IsEnabled = false;
         buttonDeleteGenRes.IsVisible = false;
@@ -77,32 +73,25 @@ public partial class MainWindow : Window
         buttonExportGame.IsEnabled = false;
     }
 
-    private void SetWorking(bool isWorking)
-    {
+    private void SetWorking(bool isWorking) {
         _isWorking = isWorking;
-        if (isWorking)
-        {
+        if (isWorking) {
             labelWork.Text = "Working";
             _timerWork.Start();
-        }
-        else
-        {
+        } else {
             _timerWork.Stop();
             labelWork.Text = "Ready";
         }
     }
 
-    private void TimerWork_Tick(object? sender, EventArgs e)
-    {
+    private void TimerWork_Tick(object? sender, EventArgs e) {
         labelWork.Text = labelWork.Text == "Working..." ? "Working" : labelWork.Text + ".";
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
 
-    private async Task<string?> OpenIsoFileAsync()
-    {
-        var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-        {
+    private async Task<string?> OpenIsoFileAsync() {
+        var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {
             Title = "Select ISO file",
             AllowMultiple = false,
             FileTypeFilter = [new FilePickerFileType("ISO files") { Patterns = ["*.iso"] }]
@@ -110,10 +99,8 @@ public partial class MainWindow : Window
         return files.Count == 1 ? files[0].Path.LocalPath : null;
     }
 
-    private async Task<string?> SaveIsoFileAsync()
-    {
-        var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
-        {
+    private async Task<string?> SaveIsoFileAsync() {
+        var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions {
             Title = "Save ISO file",
             DefaultExtension = "iso",
             FileTypeChoices = [new FilePickerFileType("ISO files") { Patterns = ["*.iso"] }]
@@ -127,10 +114,8 @@ public partial class MainWindow : Window
     private async Task ShowInfoAsync(string message) =>
         await ShowDialogAsync("ToradoraTranslateTool", message);
 
-    private async Task ShowDialogAsync(string title, string message)
-    {
-        var dialog = new Window
-        {
+    private async Task ShowDialogAsync(string title, string message) {
+        var dialog = new Window {
             Title = title,
             Width = 420,
             Height = 160,
@@ -138,14 +123,12 @@ public partial class MainWindow : Window
             CanResize = false
         };
         var panel = new StackPanel { Margin = new Avalonia.Thickness(16), Spacing = 12 };
-        panel.Children.Add(new TextBlock
-        {
+        panel.Children.Add(new TextBlock {
             Text = message,
             TextWrapping = Avalonia.Media.TextWrapping.Wrap,
             MaxWidth = 380
         });
-        var okBtn = new Button
-        {
+        var okBtn = new Button {
             Content = "OK",
             HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
             MinWidth = 80
@@ -162,13 +145,11 @@ public partial class MainWindow : Window
 
     // ── Button handlers ──────────────────────────────────────────────────────
 
-    private async void ButtonExtractIso_Click(object? sender, RoutedEventArgs e)
-    {
+    private async void ButtonExtractIso_Click(object? sender, RoutedEventArgs e) {
         string? path = await OpenIsoFileAsync();
         if (path == null) return;
 
         var sw = Stopwatch.StartNew();
-        string currentFile = "";
         try {
             SetWorking(true);
             DisableButtons();
@@ -177,7 +158,14 @@ public partial class MainWindow : Window
             IsoProgress.IsVisible = true;
             buttonExtractIso.IsVisible = false;
 
-            await api.ExtractIso(path, null, progress => Dispatcher.UIThread.Post(() => IsoProgress.Value = progress));
+            // Run on a background thread to avoid deadlocking the UI thread,
+            // since IsoTools.ExtractIso uses GetAwaiter().GetResult() internally.
+            await Task.Run(() => api.ExtractIso(
+                path,
+                file => Console.WriteLine($"\t{file}"),
+                progress => Dispatcher.UIThread.Post(() => IsoProgress.Value = progress)
+            ).GetAwaiter().GetResult());
+
             await ShowInfoAsync($"ISO extraction completed in {sw.ElapsedMilliseconds} ms.");
         } catch (Exception ex) {
             LogError(ex);
@@ -192,41 +180,33 @@ public partial class MainWindow : Window
         }
     }
 
-    private async void ButtonExtractGame_Click(object? sender, RoutedEventArgs e)
-    {
+    private async void ButtonExtractGame_Click(object? sender, RoutedEventArgs e) {
         var sw = Stopwatch.StartNew();
-        try
-        {
+        try {
             SetWorking(true);
             DisableButtons();
 
             await api.ExtractGame(DataDir);
 
             await ShowInfoAsync($"Game files extraction completed in {sw.ElapsedMilliseconds} ms.");
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             LogError(ex);
             await ShowErrorAsync(ex.ToString(), sw.ElapsedMilliseconds);
-        }
-        finally
-        {
+        } finally {
             sw.Stop();
             SetWorking(false);
             EnableButtons();
         }
     }
 
-    private async void ButtonDeleteGenRes_Click(object? sender, RoutedEventArgs e)
-    {
+    private async void ButtonDeleteGenRes_Click(object? sender, RoutedEventArgs e) {
         // Confirm dialog
         var confirmed = await ShowConfirmAsync(
             "This is an effective factory reset.\nAre you sure you want to continue?");
         if (!confirmed) return;
 
         var sw = Stopwatch.StartNew();
-        try
-        {
+        try {
             SetWorking(true);
             DisableButtons();
 
@@ -235,7 +215,11 @@ public partial class MainWindow : Window
             {
                 Task.Run(() => Directory.Delete(Path.Combine(DataDir, "Extracted"), true)),
                 Task.Run(() => Directory.Delete(Path.Combine(DataDir, "Obj"), true)),
-                Task.Run(() => Directory.Delete(Path.Combine(DataDir, "Txt"), true)),
+                Task.Run(() => {
+                    if (Directory.Exists(Path.Combine(DataDir, "Txt"))) {
+                        Directory.Delete(Path.Combine(DataDir, "Txt"), true);
+                    }
+                }),
                 Task.CompletedTask
             };
             if (repacked)
@@ -243,84 +227,64 @@ public partial class MainWindow : Window
 
             await Task.WhenAll(tasks);
             await ShowInfoAsync($"Resource deletion completed in {sw.ElapsedMilliseconds} ms.");
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             LogError(ex);
             await ShowErrorAsync(ex.ToString(), sw.ElapsedMilliseconds);
-        }
-        finally
-        {
+        } finally {
             sw.Stop();
             SetWorking(false);
             EnableButtons();
         }
     }
 
-    private void ButtonTranslate_Click(object? sender, RoutedEventArgs e)
-    {
+    private void ButtonTranslate_Click(object? sender, RoutedEventArgs e) {
         var win = new TranslationWindow();
         win.Show();
     }
 
-    private async void ButtonRepackGame_Click(object? sender, RoutedEventArgs e)
-    {
+    private async void ButtonRepackGame_Click(object? sender, RoutedEventArgs e) {
         bool debugMode = itemDebugMode.IsChecked == true;
 
         var sw = Stopwatch.StartNew();
-        try
-        {
+        try {
             SetWorking(true);
             DisableButtons();
 
             await api.RepackGame(DataDir, debugMode);
 
             await ShowInfoAsync($"Game files repacking completed in {sw.ElapsedMilliseconds} ms.");
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             LogError(ex);
             await ShowErrorAsync(ex.ToString(), sw.ElapsedMilliseconds);
-        }
-        finally
-        {
+        } finally {
             sw.Stop();
             SetWorking(false);
             EnableButtons();
         }
     }
 
-    private async void ButtonStartGame_Click(object? sender, RoutedEventArgs e)
-    {
+    private async void ButtonStartGame_Click(object? sender, RoutedEventArgs e) {
         var sw = Stopwatch.StartNew();
-        try
-        {
+        try {
             SetWorking(true);
             DisableButtons();
-
             await api.StartGame();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             LogError(ex);
             await ShowErrorAsync(ex.ToString(), sw.ElapsedMilliseconds);
-        }
-        finally
-        {
+        } finally {
             sw.Stop();
             SetWorking(false);
             EnableButtons();
         }
     }
 
-    private async void ButtonExportGame_Click(object? sender, RoutedEventArgs e)
-    {
+    private async void ButtonExportGame_Click(object? sender, RoutedEventArgs e) {
         string? selectedPath = await SaveIsoFileAsync();
         if (selectedPath == null) return;
 
         var sw = Stopwatch.StartNew();
-        try
-        {
+        try {
             SetWorking(true);
             DisableButtons();
             ExtractProgress.IsVisible = true;
@@ -337,14 +301,10 @@ public partial class MainWindow : Window
                 progress => Dispatcher.UIThread.Post(() => ExtractProgress.Value = (int)progress)));
 
             await ShowInfoAsync($"Game export completed in {sw.ElapsedMilliseconds} ms.");
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             LogError(ex);
             await ShowErrorAsync(ex.ToString(), sw.ElapsedMilliseconds);
-        }
-        finally
-        {
+        } finally {
             sw.Stop();
             SetWorking(false);
             EnableButtons();
@@ -380,11 +340,9 @@ public partial class MainWindow : Window
 
     // ── Confirm dialog helper ─────────────────────────────────────────────────
 
-    private async Task<bool> ShowConfirmAsync(string message)
-    {
+    private async Task<bool> ShowConfirmAsync(string message) {
         bool result = false;
-        var dialog = new Window
-        {
+        var dialog = new Window {
             Title = "ToradoraTranslateTool",
             Width = 420,
             Height = 160,
@@ -392,14 +350,12 @@ public partial class MainWindow : Window
             CanResize = false
         };
         var panel = new StackPanel { Margin = new Avalonia.Thickness(16), Spacing = 12 };
-        panel.Children.Add(new TextBlock
-        {
+        panel.Children.Add(new TextBlock {
             Text = message,
             TextWrapping = Avalonia.Media.TextWrapping.Wrap,
             MaxWidth = 380
         });
-        var btnPanel = new StackPanel
-        {
+        var btnPanel = new StackPanel {
             Orientation = Avalonia.Layout.Orientation.Horizontal,
             HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
             Spacing = 8
@@ -418,8 +374,7 @@ public partial class MainWindow : Window
 
     // ── Window closing ────────────────────────────────────────────────────────
 
-    private async void MainWindow_Closing(object? sender, WindowClosingEventArgs e)
-    {
+    private async void MainWindow_Closing(object? sender, WindowClosingEventArgs e) {
         if (!_isWorking) return;
         e.Cancel = true;
         bool close = await ShowConfirmAsync(
