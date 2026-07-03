@@ -223,7 +223,7 @@ public class TranslationProjectCli
         for (int i = cell; i <= Strings.Count; i++)
         {
             string cellKey = GetColumnName(column - 1) + i.ToString();
-            Console.WriteLine($"Column {column}: {cellKey}");
+//             Console.WriteLine($"Column {column}: {cellKey}");
             try
             {
                 Strings[i - 1].Translated = myWorkbook.CurrentWorksheet.Cells[cellKey].Value?.ToString() ?? "";

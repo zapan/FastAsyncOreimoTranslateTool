@@ -6,6 +6,9 @@ using System.Text.RegularExpressions;
 namespace OBJEditor;
 
 public class Obj(byte[] script) {
+    byte Version = 0;
+    const byte vTORADORA = 0, vOREIMO = 1;
+
     private const short Dialogue = 0x64;
     private const short Dialogue2 = 0x68;
 
@@ -16,8 +19,35 @@ public class Obj(byte[] script) {
 
     private const short Chapter = 0x2BC;
 
+    private void DetectVersion() {
+#if TORADORA
+        Version = vTORADORA;
+        return;
+#endif
+#if OREIMO
+        Version = vOREIMO;
+        return;
+#endif
+
+        int blockCount = script.GetInt32(0x00);
+        int blockLen = script.GetInt32(0x04);
+        bool OREIMO = true;
+        for (int i = blockLen, x = 0; x < blockCount; x++, i += blockLen) {
+            blockLen = script.GetInt32(i);
+            int type = script.GetInt16(i + 4);
+            if (type == Dialogue || type == Dialogue2) {
+                if (script[i + 6] != 0x00)
+                    OREIMO = false;
+            }
+        }
+
+        Version = OREIMO ? vOREIMO : vTORADORA;
+//         Console.WriteLine($"Detected version: {Version} " + (OREIMO ? "OREIMO" : "TORADORA"));
+    }
+
     public string[] Import()
     {
+        DetectVersion();
         List<string> strings = [];
         int blockCount = script.GetInt32(0x00);
         int blockLen = script.GetInt32(0x04);
@@ -32,22 +62,9 @@ public class Obj(byte[] script) {
             {
                 case Dialogue2:
                 case Dialogue:
-                    int textOffsetToradora = 10; // Toradora
-                    int textOffsetOreimo = 11;	 // Oreimo
-
-//                     Console.WriteLine("********************************************");
-//                     Console.WriteLine($"{script[i + textOffsetOreimo + 1]:x2}");
-//                     Console.WriteLine($"{script[i + textOffsetOreimo + 2]:x2}");
-//                     Console.WriteLine($"{script[i + textOffsetOreimo + 3]:x2}");
-//                     Console.WriteLine("********************************************");
-
-                    int textOffset = 0;
-                    if (script[i + textOffsetOreimo + 1] == 0 && script[i + textOffsetOreimo + 2] == 0 && script[i + textOffsetOreimo + 3] == 0)	{
-                        textOffset = textOffsetOreimo;
-//                         Console.WriteLine($"Import: Detected Oreimo format, using textOffset={textOffset}");
-                    } else {
-                        textOffset = textOffsetToradora;
-//                         Console.WriteLine($"Import: Detected Toradora format, using textOffset={textOffset}");
+                    int textOffset = 10; // Toradora
+                    if (Version == vOREIMO) {
+                        textOffset = 11; // Oreimo
                     }
                     strings.Add(script.GetString(i + textOffset));
                     break;
@@ -112,6 +129,7 @@ public class Obj(byte[] script) {
 
     public byte[] Export(string[] strings)
     {
+        DetectVersion();
         int blockCount = script.GetInt32(0x00);
         int blockLen = script.GetInt32(0x04);
         List<List<int>> jumpUpdates = [];
@@ -131,7 +149,11 @@ public class Obj(byte[] script) {
                 case Dialogue2:
                 case Dialogue:
                     newBlock = new MemoryStream();
-                    script.CopyTo(newBlock, i + 4, 0x7);
+                    int textOffset = 0x6; // Toradora
+                    if (Version == vOREIMO) {
+                        textOffset = 0x7; // Oreimo
+                    }
+                    script.CopyTo(newBlock, i + 4, textOffset);
 
                     string phrase = strings[id++];
                     string secondPhrase = null;
