@@ -5,7 +5,7 @@ using NativeFileDialogSharp;
 using OBJEditor;
 using Newtonsoft.Json.Linq;
 
-namespace ToradoraTranslateToolCLI;
+namespace OreimoTranslateToolCLI;
 
 public static class Cli {
     public static string StartupPath { get; private set; } = Directory.GetCurrentDirectory();

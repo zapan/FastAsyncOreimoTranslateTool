@@ -2,11 +2,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": ".NET Launch ToradoraTranslateToolCLI",
+      "name": ".NET Launch OreimoTranslateToolCLI",
       "type": "coreclr",
       "request": "launch",
-      "preLaunchTask": "build ToradoraTranslateToolCLI",
-      "program": "${workspaceFolder}/ToradoraTranslateToolCLI/bin/Debug/net10.0/ToradoraTranslateToolCLI.dll",
+      "preLaunchTask": "build OreimoTranslateToolCLI",
+      "program": "${workspaceFolder}/OreimoTranslateToolCLI/bin/Debug/net10.0/OreimoTranslateToolCLI.dll",
       "args": [],
       "cwd": "${workspaceFolder}",
       "stopAtEntry": false,

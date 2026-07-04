@@ -2,12 +2,12 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "build ToradoraTranslateToolCLI",
+      "label": "build OreimoTranslateToolCLI",
       "type": "process",
       "command": "dotnet",
       "args": [
         "build",
-        "${workspaceFolder}/ToradoraTranslateToolCLI/ToradoraTranslateToolCLI.csproj"
+        "${workspaceFolder}/OreimoTranslateToolCLI/OreimoTranslateToolCLI.csproj"
       ],
       "problemMatcher": "$msCompile",
       "group": "build"

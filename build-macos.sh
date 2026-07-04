@@ -46,11 +46,11 @@ dotnet build -c Release
 
 # Build the CLI
 echo "Building CLI..."
-dotnet build ToradoraTranslateToolCLI -c Release
+dotnet build OreimoTranslateToolCLI -c Release
 
 echo ""
 echo "=== Build Complete ==="
-echo "To run the CLI: dotnet run --project ToradoraTranslateToolCLI"
+echo "To run the CLI: dotnet run --project OreimoTranslateToolCLI"
 echo ""
 echo "Make sure to set up mkisofs.conf if mkisofs is not in your PATH:"
 echo "  echo 'path/to/mkisofs' > mkisofs.conf"

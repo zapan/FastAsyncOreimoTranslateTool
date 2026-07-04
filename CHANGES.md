@@ -4,14 +4,14 @@ Este documento detalla los cambios realizados para hacer que FastAsyncToradoraTr
 
 ## Archivos Modificados
 
-### 1. `ToradoraTranslateToolCLI/CLI.cs`
+### 1. `OreimoTranslateToolCLI/CLI.cs`
 - **Cambios:**
   - Corregido método `Main` para que sea `void` en lugar de no tener tipo de retorno
   - Agregada detección de plataforma (Windows/macOS/Unix)
   - Actualizados mensajes de error para incluir instrucciones de macOS
   - Agregada directiva `using System.Runtime.InteropServices`
 
-### 2. `ToradoraTranslateToolCLI/ToradoraTranslateToolCLI.csproj`
+### 2. `OreimoTranslateToolCLI/OreimoTranslateToolCLI.csproj`
 - **Cambios:**
   - Agregado soporte para macOS con condicionales de compilación
   - Definición de constantes `_WINDOWS` y `__UNIX__` según la plataforma
@@ -91,13 +91,13 @@ Este documento detalla los cambios realizados para hacer que FastAsyncToradoraTr
 # Manual
 dotnet restore
 dotnet build -c Release
-dotnet build ToradoraTranslateToolCLI -c Release
+dotnet build OreimoTranslateToolCLI -c Release
 ```
 
 ## Ejecución
 
 ```bash
-dotnet run --project ToradoraTranslateToolCLI
+dotnet run --project OreimoTranslateToolCLI
 ```
 
 ## Notas Importantes

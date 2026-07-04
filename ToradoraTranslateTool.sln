@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CppPorts", "CppPorts\CppPor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RyuujiApi", "RyuujiApi\RyuujiApi.csproj", "{C871F9DE-17F4-4247-8FA1-15DAD77ACBC4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToradoraTranslateToolCLI", "ToradoraTranslateToolCLI\ToradoraTranslateToolCLI.csproj", "{48E4FD2D-00C5-4002-8073-5AB482D6B1D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OreimoTranslateToolCLI", "OreimoTranslateToolCLI\OreimoTranslateToolCLI.csproj", "{48E4FD2D-00C5-4002-8073-5AB482D6B1D2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatWorker.Cli", "DatWorker.Cli\DatWorker.Cli.csproj", "{242225A0-215A-488D-BE35-D17A29F828AE}"
 EndProject

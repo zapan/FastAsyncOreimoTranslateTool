@@ -118,14 +118,14 @@ dotnet restore
 dotnet build -c Release
 
 # Or build just the CLI
-dotnet build ToradoraTranslateToolCLI -c Release
+dotnet build OreimoTranslateToolCLI -c Release
 ```
 
 ### Running on macOS
 
 ```bash
 # Run the CLI
-dotnet run --project ToradoraTranslateToolCLI
+dotnet run --project OreimoTranslateToolCLI
 ```
 
 ### Platform-specific Files
