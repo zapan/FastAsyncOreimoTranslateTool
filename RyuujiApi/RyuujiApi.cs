@@ -12,6 +12,10 @@ public class RyuujiApi(string startUpPath) {
         IsoTools.RepackIso(mkisofs, isoDirectory, outputPath, progressCallback);
         /*IsoTools.RepackIso(Path.Combine(startUpPath, "Resources", "!!Tools", "Mkisofs"), isoDirectory, outputPath, progressCallback);*/
 
+    public string DetectGameFromIso(string isoPath) {
+        return IsoTools.DetectGameFromIso(isoPath);
+    }
+
     public Task ExtractGame(string dataDir) =>
         Task.WhenAll(
              Task.Run(() => { // resource

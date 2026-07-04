@@ -220,34 +220,8 @@ public static class IsoTools {
             throw new DirectoryNotFoundException($"iso directory not found: {isoDirectory}");
         }
 
-        string game = "Toradora";
-        try {
-            FileStream inputResStream = File.OpenRead(Path.Combine(isoDirectory, "UMD_DATA.BIN"));
-            StreamReader inputResReader = new StreamReader(inputResStream);
-            string? line = inputResReader.ReadLine();
-            inputResReader.Dispose();
-            if (string.IsNullOrWhiteSpace(line))
-               throw new EndOfStreamException();
-            string[] parts = line.Split('|', StringSplitOptions.RemoveEmptyEntries);
-
-            switch (parts[0]) {
-                case "NPJH-50568":
-                case "NPJH-50569":
-                case "ULJS-00490":
-                case "ULJS-00491":
-                case "ULJS-00492":
-                case "ULJS-00493":
-                case "ULJS-19086":
-                case "ULJS-00358":
-                    game = "Oreimo";
-                    break;
-            }
-            Console.WriteLine($"Detected {game} Iso.");
-        } catch (Exception e) {
-            Console.WriteLine($"Unable to detect Iso game. Using {game} as default.");
-        }
-
-        string command = "-iso-level 4 -xa -A \"PSP GAME\" -V \"" + game + "\" -sysid \"PSP GAME\" -volset \"" + game + "\" -p \"\" -publisher \"\" -o \"" + outputPath + "\" \"" + isoDirectory + "\"";
+        var gameName = DetectGameFromIso(isoDirectory);
+        string command = "-iso-level 4 -xa -A \"PSP GAME\" -V \"" + gameName + "\" -sysid \"PSP GAME\" -volset \"" + gameName + "\" -p \"\" -publisher \"\" -o \"" + outputPath + "\" \"" + isoDirectory + "\"";
         using Process myProc = new();
         myProc.StartInfo.FileName = "mkisofs";
         myProc.StartInfo.Arguments = command;
@@ -276,5 +250,37 @@ public static class IsoTools {
             Console.WriteLine("Chances are you dont have cdrtools installed, \n\nto rebuild the iso you need to provide the mkisofs path in mkisofs.conf in the root directory of the application.");
             throw;
         }
+    }
+
+    public static string DetectGameFromIso(string isoDirectory)
+    {
+        string game = "Toradora";
+        try {
+            FileStream inputResStream = File.OpenRead(Path.Combine(isoDirectory, "UMD_DATA.BIN"));
+            StreamReader inputResReader = new StreamReader(inputResStream);
+            string? line = inputResReader.ReadLine();
+            inputResReader.Dispose();
+            if (string.IsNullOrWhiteSpace(line))
+                throw new EndOfStreamException();
+            string[] parts = line.Split('|', StringSplitOptions.RemoveEmptyEntries);
+
+            switch (parts[0]) {
+                case "NPJH-50568":
+                case "NPJH-50569":
+                case "ULJS-00490":
+                case "ULJS-00491":
+                case "ULJS-00492":
+                case "ULJS-00493":
+                case "ULJS-19086":
+                case "ULJS-00358":
+                    game = "Oreimo";
+                    break;
+            }
+            Console.WriteLine($"Detected {game} Iso.");
+        } catch (Exception e) {
+            Console.WriteLine($"Unable to detect Iso game. Using {game} as default.");
+        }
+
+        return game;
     }
 }

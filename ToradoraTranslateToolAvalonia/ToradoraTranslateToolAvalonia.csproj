@@ -5,10 +5,10 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyVersion>1.5.0</AssemblyVersion>
-    <ProductVersion>1.5.0</ProductVersion>
-    <Version>1.5.0</Version>
-    <FileVersion>1.5.0</FileVersion>
+    <AssemblyVersion>1.6.0</AssemblyVersion>
+    <ProductVersion>1.6.0</ProductVersion>
+    <Version>1.6.0</Version>
+    <FileVersion>1.6.0</FileVersion>
     <ApplicationIcon>Assets\white.ico</ApplicationIcon>
     <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
   </PropertyGroup>
@@ -30,6 +30,8 @@
 
   <ItemGroup>
     <AvaloniaResource Include="Assets\Taiga.png"/>
+    <AvaloniaResource Include="Assets\kuroneko1.jpg"/>
+    <AvaloniaResource Include="Assets\kuroneko2.jpg"/>
     <AvaloniaResource Include="Assets\white.ico"/>
   </ItemGroup>
 

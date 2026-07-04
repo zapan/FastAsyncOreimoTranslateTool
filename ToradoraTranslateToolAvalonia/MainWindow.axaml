@@ -28,7 +28,7 @@
         <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2"
                 BorderBrush="#CCCCCC" BorderThickness="1"
                 Margin="10,10,5,10">
-            <Image Source="avares://ToradoraTranslateToolAvalonia/Assets/Taiga.png" Stretch="Uniform"/>
+            <Image x:Name="catImage" Source="avares://ToradoraTranslateToolAvalonia/Assets/kuroneko2.jpg" Stretch="Uniform"/>
         </Border>
 
         <!-- Right: control panel -->
