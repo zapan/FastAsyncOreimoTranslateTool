@@ -1,19 +1,18 @@
-# This workflow will build a .NET project
+# This workflow will build a .NET project and create releases for macOS and Windows
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
-name: .NET
+name: .NET Build & Release
 
 on:
   push:
     branches: [ "master" ]
+    tags: [ "v*" ]
   pull_request:
     branches: [ "master" ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
@@ -26,3 +25,96 @@ jobs:
         run: dotnet build --no-restore
       - name: Test
         run: dotnet test --no-build --verbosity normal
+
+  build-macos:
+    runs-on: macos-latest
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Install dependencies
+        run: |
+          brew install cdrtools
+      - name: Make scripts executable
+        run: chmod +x Resources/!!Tools/DatWorker/gzip
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Publish CLI for macOS (x64)
+        run: dotnet publish OreimoTranslateToolCLI -c Release -r osx-x64 -o ./publish/cli-macos-x64 --self-contained
+      - name: Publish CLI for macOS (ARM64)
+        run: dotnet publish OreimoTranslateToolCLI -c Release -r osx-arm64 -o ./publish/cli-macos-arm64 --self-contained
+      - name: Publish GUI for macOS (x64)
+        run: dotnet publish OreimoTranslateToolAvalonia -c Release -r osx-x64 -o ./publish/gui-macos-x64 --self-contained
+      - name: Publish GUI for macOS (ARM64)
+        run: dotnet publish OreimoTranslateToolAvalonia -c Release -r osx-arm64 -o ./publish/gui-macos-arm64 --self-contained
+      - name: Create macOS bundles
+        run: |
+          mkdir -p ./releases
+          cd ./publish
+          tar -czf ../releases/OreimoTranslateTool-CLI-macOS-x64.tar.gz cli-macos-x64/
+          tar -czf ../releases/OreimoTranslateTool-CLI-macOS-ARM64.tar.gz cli-macos-arm64/
+          tar -czf ../releases/OreimoTranslateTool-GUI-macOS-x64.tar.gz gui-macos-x64/
+          tar -czf ../releases/OreimoTranslateTool-GUI-macOS-ARM64.tar.gz gui-macos-arm64/
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: macos-binaries
+          path: releases/
+
+  build-windows:
+    runs-on: windows-latest
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Publish CLI for Windows (x64)
+        run: dotnet publish OreimoTranslateToolCLI -c Release -r win-x64 -o ./publish/cli-windows-x64 --self-contained
+      - name: Publish CLI for Windows (ARM64)
+        run: dotnet publish OreimoTranslateToolCLI -c Release -r win-arm64 -o ./publish/cli-windows-arm64 --self-contained
+      - name: Publish GUI for Windows (x64)
+        run: dotnet publish OreimoTranslateToolAvalonia -c Release -r win-x64 -o ./publish/gui-windows-x64 --self-contained
+      - name: Publish GUI for Windows (ARM64)
+        run: dotnet publish OreimoTranslateToolAvalonia -c Release -r win-arm64 -o ./publish/gui-windows-arm64 --self-contained
+      - name: Create Windows packages
+        run: |
+          mkdir releases
+          cd publish
+          powershell -Command "Compress-Archive -Path cli-windows-x64 -DestinationPath ../releases/OreimoTranslateTool-CLI-Windows-x64.zip"
+          powershell -Command "Compress-Archive -Path cli-windows-arm64 -DestinationPath ../releases/OreimoTranslateTool-CLI-Windows-ARM64.zip"
+          powershell -Command "Compress-Archive -Path gui-windows-x64 -DestinationPath ../releases/OreimoTranslateTool-GUI-Windows-x64.zip"
+          powershell -Command "Compress-Archive -Path gui-windows-arm64 -DestinationPath ../releases/OreimoTranslateTool-GUI-Windows-ARM64.zip"
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-binaries
+          path: releases/
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs: [build-macos, build-windows]
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            macos-binaries/*
+            windows-binaries/*
+          body_path: CHANGES.md
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
