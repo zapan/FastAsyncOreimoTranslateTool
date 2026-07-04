@@ -48,31 +48,41 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
       - name: Publish CLI for macOS (x64)
-        run: dotnet publish OreimoTranslateToolCLI -c Release -r osx-x64 -o ./build/OreimoTranslateTool-macOS-x64/CLI --self-contained
+        run: dotnet publish OreimoTranslateToolCLI -c Release -r osx-x64 -o ./build/OreimoTranslateTool-macOS-x64 --self-contained
       - name: Publish CLI for macOS (ARM64)
-        run: dotnet publish OreimoTranslateToolCLI -c Release -r osx-arm64 -o ./build/OreimoTranslateTool-macOS-ARM64/CLI --self-contained
+        run: dotnet publish OreimoTranslateToolCLI -c Release -r osx-arm64 -o ./build/OreimoTranslateTool-macOS-ARM64 --self-contained
       - name: Publish GUI for macOS (x64)
-        run: dotnet publish OreimoTranslateToolAvalonia -c Release -r osx-x64 -o ./build/OreimoTranslateTool-macOS-x64/GUI --self-contained
+        run: dotnet publish OreimoTranslateToolAvalonia -c Release -r osx-x64 -o ./build/OreimoTranslateTool-macOS-x64-GUI --self-contained
       - name: Publish GUI for macOS (ARM64)
-        run: dotnet publish OreimoTranslateToolAvalonia -c Release -r osx-arm64 -o ./build/OreimoTranslateTool-macOS-ARM64/GUI --self-contained
+        run: dotnet publish OreimoTranslateToolAvalonia -c Release -r osx-arm64 -o ./build/OreimoTranslateTool-macOS-ARM64-GUI --self-contained
       - name: Copy assets to macOS x64 build
         run: |
-          mkdir -p ./build/OreimoTranslateTool-macOS-x64/Resources
+          mkdir -p ./build/OreimoTranslateTool-macOS-x64/Assets
           mkdir -p ./build/OreimoTranslateTool-macOS-x64/Data
-          cp -r OreimoTranslateToolAvalonia/Assets ./build/OreimoTranslateTool-macOS-x64/
+          cp -r OreimoTranslateToolAvalonia/Assets/* ./build/OreimoTranslateTool-macOS-x64/Assets/
           cp Data/Translation.json ./build/OreimoTranslateTool-macOS-x64/Data/
+          mkdir -p ./build/OreimoTranslateTool-macOS-x64-GUI/Assets
+          mkdir -p ./build/OreimoTranslateTool-macOS-x64-GUI/Data
+          cp -r OreimoTranslateToolAvalonia/Assets/* ./build/OreimoTranslateTool-macOS-x64-GUI/Assets/
+          cp Data/Translation.json ./build/OreimoTranslateTool-macOS-x64-GUI/Data/
       - name: Copy assets to macOS ARM64 build
         run: |
-          mkdir -p ./build/OreimoTranslateTool-macOS-ARM64/Resources
+          mkdir -p ./build/OreimoTranslateTool-macOS-ARM64/Assets
           mkdir -p ./build/OreimoTranslateTool-macOS-ARM64/Data
-          cp -r OreimoTranslateToolAvalonia/Assets ./build/OreimoTranslateTool-macOS-ARM64/
+          cp -r OreimoTranslateToolAvalonia/Assets/* ./build/OreimoTranslateTool-macOS-ARM64/Assets/
           cp Data/Translation.json ./build/OreimoTranslateTool-macOS-ARM64/Data/
+          mkdir -p ./build/OreimoTranslateTool-macOS-ARM64-GUI/Assets
+          mkdir -p ./build/OreimoTranslateTool-macOS-ARM64-GUI/Data
+          cp -r OreimoTranslateToolAvalonia/Assets/* ./build/OreimoTranslateTool-macOS-ARM64-GUI/Assets/
+          cp Data/Translation.json ./build/OreimoTranslateTool-macOS-ARM64-GUI/Data/
       - name: Create macOS bundles
         run: |
           mkdir -p ./releases
           cd ./build
-          tar -czf ../releases/OreimoTranslateTool-macOS-x64.tar.gz OreimoTranslateTool-macOS-x64/
-          tar -czf ../releases/OreimoTranslateTool-macOS-ARM64.tar.gz OreimoTranslateTool-macOS-ARM64/
+          tar -czf ../releases/OreimoTranslateTool-macOS-x64-CLI.tar.gz OreimoTranslateTool-macOS-x64/
+          tar -czf ../releases/OreimoTranslateTool-macOS-ARM64-CLI.tar.gz OreimoTranslateTool-macOS-ARM64/
+          tar -czf ../releases/OreimoTranslateTool-macOS-x64-GUI.tar.gz OreimoTranslateTool-macOS-x64-GUI/
+          tar -czf ../releases/OreimoTranslateTool-macOS-ARM64-GUI.tar.gz OreimoTranslateTool-macOS-ARM64-GUI/
       - name: Upload macOS artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -92,31 +102,41 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
       - name: Publish CLI for Windows (x64)
-        run: dotnet publish OreimoTranslateToolCLI -c Release -r win-x64 -o ./build/OreimoTranslateTool-Windows-x64/CLI --self-contained
+        run: dotnet publish OreimoTranslateToolCLI -c Release -r win-x64 -o ./build/OreimoTranslateTool-Windows-x64 --self-contained
       - name: Publish CLI for Windows (ARM64)
-        run: dotnet publish OreimoTranslateToolCLI -c Release -r win-arm64 -o ./build/OreimoTranslateTool-Windows-ARM64/CLI --self-contained
+        run: dotnet publish OreimoTranslateToolCLI -c Release -r win-arm64 -o ./build/OreimoTranslateTool-Windows-ARM64 --self-contained
       - name: Publish GUI for Windows (x64)
-        run: dotnet publish OreimoTranslateToolAvalonia -c Release -r win-x64 -o ./build/OreimoTranslateTool-Windows-x64/GUI --self-contained
+        run: dotnet publish OreimoTranslateToolAvalonia -c Release -r win-x64 -o ./build/OreimoTranslateTool-Windows-x64-GUI --self-contained
       - name: Publish GUI for Windows (ARM64)
-        run: dotnet publish OreimoTranslateToolAvalonia -c Release -r win-arm64 -o ./build/OreimoTranslateTool-Windows-ARM64/GUI --self-contained
+        run: dotnet publish OreimoTranslateToolAvalonia -c Release -r win-arm64 -o ./build/OreimoTranslateTool-Windows-ARM64-GUI --self-contained
       - name: Copy assets to Windows x64 build
         run: |
-          New-Item -ItemType Directory -Force -Path ./build/OreimoTranslateTool-Windows-x64/Resources
+          New-Item -ItemType Directory -Force -Path ./build/OreimoTranslateTool-Windows-x64/Assets
           New-Item -ItemType Directory -Force -Path ./build/OreimoTranslateTool-Windows-x64/Data
-          Copy-Item -Recurse OreimoTranslateToolAvalonia/Assets ./build/OreimoTranslateTool-Windows-x64/
+          Copy-Item -Recurse OreimoTranslateToolAvalonia/Assets/* ./build/OreimoTranslateTool-Windows-x64/Assets/
           Copy-Item Data/Translation.json ./build/OreimoTranslateTool-Windows-x64/Data/
+          New-Item -ItemType Directory -Force -Path ./build/OreimoTranslateTool-Windows-x64-GUI/Assets
+          New-Item -ItemType Directory -Force -Path ./build/OreimoTranslateTool-Windows-x64-GUI/Data
+          Copy-Item -Recurse OreimoTranslateToolAvalonia/Assets/* ./build/OreimoTranslateTool-Windows-x64-GUI/Assets/
+          Copy-Item Data/Translation.json ./build/OreimoTranslateTool-Windows-x64-GUI/Data/
       - name: Copy assets to Windows ARM64 build
         run: |
-          New-Item -ItemType Directory -Force -Path ./build/OreimoTranslateTool-Windows-ARM64/Resources
+          New-Item -ItemType Directory -Force -Path ./build/OreimoTranslateTool-Windows-ARM64/Assets
           New-Item -ItemType Directory -Force -Path ./build/OreimoTranslateTool-Windows-ARM64/Data
-          Copy-Item -Recurse OreimoTranslateToolAvalonia/Assets ./build/OreimoTranslateTool-Windows-ARM64/
+          Copy-Item -Recurse OreimoTranslateToolAvalonia/Assets/* ./build/OreimoTranslateTool-Windows-ARM64/Assets/
           Copy-Item Data/Translation.json ./build/OreimoTranslateTool-Windows-ARM64/Data/
+          New-Item -ItemType Directory -Force -Path ./build/OreimoTranslateTool-Windows-ARM64-GUI/Assets
+          New-Item -ItemType Directory -Force -Path ./build/OreimoTranslateTool-Windows-ARM64-GUI/Data
+          Copy-Item -Recurse OreimoTranslateToolAvalonia/Assets/* ./build/OreimoTranslateTool-Windows-ARM64-GUI/Assets/
+          Copy-Item Data/Translation.json ./build/OreimoTranslateTool-Windows-ARM64-GUI/Data/
       - name: Create Windows packages
         run: |
           New-Item -ItemType Directory -Force -Path releases
           cd build
-          powershell -Command "Compress-Archive -Path OreimoTranslateTool-Windows-x64 -DestinationPath ../releases/OreimoTranslateTool-Windows-x64.zip"
-          powershell -Command "Compress-Archive -Path OreimoTranslateTool-Windows-ARM64 -DestinationPath ../releases/OreimoTranslateTool-Windows-ARM64.zip"
+          powershell -Command "Compress-Archive -Path OreimoTranslateTool-Windows-x64 -DestinationPath ../releases/OreimoTranslateTool-Windows-x64-CLI.zip"
+          powershell -Command "Compress-Archive -Path OreimoTranslateTool-Windows-ARM64 -DestinationPath ../releases/OreimoTranslateTool-Windows-ARM64-CLI.zip"
+          powershell -Command "Compress-Archive -Path OreimoTranslateTool-Windows-x64-GUI -DestinationPath ../releases/OreimoTranslateTool-Windows-x64-GUI.zip"
+          powershell -Command "Compress-Archive -Path OreimoTranslateTool-Windows-ARM64-GUI -DestinationPath ../releases/OreimoTranslateTool-Windows-ARM64-GUI.zip"
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
