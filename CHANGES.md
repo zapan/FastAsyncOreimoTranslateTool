@@ -1,68 +1,117 @@
-# Cambios para Soporte macOS
+# Changelog
 
-Este documento detalla los cambios realizados para hacer que FastAsyncOreimoTranslateTool funcione nativamente en macOS.
+All notable changes to FastAsyncOreimoTranslateTool are documented in this file.
 
-## Archivos Modificados
+## [v1.0.0] - 2026-07-04
 
-### 1. `OreimoTranslateToolCLI/CLI.cs`
-- **Cambios:**
-  - Corregido método `Main` para que sea `void` en lugar de no tener tipo de retorno
-  - Agregada detección de plataforma (Windows/macOS/Unix)
-  - Actualizados mensajes de error para incluir instrucciones de macOS
-  - Agregada directiva `using System.Runtime.InteropServices`
+### 🎉 Major Features
 
-### 2. `OreimoTranslateToolCLI/OreimoTranslateToolCLI.csproj`
-- **Cambios:**
-  - Agregado soporte para macOS con condicionales de compilación
-  - Definición de constantes `_WINDOWS` y `__UNIX__` según la plataforma
-  - Configuración para copiar archivos específicos de macOS
+#### Cross-Platform GUI (Avalonia)
+- ✨ Ported original GUI to **Avalonia** framework for cross-platform support
+- 🍎 **Native macOS support** (x64 and ARM64)
+- 🪟 **Native Windows support** (x64 and ARM64)  
+- 🐧 **Linux support** included
+- Unified codebase for all platforms replacing platform-specific implementations
 
-### 3. `RyuujiApi/IsoTools.cs` (nuevo archivo)
-- **Cambios:**
-  - Reescrito desde cero para usar la API correcta de `DiscUtils.Iso9660`
-  - Corregido uso de métodos `GetDirectories()` y `GetFiles()` de CDReader
-  - Implementación de extracción ISO multiplataforma
-  - Soporte para `mkisofs` nativo de macOS
-  - Agregada clase `ProgressCounter` para gestión de progreso
+#### Extended CLI
+- 📝 CLI tool extended with full macOS support
+- 🔧 New standalone options for automation and scripting
+- 🎯 Better integration for headless operations and batch processing
 
-### 4. `RyuujiApi/RyuujiApi.cs`
-- **Cambios:**
-  - Corregido namespace (de namespace a clase pública)
+#### macOS Support
+- Full native support for macOS (Intel and Apple Silicon)
+- Platform-specific implementations using native tools (gzip, mkisofs)
+- Proper handling of macOS file system and architecture differences
 
-### 5. `DatWorker/DatWorker.cs`
-- **Cambios:**
-  - Agregado soporte condicional para usar `MakeGpdaMacOS` en Unix
-  - Uso de `__UNIX__` para compilar código específico de macOS
+#### GitHub Actions Workflow
+- 🚀 Automated CI/CD pipeline for building releases
+- 📦 Automatic binary generation for macOS (x64, ARM64) and Windows (x64, ARM64)
+- 🔄 Self-contained executables with no .NET runtime dependency needed
+- 📋 Automated release creation with all binaries
 
-### 6. `Readme.md`
-- **Cambios:**
-  - Agregada sección completa sobre soporte macOS
-  - Instrucciones para instalar dependencias con Homebrew
-  - Comandos para construir y ejecutar en macOS
-  - Diferencias con la versión de Windows
+### 📝 Project Rebranding
+- Renamed from **ToradoraTranslateTool** to **OreimoTranslateTool**
+- Updated solution file and all project references
+- Updated tool titles and branding throughout the application
+- Maintains compatibility with original project structure
 
-## Archivos Nuevos
+### 🔧 Modified Files
 
-### 1. `CppPorts/MakeGpda.macOS.cs`
-- Implementación base de MakeGpda para macOS
-- Firma lista para implementación completa del formato GPDA en macOS
+#### Core CLI Changes
+**`OreimoTranslateToolCLI/CLI.cs`**
+- Fixed `Main` method signature
+- Added platform detection (Windows/macOS/Unix)
+- Updated error messages with macOS-specific instructions
+- Added `System.Runtime.InteropServices` support
 
-### 2. `build-macos.sh`
-- Script de build para macOS
-- Verificación de dependencias (dotnet, mkisofs)
-- Comandos de build automáticos
-- Instrucciones post-build
+**`OreimoTranslateToolCLI/OreimoTranslateToolCLI.csproj`**
+- Added macOS compilation conditionals
+- Platform-specific constants (`_WINDOWS`, `__UNIX__`)
+- Configuration for copying platform-specific files
 
-### 3. `mkisofs.conf`
-- Configuración para encontrar `mkisofs` en macOS
-- Por defecto usa `mkisofs` en PATH
+#### API and Worker Updates
+**`RyuujiApi/IsoTools.cs`**
+- Rewrote for correct `DiscUtils.Iso9660` API usage
+- Fixed `GetDirectories()` and `GetFiles()` methods for CDReader
+- Cross-platform ISO extraction implementation
+- Native macOS `mkisofs` support
+- Added `ProgressCounter` class for progress management
 
-### 4. `Resources/!!Tools/DatWorker/gzip`
-- Script shell wrapper para usar `gzip` nativo de macOS
+**`RyuujiApi/RyuujiApi.cs`**
+- Corrected namespace to public class
 
-## Dependencias de macOS
+**`DatWorker/DatWorker.cs`**
+- Conditional support for macOS via `MakeGpdaMacOS`
+- `__UNIX__` compilation flags for platform-specific code
 
-### Requeridas
+**`TranslationWindow.axaml.cs`**
+- Fixed `basePath` parameter passing to `NamesWindow`
+- Proper field initialization for cross-platform compatibility
+
+#### Documentation
+**`Readme.md`**
+- Added comprehensive macOS section with prerequisites and build instructions
+- Separated GUI (Avalonia) and CLI documentation
+- Updated screenshots and feature list
+- Added macOS-specific platform differences
+- Updated Special Thanks to credit original projects
+
+### 📦 New Files
+
+#### GUI
+**`OreimoTranslateToolAvalonia/`** (entire project)
+- New Avalonia-based cross-platform GUI
+- Replaces Windows Forms implementation
+- Full macOS native support with proper file dialogs and UI conventions
+
+#### Build and Configuration
+**`build-macos.sh`**
+- Automated macOS build script
+- Dependency verification (dotnet, mkisofs)
+- Multi-project build orchestration
+- Post-build instructions
+
+**`.github/workflows/dotnet.yml`**
+- GitHub Actions CI/CD workflow
+- Multi-platform builds (macOS x64/ARM64, Windows x64/ARM64)
+- Automated release creation with binaries
+- Self-contained executable generation
+
+**`mkisofs.conf`**
+- Configuration for macOS `mkisofs` path resolution
+- Defaults to system PATH
+
+**`Resources/!!Tools/DatWorker/gzip`**
+- Shell wrapper for native macOS gzip
+
+#### Platform Support
+**`CppPorts/MakeGpda.macOS.cs`**
+- Base implementation for macOS MakeGpda
+- Ready for full GPDA format implementation
+
+### 🛠️ macOS Setup Requirements
+
+#### Required Dependencies
 1. **.NET 8.0 SDK**
    ```bash
    brew install --cask dotnet-sdk
@@ -73,60 +122,61 @@ Este documento detalla los cambios realizados para hacer que FastAsyncOreimoTran
    brew install cdrtools
    ```
 
-3. **NativeFileDialogSharp** (dependencia de NuGet)
-   - Ya incluida en el proyecto
-
-### Opcionales
-- **libffi, libplist** (para NativeFileDialogSharp)
-  ```bash
-  brew install libffi libplist
-  ```
-
-## Compilación en macOS
+#### Build Instructions
 
 ```bash
-# Script automático
+# Automatic (using provided script)
+chmod +x Resources/!!Tools/DatWorker/gzip
 ./build-macos.sh
 
-# Manual
+# Manual build
 dotnet restore
 dotnet build -c Release
+
+# Build specific projects
+dotnet build OreimoTranslateToolAvalonia -c Release
 dotnet build OreimoTranslateToolCLI -c Release
 ```
 
-## Ejecución
+#### Running Applications
 
 ```bash
+# GUI (Avalonia)
+dotnet run --project OreimoTranslateToolAvalonia
+
+# CLI
 dotnet run --project OreimoTranslateToolCLI
 ```
 
-## Notas Importantes
+### ⚙️ Configuration
 
-### Para mkisofs
-Si `mkisofs` no está en PATH, crear el archivo `mkisofs.conf` con la ruta:
+**mkisofs Path Configuration**
+If `mkisofs` is not in your PATH, create `mkisofs.conf`:
 ```bash
 echo '/opt/homebrew/bin/mkisofs' > mkisofs.conf
 ```
 
-### Para NativeFileDialogSharp
-Asegurarse de tener instalado:
-```bash
-brew install libffi libplist
-```
+### 🐛 Known Limitations
 
-## Limitaciones Conocidas
+1. **CppPorts (MakeGpda, ModSeekMap)**: Full macOS implementation pending
+   - Currently uses Windows versions or awaits native implementation
+   - `MakeGpda.macOS.cs` ready for development
 
-1. **CppPorts (MakeGpda, ModSeekMap)**: Requiere implementación completa para macOS
-   - Actualmente usa versiones Windows o espera implementación futura
-   - Archivo `MakeGpda.macOS.cs` listo para desarrollo
+2. **External Tools**: Some Windows executables need macOS replacements
+   - `makeGDP.exe` → Implementation pending
+   - `modseekmap.exe` → Implementation pending
 
-2. **Herramientas externas**: Algunas herramientas Windows necesitan reemplazo:
-   - `makeGDP.exe` → En espera de implementación
-   - `modseekmap.exe` → En espera de implementación
+### 📊 Performance (Inherited from FastAsyncToradoraTranslateTool)
+- Game file extraction: **1,848.80%** faster than original
+- Game file repacking: **2,037.40%** faster than original
 
-## Próximos Pasos
+### 🙏 Credits
 
-1. Implementar completamente MakeGpda para macOS
-2. Implementar completamente ModSeekMap para macOS
-3. Pruebas extensivas de todas las funcionalidades
-4. Posiblemente crear versiones nativas de todas las herramientas en C# puro
+Based on [FastAsyncToradoraTranslateTool](https://github.com/computer-catt/FastAsyncToradoraTranslateTool) by [computer-catt](https://github.com/computer-catt).
+
+### 🔮 Future Plans
+
+1. Complete macOS implementations for MakeGpda and ModSeekMap
+2. Extensive testing of all functionality
+3. Consider pure C# implementations of native tools
+4. Additional platform optimizations
