@@ -9,6 +9,8 @@ Name inspired by the [FastAsyncWorldEdit](https://www.spigotmc.org/resources/fas
 - Improved game file repacking time by 2,037.40 %!
   - old time 189438 ms vs new time 8863 ms
 - Reworked file structure! Allows you to easily delete all generated resources
+- **Ported GUI to Avalonia** (OreimoTranslateToolAvalonia) for native macOS support
+- **Extended CLI** with macOS support and new standalone options
 
 ### Why?
 
@@ -26,7 +28,19 @@ With this program you will be able to extract ISO, extract game files, translate
 
 All you need is the game's ISO file. You can use the original Japanese version, or already patched (except if it's patched by this app).
 
-After you got the ISO file, just open the program, and start with the first stage. Next to each step there is a button with a question mark, when you click on it, you will get all the necessary information.
+After you got the ISO file, you can choose between:
+
+### Option 1: GUI (Avalonia - Cross-platform)
+
+Open the Avalonia GUI application (OreimoTranslateToolAvalonia), which works on Windows, macOS, and Linux. The interface guides you through each step with help buttons explaining each section.
+
+### Option 2: CLI (Command-line - Standalone)
+
+Use the CLI tool (OreimoTranslateToolCLI) for scripting and automation. The CLI has been extended with macOS support and offers standalone options for headless operation.
+
+### Translation Process
+
+Start with the first stage. Next to each step there is a button with a question mark, when you click on it, you will get all the necessary information.
 
 The instruction on the images translation is written in Resources/HowTo.txt.
 
@@ -81,15 +95,25 @@ for arch you have to run `pacman -S cdrtools` to install because its cool.
 
 - [Marcus André](https://github.com/marcussacana) again for their help regarding their tools
 
+- [computer-catt](https://github.com/computer-catt) for the [FastAsyncToradoraTranslateTool](https://github.com/computer-catt/FastAsyncToradoraTranslateTool) optimization improvements
+
 - You! Thanks for reading even if you don't plan on using the software. :3
 
 ## Screenshots
-![Main window](https://i.imgur.com/QxW8w5a.png)
-![Translation window](https://i.imgur.com/ZOm8WEy.png)
+![Main window](mainWindow.png)
+![Translation window](translateWindow.png)
 
 ## macOS Support
 
-This tool has been adapted to work natively on macOS. Here's what you need to know:
+This tool has been adapted to work natively on macOS with both GUI and CLI options:
+
+### GUI (Avalonia - OreimoTranslateToolAvalonia)
+
+The original GUI has been ported to Avalonia, providing a native cross-platform experience on macOS, Windows, and Linux.
+
+### CLI (OreimoTranslateToolCLI)
+
+The CLI tool has been extended with full macOS support and new standalone options for automation and scripting.
 
 ### Prerequisites for macOS
 
@@ -114,8 +138,11 @@ This tool has been adapted to work natively on macOS. Here's what you need to kn
 # Restore packages
 dotnet restore
 
-# Build the solution
+# Build the complete solution
 dotnet build -c Release
+
+# Or build just the GUI (Avalonia)
+dotnet build OreimoTranslateToolAvalonia -c Release
 
 # Or build just the CLI
 dotnet build OreimoTranslateToolCLI -c Release
@@ -124,12 +151,17 @@ dotnet build OreimoTranslateToolCLI -c Release
 ### Running on macOS
 
 ```bash
-# Run the CLI
+# Run the GUI (Avalonia)
+dotnet run --project OreimoTranslateToolAvalonia
+
+# Or run the CLI
 dotnet run --project OreimoTranslateToolCLI
 ```
 
-### Platform-specific Files
+### Platform-specific Implementation
 
+- **GUI**: Avalonia framework provides native macOS integration
+- **CLI**: Extended with macOS-specific standalone options
 - `mkisofs.conf`: Contains the path to mkisofs executable (default: `mkisofs`)
 - `DatWorker/macOS/`: Contains macOS-specific implementations
 - `Resources/!!Tools/DatWorker/gzip`: Shell script wrapper for macOS gzip
@@ -138,5 +170,5 @@ dotnet run --project OreimoTranslateToolCLI
 
 - Uses native macOS tools (gzip, mkisofs) instead of Windows executables
 - Platform-specific conditional compilation for CppPorts
-- Native file dialog via NativeFileDialogSharp (works on macOS)
+- Native file dialogs via Avalonia on GUI, standard dialogs on CLI
 - No dependency on Windows CRT (msvcp110d.dll, msvcr110d.dll)
