@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.1.11312.151
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToradoraTranslateTool", "ToradoraTranslateTool\ToradoraTranslateTool.csproj", "{AE5D7ADD-9B69-4CA7-8060-A48CF665A821}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OBJEditor", "OBJEditor\OBJEditor.csproj", "{982F6A65-F0D6-4AAE-8C13-03C2F8A36ABC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TenoriTool.Cli", "TenoriTool.Cli\TenoriTool.Cli.csproj", "{2081BDDC-A099-4408-82BA-2436F5860A4D}"
@@ -42,24 +40,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{AE5D7ADD-9B69-4CA7-8060-A48CF665A821}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AE5D7ADD-9B69-4CA7-8060-A48CF665A821}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AE5D7ADD-9B69-4CA7-8060-A48CF665A821}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{AE5D7ADD-9B69-4CA7-8060-A48CF665A821}.Debug|x64.Build.0 = Debug|Any CPU
-		{AE5D7ADD-9B69-4CA7-8060-A48CF665A821}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{AE5D7ADD-9B69-4CA7-8060-A48CF665A821}.Debug|x86.Build.0 = Debug|Any CPU
-		{AE5D7ADD-9B69-4CA7-8060-A48CF665A821}.DebugTests|Any CPU.ActiveCfg = Debug|Any CPU
-		{AE5D7ADD-9B69-4CA7-8060-A48CF665A821}.DebugTests|Any CPU.Build.0 = Debug|Any CPU
-		{AE5D7ADD-9B69-4CA7-8060-A48CF665A821}.DebugTests|x64.ActiveCfg = DebugTests|Any CPU
-		{AE5D7ADD-9B69-4CA7-8060-A48CF665A821}.DebugTests|x64.Build.0 = DebugTests|Any CPU
-		{AE5D7ADD-9B69-4CA7-8060-A48CF665A821}.DebugTests|x86.ActiveCfg = DebugTests|Any CPU
-		{AE5D7ADD-9B69-4CA7-8060-A48CF665A821}.DebugTests|x86.Build.0 = DebugTests|Any CPU
-		{AE5D7ADD-9B69-4CA7-8060-A48CF665A821}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AE5D7ADD-9B69-4CA7-8060-A48CF665A821}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AE5D7ADD-9B69-4CA7-8060-A48CF665A821}.Release|x64.ActiveCfg = Release|Any CPU
-		{AE5D7ADD-9B69-4CA7-8060-A48CF665A821}.Release|x64.Build.0 = Release|Any CPU
-		{AE5D7ADD-9B69-4CA7-8060-A48CF665A821}.Release|x86.ActiveCfg = Release|Any CPU
-		{AE5D7ADD-9B69-4CA7-8060-A48CF665A821}.Release|x86.Build.0 = Release|Any CPU
 		{982F6A65-F0D6-4AAE-8C13-03C2F8A36ABC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{982F6A65-F0D6-4AAE-8C13-03C2F8A36ABC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{982F6A65-F0D6-4AAE-8C13-03C2F8A36ABC}.Debug|x64.ActiveCfg = Debug|Any CPU
