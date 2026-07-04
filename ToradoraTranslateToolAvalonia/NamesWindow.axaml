@@ -2,8 +2,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="ToradoraTranslateToolAvalonia.NamesWindow"
         Title="Names translation"
-        Width="800" Height="460"
-        MinWidth="250" MinHeight="150"
+        Width="400" Height="800"
+        MinWidth="200" MinHeight="200"
         WindowStartupLocation="CenterOwner">
 
     <Grid RowDefinitions="*,Auto">
@@ -11,11 +11,12 @@
         <DataGrid Grid.Row="0"
                   x:Name="dataGridNames"
                   CanUserReorderColumns="False"
+                  CanUserResizeColumns="True"
                   CanUserSortColumns="False"
                   GridLinesVisibility="Horizontal">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Original"   Binding="{Binding Original}"   IsReadOnly="True"  Width="*"/>
-                <DataGridTextColumn Header="Translated" Binding="{Binding Translated}"  IsReadOnly="False" Width="*"/>
+                <DataGridTextColumn Header="Original"   Binding="{Binding Original}"   IsReadOnly="True"  Width="200"/>
+                <DataGridTextColumn Header="Translated" Binding="{Binding Translated}"  IsReadOnly="False" Width="200"/>
             </DataGrid.Columns>
         </DataGrid>
 

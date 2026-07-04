@@ -119,18 +119,18 @@ public partial class MainWindow : Window {
     }
 
     private async Task ShowErrorAsync(string message, long ms = 0) =>
-        await ShowDialogAsync("Error" + (ms > 0 ? $" in {ms} ms!" : ""), message);
+        await ShowDialogAsync("Error" + (ms > 0 ? $" in {ms} ms!" : ""), message, 400);
 
-    private async Task ShowInfoAsync(string message) =>
-        await ShowDialogAsync("ToradoraTranslateTool", message);
+    private async Task ShowInfoAsync(string message, int height = 100) =>
+        await ShowDialogAsync("ToradoraTranslateTool", message, height);
 
-    private async Task ShowDialogAsync(string title, string message) {
+    private async Task ShowDialogAsync(string title, string message, int height) {
         var dialog = new Window {
             Title = title,
-            Width = 420,
-            Height = 160,
+            Width = 500,
+            Height = height,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            CanResize = false
+            CanResize = true
         };
         var panel = new StackPanel { Margin = new Avalonia.Thickness(16), Spacing = 12 };
         panel.Children.Add(new TextBlock {
@@ -347,10 +347,10 @@ public partial class MainWindow : Window {
             "This stage will inject translation and repack all game files.\n" +
             "It'll take ~5-10 seconds depending on the SSD.\n" +
             "You can enable debug mode by right-clicking on the repack button.\n" +
-            "In this mode you will be able to teleport to any level, and much more");
+            "In this mode you will be able to teleport to any level, and much more", 160);
 
     private async void ButtonStartGameHelp_Click(object? sender, RoutedEventArgs e) =>
-        await ShowInfoAsync(RyuujiApi.RyuujiApi.StartGameHelpText);
+        await ShowInfoAsync(RyuujiApi.RyuujiApi.StartGameHelpText, 250);
 
     private async void ButtonRepackIsoHelp_Click(object? sender, RoutedEventArgs e) =>
         await ShowInfoAsync("This stage will repack ISO and save it in the program folder");

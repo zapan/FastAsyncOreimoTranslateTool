@@ -31,7 +31,7 @@
                 </DataGrid.ContextMenu>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Name"     Binding="{Binding FileName}" Width="190" FontSize="12"/>
-                    <DataGridTextColumn Header="Progress" Binding="{Binding ProgressText}" Width="100" FontSize="12"/>
+                    <DataGridTextColumn Header="Progress" Binding="{Binding ProgressText}" Width="70" FontSize="12"/>
                 </DataGrid.Columns>
             </DataGrid>
 
