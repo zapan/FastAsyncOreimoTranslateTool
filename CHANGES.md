@@ -2,7 +2,7 @@
 
 All notable changes to FastAsyncOreimoTranslateTool are documented in this file.
 
-## [v1.0.0] - 2026-07-04
+## [v1.6.0] - 2026-07-04
 
 ### 🎉 Major Features
 
