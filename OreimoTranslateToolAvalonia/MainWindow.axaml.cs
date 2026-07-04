@@ -26,8 +26,8 @@ public partial class MainWindow : Window {
         string gameName = api.DetectGameFromIso(Path.Combine(DataDir, "Iso"));
         string randomNumber = RandomNumberGenerator.GetInt32(1,3).ToString();
         catImage.Source = gameName switch {
-            "Oreimo" => new Avalonia.Media.Imaging.Bitmap(Path.Combine(StartupPath, "OreimoTranslateToolAvalonia", "Assets", "kuroneko" + randomNumber + ".jpg")),
-            "Toradora" => new Avalonia.Media.Imaging.Bitmap(Path.Combine(StartupPath, "OreimoTranslateToolAvalonia", "Assets", "Taiga.png")),
+            "Oreimo" => new Avalonia.Media.Imaging.Bitmap(Path.Combine(StartupPath, "Assets", "kuroneko" + randomNumber + ".jpg")),
+            "Toradora" => new Avalonia.Media.Imaging.Bitmap(Path.Combine(StartupPath, "Assets", "Taiga.png")),
         };
         
         // Version label
