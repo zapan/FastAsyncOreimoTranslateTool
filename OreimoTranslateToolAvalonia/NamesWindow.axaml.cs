@@ -19,11 +19,11 @@ public partial class NamesWindow : Window
     private readonly string _mainFilePath;
     private readonly ObservableCollection<NameRow> _rows = [];
 
-    public NamesWindow(List<string> originalNames)
+    public NamesWindow(string basePath, List<string> originalNames)
     {
         InitializeComponent();
 
-        _mainFilePath = Path.Combine(AppContext.BaseDirectory, "Data", "Translation.json");
+        _mainFilePath = Path.Combine(basePath, "Data", "Translation.json");
 
         JObject mainFile = JObject.Parse(File.ReadAllText(_mainFilePath));
 

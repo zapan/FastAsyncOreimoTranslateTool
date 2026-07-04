@@ -14,8 +14,7 @@ using TranslateCLI;
 
 namespace OreimoTranslateToolAvalonia;
 
-public partial class TranslationWindow : Window
-{
+public partial class TranslationWindow : Window {
     // ── Observable wrappers for Avalonia binding ─────────────────────────────
 
     /// <summary>Row shown in the file-list DataGrid.</summary>
@@ -45,6 +44,7 @@ public partial class TranslationWindow : Window
 
     // ── Fields ────────────────────────────────────────────────────────────────
 
+    private readonly string _basePath;
     private readonly TranslationProjectCli _project;
     private readonly ObservableCollection<FileRow> _fileRows = [];
     private readonly ObservableCollection<StringRow> _stringRows = [];
@@ -57,6 +57,7 @@ public partial class TranslationWindow : Window
     {
         InitializeComponent();
 
+        _basePath = basePath;
         _project = new TranslationProjectCli(basePath);
 
         dataGridFiles.ItemsSource = _fileRows;
@@ -326,7 +327,7 @@ public partial class TranslationWindow : Window
     {
         // GetAllNames reads many .obj files — run on background thread
         var names = await Task.Run(() => _project.GetAllNames());
-        var win = new NamesWindow(names);
+        var win = new NamesWindow(_basePath, names);
         await win.ShowDialog(this);
     }
 
