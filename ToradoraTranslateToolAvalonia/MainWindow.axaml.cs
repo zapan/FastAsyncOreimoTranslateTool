@@ -47,6 +47,10 @@ public partial class MainWindow : Window {
         if (isoExtracted) {
             buttonExtractGame.IsEnabled = true;
             buttonExtractGame.IsVisible = true;
+            
+            buttonDeleteGenRes.IsEnabled = false;
+            buttonDeleteGenRes.IsVisible = false;
+            
             buttonStartGame.IsEnabled = true;
         }
 
@@ -54,8 +58,11 @@ public partial class MainWindow : Window {
                              File.Exists(Path.Combine(DataDir, "Extracted", "first", "seekmap", "res.map.gz"));
 
         if (gameExtracted) {
-            buttonDeleteGenRes.IsVisible = true;
+            buttonExtractGame.IsEnabled = false;
             buttonExtractGame.IsVisible = false;
+            
+            buttonDeleteGenRes.IsEnabled = true;
+            buttonDeleteGenRes.IsVisible = true;
 
             buttonTranslate.IsEnabled = true;
             buttonRepackGame.IsEnabled = true;
@@ -66,11 +73,14 @@ public partial class MainWindow : Window {
     private void DisableButtons() {
         buttonExtractIso.IsEnabled = false;
         buttonExtractGame.IsEnabled = false;
-        buttonDeleteGenRes.IsVisible = false;
+        buttonDeleteGenRes.IsEnabled = false;
         buttonTranslate.IsEnabled = false;
         buttonRepackGame.IsEnabled = false;
         buttonStartGame.IsEnabled = false;
         buttonExportGame.IsEnabled = false;
+        
+        buttonExtractGame.IsVisible = true;
+        buttonDeleteGenRes.IsVisible = false;
     }
 
     private void SetWorking(bool isWorking) {
@@ -159,6 +169,7 @@ public partial class MainWindow : Window {
 
             IsoProgress.Value = 0;
             IsoProgress.IsVisible = true;
+            ExtractIsoHelpButton.IsVisible = false;
             buttonExtractIso.IsVisible = false;
 
             // Run on a background thread to avoid deadlocking the UI thread,
@@ -179,6 +190,7 @@ public partial class MainWindow : Window {
             EnableButtons();
             IsoProgress.IsVisible = false;
             buttonExtractIso.IsVisible = true;
+            ExtractIsoHelpButton.IsVisible = true;
             IsoProgress.Value = 0;
         }
     }
@@ -291,6 +303,7 @@ public partial class MainWindow : Window {
             DisableButtons();
             ExtractProgress.IsVisible = true;
             buttonExportGame.IsVisible = false;
+            ExportGameHelpButton.IsVisible = false;
             ExtractProgress.Value = 0;
 
             string isoPath = Path.Combine(DataDir, "Iso");
@@ -312,6 +325,7 @@ public partial class MainWindow : Window {
             EnableButtons();
             ExtractProgress.IsVisible = false;
             buttonExportGame.IsVisible = true;
+            ExportGameHelpButton.IsVisible = true;
             ExtractProgress.Value = 0;
         }
     }

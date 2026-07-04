@@ -52,8 +52,11 @@
                             Classes="action"
                             Content="Extract ISO"
                             VerticalContentAlignment="Center"
+                            IsVisible="True"
                             Click="ButtonExtractIso_Click"/>
-                    <Button Grid.Column="1" Classes="help"
+                    <Button Grid.Column="1" 
+                            x:Name="ExtractIsoHelpButton"
+                            Classes="help"
                             Content="?" Margin="4,0,0,0"
                             Click="ButtonExtractIsoHelp_Click"/>
                 </Grid>
@@ -137,7 +140,9 @@
                             VerticalContentAlignment="Center"
                             IsEnabled="False"
                             Click="ButtonExportGame_Click"/>
-                    <Button Grid.Column="1" Classes="help"
+                    <Button Grid.Column="1" 
+                            x:Name="ExportGameHelpButton"
+                            Classes="help"
                             Content="?" Margin="4,0,0,0"
                             Click="ButtonRepackIsoHelp_Click"/>
                 </Grid>
