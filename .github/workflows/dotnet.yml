@@ -58,13 +58,15 @@ jobs:
       - name: Copy assets to macOS x64 build
         run: |
           mkdir -p ./build/OreimoTranslateTool-macOS-x64/Resources
+          mkdir -p ./build/OreimoTranslateTool-macOS-x64/Data
           cp -r OreimoTranslateToolAvalonia/Assets ./build/OreimoTranslateTool-macOS-x64/
-          cp Data/Translation.json ./build/OreimoTranslateTool-macOS-x64/
+          cp Data/Translation.json ./build/OreimoTranslateTool-macOS-x64/Data/
       - name: Copy assets to macOS ARM64 build
         run: |
           mkdir -p ./build/OreimoTranslateTool-macOS-ARM64/Resources
+          mkdir -p ./build/OreimoTranslateTool-macOS-ARM64/Data
           cp -r OreimoTranslateToolAvalonia/Assets ./build/OreimoTranslateTool-macOS-ARM64/
-          cp Data/Translation.json ./build/OreimoTranslateTool-macOS-ARM64/
+          cp Data/Translation.json ./build/OreimoTranslateTool-macOS-ARM64/Data/
       - name: Create macOS bundles
         run: |
           mkdir -p ./releases
@@ -100,13 +102,15 @@ jobs:
       - name: Copy assets to Windows x64 build
         run: |
           New-Item -ItemType Directory -Force -Path ./build/OreimoTranslateTool-Windows-x64/Resources
+          New-Item -ItemType Directory -Force -Path ./build/OreimoTranslateTool-Windows-x64/Data
           Copy-Item -Recurse OreimoTranslateToolAvalonia/Assets ./build/OreimoTranslateTool-Windows-x64/
-          Copy-Item Data/Translation.json ./build/OreimoTranslateTool-Windows-x64/
+          Copy-Item Data/Translation.json ./build/OreimoTranslateTool-Windows-x64/Data/
       - name: Copy assets to Windows ARM64 build
         run: |
           New-Item -ItemType Directory -Force -Path ./build/OreimoTranslateTool-Windows-ARM64/Resources
+          New-Item -ItemType Directory -Force -Path ./build/OreimoTranslateTool-Windows-ARM64/Data
           Copy-Item -Recurse OreimoTranslateToolAvalonia/Assets ./build/OreimoTranslateTool-Windows-ARM64/
-          Copy-Item Data/Translation.json ./build/OreimoTranslateTool-Windows-ARM64/
+          Copy-Item Data/Translation.json ./build/OreimoTranslateTool-Windows-ARM64/Data/
       - name: Create Windows packages
         run: |
           New-Item -ItemType Directory -Force -Path releases
