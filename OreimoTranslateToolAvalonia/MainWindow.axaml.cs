@@ -8,7 +8,7 @@ using Avalonia.Platform.Storage;
 namespace OreimoTranslateToolAvalonia;
 
 public partial class MainWindow : Window {
-    public static string StartupPath { get; private set; } = Directory.GetCurrentDirectory();
+    public static string StartupPath { get; private set; } = AppContext.BaseDirectory;
     public static string DataDir = Path.Combine(StartupPath, "Data");
 
     private readonly RyuujiApi.RyuujiApi api;

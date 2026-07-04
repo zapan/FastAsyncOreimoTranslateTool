@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 namespace OreimoTranslateToolCLI;
 
 public static class Cli {
-    public static string StartupPath { get; private set; } = Directory.GetCurrentDirectory();
+    public static string StartupPath { get; private set; } = AppContext.BaseDirectory;
     public static string DataDir = Path.Combine(StartupPath, "Data");
     public static string mainFilePath = Path.Combine(StartupPath, "Data", "Translation.json");
     public static RyuujiApi.RyuujiApi Api = new(StartupPath);
