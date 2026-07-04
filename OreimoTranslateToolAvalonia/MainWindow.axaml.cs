@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Security.Cryptography;
 using Avalonia.Platform.Storage;
 
-namespace ToradoraTranslateToolAvalonia;
+namespace OreimoTranslateToolAvalonia;
 
 public partial class MainWindow : Window {
     public static string StartupPath { get; private set; } = Directory.GetCurrentDirectory();
@@ -23,8 +23,8 @@ public partial class MainWindow : Window {
         string gameName = api.DetectGameFromIso(Path.Combine(DataDir, "Iso"));
         string randomNumber = RandomNumberGenerator.GetInt32(1,3).ToString();
         catImage.Source = gameName switch {
-            "Oreimo" => new Avalonia.Media.Imaging.Bitmap(Path.Combine("ToradoraTranslateToolAvalonia", "Assets", "kuroneko" + randomNumber + ".jpg")),
-            "Toradora" => new Avalonia.Media.Imaging.Bitmap(Path.Combine("ToradoraTranslateToolAvalonia", "Assets", "Taiga.png")),
+            "Oreimo" => new Avalonia.Media.Imaging.Bitmap(Path.Combine(StartupPath, "OreimoTranslateToolAvalonia", "Assets", "kuroneko" + randomNumber + ".jpg")),
+            "Toradora" => new Avalonia.Media.Imaging.Bitmap(Path.Combine(StartupPath, "OreimoTranslateToolAvalonia", "Assets", "Taiga.png")),
         };
         
         // Version label

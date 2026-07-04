@@ -2,7 +2,7 @@ using Avalonia;
 using System;
 using System.Text;
 
-namespace ToradoraTranslateToolAvalonia;
+namespace OreimoTranslateToolAvalonia;
 
 class Program
 {

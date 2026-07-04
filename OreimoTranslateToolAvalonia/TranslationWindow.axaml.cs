@@ -12,7 +12,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using TranslateCLI;
 
-namespace ToradoraTranslateToolAvalonia;
+namespace OreimoTranslateToolAvalonia;
 
 public partial class TranslationWindow : Window
 {
