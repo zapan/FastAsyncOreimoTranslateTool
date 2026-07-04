@@ -148,24 +148,6 @@ dotnet run --project OreimoTranslateToolAvalonia
 dotnet run --project OreimoTranslateToolCLI
 ```
 
-### ⚙️ Configuration
-
-**mkisofs Path Configuration**
-If `mkisofs` is not in your PATH, create `mkisofs.conf`:
-```bash
-echo '/opt/homebrew/bin/mkisofs' > mkisofs.conf
-```
-
-### 🐛 Known Limitations
-
-1. **CppPorts (MakeGpda, ModSeekMap)**: Full macOS implementation pending
-   - Currently uses Windows versions or awaits native implementation
-   - `MakeGpda.macOS.cs` ready for development
-
-2. **External Tools**: Some Windows executables need macOS replacements
-   - `makeGDP.exe` → Implementation pending
-   - `modseekmap.exe` → Implementation pending
-
 ### 📊 Performance (Inherited from FastAsyncToradoraTranslateTool)
 - Game file extraction: **1,848.80%** faster than original
 - Game file repacking: **2,037.40%** faster than original
@@ -176,7 +158,5 @@ Based on [FastAsyncToradoraTranslateTool](https://github.com/computer-catt/FastA
 
 ### 🔮 Future Plans
 
-1. Complete macOS implementations for MakeGpda and ModSeekMap
-2. Extensive testing of all functionality
-3. Consider pure C# implementations of native tools
-4. Additional platform optimizations
+1. Extensive testing of all functionality
+2. Additional platform optimizations
