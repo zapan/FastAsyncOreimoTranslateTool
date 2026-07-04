@@ -19,7 +19,7 @@ public class DatWorker(string workingDir) {
     public async Task Process(string[] args) {
         if (args.Length == 0) {
             Console.WriteLine("### Fast Async Dat Worker ####");
-            Console.WriteLine("Toradora DAT Automation Tool");
+            Console.WriteLine("Toradora & Oreimo DAT Automation Tool");
             Console.WriteLine("Drop Dat files");
             return;
         }

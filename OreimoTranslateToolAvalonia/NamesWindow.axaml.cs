@@ -83,7 +83,7 @@ public partial class NamesWindow : Window
     {
         var dlg = new Window
         {
-            Title = "ToradoraTranslateTool",
+            Title = "Toradora & Oreimo Translate Tool",
             Width = 460, Height = 160,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
             CanResize = false

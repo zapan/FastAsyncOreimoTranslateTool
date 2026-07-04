@@ -130,7 +130,7 @@ public partial class MainWindow : Window {
         await ShowDialogAsync("Error" + (ms > 0 ? $" in {ms} ms!" : ""), message, 400);
 
     private async Task ShowInfoAsync(string message, int height = 100) =>
-        await ShowDialogAsync("ToradoraTranslateTool", message, height);
+        await ShowDialogAsync("Toradora & Oreimo Translate Tool", message, height);
 
     private async Task ShowDialogAsync(string title, string message, int height) {
         var dialog = new Window {
@@ -368,7 +368,7 @@ public partial class MainWindow : Window {
     private async Task<bool> ShowConfirmAsync(string message) {
         bool result = false;
         var dialog = new Window {
-            Title = "ToradoraTranslateTool",
+            Title = "Toradora & Oreimo Translate Tool",
             Width = 420,
             Height = 160,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,

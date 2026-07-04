@@ -21,7 +21,7 @@ public static class Program {
 
     static void ShowUsage()
     {
-        Console.WriteLine("ToradoraTranslateTool CLI");
+        Console.WriteLine("Toradora & Oreimo Translate Tool CLI");
         Console.WriteLine("Commands:");
         Console.WriteLine("  list-files [basePath]");
         Console.WriteLine("  load <fileName> [basePath]");
