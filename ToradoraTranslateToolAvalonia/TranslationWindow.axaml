@@ -3,12 +3,12 @@
         xmlns:c="using:ToradoraTranslateToolAvalonia"
         x:Class="ToradoraTranslateToolAvalonia.TranslationWindow"
         Title="Translation"
-        Width="950" Height="570"
+        Width="1800" Height="1000"
         MinWidth="600" MinHeight="300"
         WindowStartupLocation="CenterScreen">
 
-    <Grid ColumnDefinitions="310,*" RowDefinitions="*">
-
+    <Grid ColumnDefinitions="260,*" RowDefinitions="*">
+        
         <!-- Left: file list -->
         <Grid Grid.Column="0" RowDefinitions="*,Auto">
 
@@ -30,8 +30,8 @@
                     </ContextMenu>
                 </DataGrid.ContextMenu>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name"     Binding="{Binding FileName}" Width="240"/>
-                    <DataGridTextColumn Header="Progress" Binding="{Binding ProgressText}" Width="100"/>
+                    <DataGridTextColumn Header="Name"     Binding="{Binding FileName}" Width="190" FontSize="12"/>
+                    <DataGridTextColumn Header="Progress" Binding="{Binding ProgressText}" Width="100" FontSize="12"/>
                 </DataGrid.Columns>
             </DataGrid>
 
@@ -64,9 +64,9 @@
                     </ContextMenu>
                 </DataGrid.ContextMenu>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name"       Binding="{Binding Name}"       IsReadOnly="True"  Width="140"/>
-                    <DataGridTextColumn Header="Original"   Binding="{Binding Sentence}"   IsReadOnly="True"  Width="*"/>
-                    <DataGridTextColumn Header="Translated" Binding="{Binding Translated}"  IsReadOnly="False" Width="*"/>
+                    <DataGridTextColumn Header="Name"       Binding="{Binding Name}"       IsReadOnly="True"  Width="100" FontSize="12"/>
+                    <DataGridTextColumn Header="Original"   Binding="{Binding Sentence}"   IsReadOnly="True"  Width="*" FontSize="12"/>
+                    <DataGridTextColumn Header="Translated" Binding="{Binding Translated}"  IsReadOnly="False" Width="*" FontSize="12"/>
                 </DataGrid.Columns>
             </DataGrid>
 
