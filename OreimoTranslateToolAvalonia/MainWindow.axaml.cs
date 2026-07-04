@@ -16,6 +16,9 @@ public partial class MainWindow : Window {
     private bool _isWorking;
 
     public MainWindow() {
+        Console.WriteLine($"StartupPath is: {StartupPath}");
+        Console.WriteLine();
+
         InitializeComponent();
         DataDir = Path.Combine(StartupPath, "Data");
         api = new RyuujiApi.RyuujiApi(StartupPath);

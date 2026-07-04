@@ -15,6 +15,8 @@ public static class Cli {
     public static TranslateCLI.TranslationProjectCli TranslationApp = new(StartupPath);
 
     static void Main(string[] args) {
+        Console.WriteLine($"StartupPath is: {StartupPath}");
+        Console.WriteLine();
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
         
         // Check platform and warn if not supported
