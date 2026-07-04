@@ -41,7 +41,10 @@ jobs:
         run: |
           brew install cdrtools
       - name: Make scripts executable
-        run: chmod +x Resources/!!Tools/DatWorker/gzip
+        run: |
+          if [ -f Resources/!!Tools/DatWorker/gzip ]; then
+            chmod +x Resources/!!Tools/DatWorker/gzip
+          fi
       - name: Restore dependencies
         run: dotnet restore
       - name: Publish CLI for macOS (x64)
