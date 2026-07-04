@@ -1,6 +1,6 @@
 # Cambios para Soporte macOS
 
-Este documento detalla los cambios realizados para hacer que FastAsyncToradoraTranslateTool funcione nativamente en macOS.
+Este documento detalla los cambios realizados para hacer que FastAsyncOreimoTranslateTool funcione nativamente en macOS.
 
 ## Archivos Modificados
 

@@ -2,7 +2,7 @@
 # Build script for macOS
 set -e
 
-echo "=== FastAsyncToradoraTranslateTool - macOS Build Script ==="
+echo "=== FastAsyncOreimoTranslateTool - macOS Build Script ==="
 
 # Check if running on macOS
 if [[ "$OSTYPE" != "darwin"* ]]; then

@@ -1,4 +1,4 @@
-# FastAsyncToradoraTranslateTool
+# FastAsyncOreimoTranslateTool
 
 Name inspired by the [FastAsyncWorldEdit](https://www.spigotmc.org/resources/fastasyncworldedit.13932/) Minecraft mod, This fork improves the original project by increasing performance of the application.
 
