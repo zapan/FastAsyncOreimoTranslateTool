@@ -10,7 +10,6 @@ namespace OreimoTranslateToolCLI;
 public static class Cli {
     public static string StartupPath { get; private set; } = AppContext.BaseDirectory;
     public static string DataDir = Path.Combine(StartupPath, "Data");
-    public static string mainFilePath = Path.Combine(StartupPath, "Data", "Translation.json");
     public static RyuujiApi.RyuujiApi Api = new(StartupPath);
     public static TranslateCLI.TranslationProjectCli TranslationApp = new(StartupPath);
 
@@ -72,6 +71,13 @@ public static class Cli {
                 break;
             
             case '2': // Extract dat
+                var tasks = new Task[] {
+                    Task.Run(() => { if (Directory.Exists(Path.Combine(DataDir, "Extracted"))) Directory.Delete(Path.Combine(DataDir, "Extracted"), true); }),
+                    Task.Run(() => { if (Directory.Exists(Path.Combine(DataDir, "Obj"))) Directory.Delete(Path.Combine(DataDir, "Obj"), true); }),
+                    Task.Run(() => { if (Directory.Exists(Path.Combine(DataDir, "Txt"))) Directory.Delete(Path.Combine(DataDir, "Txt"), true); }),
+                    Task.CompletedTask
+                };
+                Task.WhenAll(tasks).Wait();
                 meow.Start();
                 Api.ExtractGame(DataDir).Wait();
                 break;
@@ -124,7 +130,7 @@ public static class Cli {
 
             case '0':
                 TranslationApp.RemoveLineBreaksAll();
-                TranslationApp.InsertLineBreaksAll(Path.Combine(StartupPath, "fontmap.txt"), 500);
+                TranslationApp.InsertLineBreaksAll(Path.Combine(StartupPath, "Resources", "fontmap.txt"), 500);
                 break;
 
             case 'x': // Exit app

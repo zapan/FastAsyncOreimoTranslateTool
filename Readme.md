@@ -100,8 +100,8 @@ for arch you have to run `pacman -S cdrtools` to install because its cool.
 - You! Thanks for reading even if you don't plan on using the software. :3
 
 ## Screenshots
-![Main window](Assets/mainWindow.png)
-![Translation window](Assets/translateWindow.png)
+![Main window](OreimoTranslateToolAvalonia/Assets/mainWindow.png)
+![Translation window](OreimoTranslateToolAvalonia/Assets/translateWindow.png)
 
 ## macOS Support
 

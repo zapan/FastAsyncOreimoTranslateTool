@@ -16,16 +16,18 @@ public partial class NamesWindow : Window
         public string Translated { get; set; } = "";
     }
 
-    private readonly string _mainFilePath;
+    private readonly string MainFilePath;
     private readonly ObservableCollection<NameRow> _rows = [];
 
     public NamesWindow(string basePath, List<string> originalNames)
     {
         InitializeComponent();
 
-        _mainFilePath = Path.Combine(basePath, "Data", "Translation.json");
-
-        JObject mainFile = JObject.Parse(File.ReadAllText(_mainFilePath));
+        MainFilePath = Path.Combine(basePath, "Data", "Translation.json");
+        if (!File.Exists(MainFilePath))
+            File.WriteAllText(MainFilePath, "{ }");
+        
+        JObject mainFile = JObject.Parse(File.ReadAllText(MainFilePath));
 
         foreach (string name in originalNames)
         {
@@ -55,7 +57,7 @@ public partial class NamesWindow : Window
 
     private void SaveProgress()
     {
-        JObject mainFile = JObject.Parse(File.ReadAllText(_mainFilePath));
+        JObject mainFile = JObject.Parse(File.ReadAllText(MainFilePath));
 
         if (mainFile["names"] != null)
         {
@@ -70,7 +72,7 @@ public partial class NamesWindow : Window
             mainFile.Add(new JProperty("names", translatedNames));
         }
 
-        File.WriteAllText(_mainFilePath, mainFile.ToString());
+        File.WriteAllText(MainFilePath, mainFile.ToString());
     }
 
     private async void ButtonHelp_Click(object? sender, RoutedEventArgs e) =>

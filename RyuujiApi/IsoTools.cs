@@ -254,7 +254,7 @@ public static class IsoTools {
 
     public static string DetectGameFromIso(string isoDirectory)
     {
-        string game = "Toradora";
+        string game = "";
         try {
             FileStream inputResStream = File.OpenRead(Path.Combine(isoDirectory, "UMD_DATA.BIN"));
             StreamReader inputResReader = new StreamReader(inputResStream);
@@ -274,6 +274,9 @@ public static class IsoTools {
                 case "ULJS-19086":
                 case "ULJS-00358":
                     game = "Oreimo";
+                    break;
+                default:
+                    game = "Toradora";
                     break;
             }
             Console.WriteLine($"Detected {game} Iso.");

@@ -3,6 +3,7 @@ using Avalonia.Interactivity;
 using Avalonia.Threading;
 using System.Diagnostics;
 using System.Security.Cryptography;
+using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 
 namespace OreimoTranslateToolAvalonia;
@@ -22,14 +23,8 @@ public partial class MainWindow : Window {
         InitializeComponent();
         DataDir = Path.Combine(StartupPath, "Data");
         api = new RyuujiApi.RyuujiApi(StartupPath);
-        
-        string gameName = api.DetectGameFromIso(Path.Combine(DataDir, "Iso"));
-        string randomNumber = RandomNumberGenerator.GetInt32(1,3).ToString();
-        catImage.Source = gameName switch {
-            "Oreimo" => new Avalonia.Media.Imaging.Bitmap(Path.Combine(StartupPath, "Assets", "kuroneko" + randomNumber + ".jpg")),
-            "Toradora" => new Avalonia.Media.Imaging.Bitmap(Path.Combine(StartupPath, "Assets", "Taiga.png")),
-        };
-        
+        UpdateImage();
+
         // Version label
         labelVersion.Text = System.Reflection.Assembly
             .GetExecutingAssembly()
@@ -43,6 +38,17 @@ public partial class MainWindow : Window {
 
         EnableButtons();
         Closing += MainWindow_Closing;
+    }
+
+    private void UpdateImage()
+    {
+        string gameName = api.DetectGameFromIso(Path.Combine(DataDir, "Iso"));
+        string randomNumber = RandomNumberGenerator.GetInt32(1,3).ToString();
+        catImage.Source = gameName switch {
+            "Oreimo" => new Avalonia.Media.Imaging.Bitmap(AssetLoader.Open(new Uri("avares://OreimoTranslateToolAvalonia/Assets/kuroneko" + randomNumber + ".png"))),
+            "Toradora" => new Avalonia.Media.Imaging.Bitmap(AssetLoader.Open(new Uri("avares://OreimoTranslateToolAvalonia/Assets/Taiga.png"))),
+            "" => new Avalonia.Media.Imaging.Bitmap(AssetLoader.Open(new Uri("avares://OreimoTranslateToolAvalonia/Assets/kuroneko1.png"))),
+        };
     }
 
     // ── Button state management ──────────────────────────────────────────────
@@ -194,6 +200,7 @@ public partial class MainWindow : Window {
             await ShowErrorAsync(ex.ToString(), sw.ElapsedMilliseconds);
         } finally {
             sw.Stop();
+            UpdateImage();
             SetWorking(false);
             EnableButtons();
             IsoProgress.IsVisible = false;
@@ -235,17 +242,16 @@ public partial class MainWindow : Window {
 
             bool repacked = File.Exists(Path.Combine(DataDir, "Extracted", "-"));
             var tasks = new Task[] {
-                Task.Run(() => Directory.Delete(Path.Combine(DataDir, "Extracted"), true)),
-                Task.Run(() => Directory.Delete(Path.Combine(DataDir, "Obj"), true)),
-                Task.Run(() => {
-                    if (Directory.Exists(Path.Combine(DataDir, "Txt"))) {
-                        Directory.Delete(Path.Combine(DataDir, "Txt"), true);
-                    }
-                }),
+                Task.Run(() => { if (Directory.Exists(Path.Combine(DataDir, "Extracted"))) Directory.Delete(Path.Combine(DataDir, "Extracted"), true); }),
+                Task.Run(() => { if (Directory.Exists(Path.Combine(DataDir, "Obj"))) Directory.Delete(Path.Combine(DataDir, "Obj"), true); }),
+                Task.Run(() => { if (Directory.Exists(Path.Combine(DataDir, "Txt"))) Directory.Delete(Path.Combine(DataDir, "Txt"), true); }),
                 Task.CompletedTask
             };
+
             if (repacked)
-                tasks[3] = Task.Run(() => Directory.Delete(Path.Combine(DataDir, "Iso"), true));
+                tasks[3] = Task.Run(() => {
+                    if (Directory.Exists(Path.Combine(DataDir, "Iso"))) Directory.Delete(Path.Combine(DataDir, "Iso"), true);
+                });
 
             await Task.WhenAll(tasks);
             await ShowInfoAsync($"Resource deletion completed in {sw.ElapsedMilliseconds} ms.");

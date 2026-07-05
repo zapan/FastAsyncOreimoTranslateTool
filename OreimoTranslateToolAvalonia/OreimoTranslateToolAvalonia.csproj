@@ -9,7 +9,7 @@
         <ProductVersion>1.6.0</ProductVersion>
         <Version>1.6.0</Version>
         <FileVersion>1.6.0</FileVersion>
-        <ApplicationIcon>..\Assets\white.ico</ApplicationIcon>
+        <ApplicationIcon>Assets\white.ico</ApplicationIcon>
         <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
     </PropertyGroup>
 
@@ -29,10 +29,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <AvaloniaResource Include="..\Assets\Taiga.png"/>
-        <AvaloniaResource Include="..\Assets\kuroneko1.jpg"/>
-        <AvaloniaResource Include="..\Assets\kuroneko2.jpg"/>
-        <AvaloniaResource Include="..\Assets\white.ico"/>
+        <AvaloniaResource Include="Assets\Taiga.png"/>
+        <AvaloniaResource Include="Assets\kuroneko1.png"/>
+        <AvaloniaResource Include="Assets\kuroneko2.png"/>
+        <AvaloniaResource Include="Assets\white.ico"/>
     </ItemGroup>
-
+    
 </Project>

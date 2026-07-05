@@ -49,29 +49,18 @@ jobs:
           if [ -f Resources/!!Tools/DatWorker/gzip ]; then
             chmod +x Resources/!!Tools/DatWorker/gzip
           fi
+          chmod +x create-macos-app-bundle.sh
       - name: Restore dependencies
         run: dotnet restore
-      - name: Publish CLI for macOS (x64)
-        run: dotnet publish OreimoTranslateToolCLI -c Release -r osx-x64 -o ./build/OreimoTranslateTool-macOS-x64 --self-contained
-      - name: Publish CLI for macOS (ARM64)
-        run: dotnet publish OreimoTranslateToolCLI -c Release -r osx-arm64 -o ./build/OreimoTranslateTool-macOS-ARM64 --self-contained
-      - name: Publish GUI for macOS (x64)
-        run: dotnet publish OreimoTranslateToolAvalonia -c Release -r osx-x64 -o ./build/OreimoTranslateTool-macOS-x64/GUI --self-contained
-      - name: Publish GUI for macOS (ARM64)
-        run: dotnet publish OreimoTranslateToolAvalonia -c Release -r osx-arm64 -o ./build/OreimoTranslateTool-macOS-ARM64/GUI --self-contained
-      - name: Copy assets to macOS x64 build
-        run: |
-          mkdir -p ./build/OreimoTranslateTool-macOS-x64/Assets
-          mkdir -p ./build/OreimoTranslateTool-macOS-x64/Data
-          cp -r Assets/* ./build/OreimoTranslateTool-macOS-x64/Assets/
-          cp Data/Translation.json ./build/OreimoTranslateTool-macOS-x64/Data/
-      - name: Copy assets to macOS ARM64 build
-        run: |
-          mkdir -p ./build/OreimoTranslateTool-macOS-ARM64/Assets
-          mkdir -p ./build/OreimoTranslateTool-macOS-ARM64/Data
-          cp -r Assets/* ./build/OreimoTranslateTool-macOS-ARM64/Assets/
-          cp Data/Translation.json ./build/OreimoTranslateTool-macOS-ARM64/Data/
-      - name: Create macOS bundles
+      - name: Publish solution for macOS (x64)
+        run: dotnet publish -c Release -r osx-x64 -o ./build/OreimoTranslateTool-macOS-x64 --self-contained 2>&1 | grep "OreimoTranslateToolAvalonia ->\|OreimoTranslateToolCLI ->"
+      - name: Publish solution for macOS (ARM64)
+        run: dotnet publish -c Release -r osx-arm64 -o ./build/OreimoTranslateTool-macOS-ARM64 --self-contained 2>&1 | grep "OreimoTranslateToolAvalonia ->\|OreimoTranslateToolCLI ->"
+      - name: Create .app bundles for macOS x64
+        run: bash ./create-macos-app-bundle.sh ./build/OreimoTranslateTool-macOS-x64 x64
+      - name: Create .app bundles for macOS ARM64
+        run: bash ./create-macos-app-bundle.sh ./build/OreimoTranslateTool-macOS-ARM64 ARM64
+      - name: Create macOS packages
         run: |
           mkdir -p ./releases
           cd ./build
@@ -97,26 +86,19 @@ jobs:
             10.0.x
       - name: Restore dependencies
         run: dotnet restore
+        
       - name: Publish CLI for Windows (x64)
-        run: dotnet publish OreimoTranslateToolCLI -c Release -r win-x64 -o ./build/OreimoTranslateTool-Windows-x64 --self-contained
-      - name: Publish CLI for Windows (ARM64)
-        run: dotnet publish OreimoTranslateToolCLI -c Release -r win-arm64 -o ./build/OreimoTranslateTool-Windows-ARM64 --self-contained
+        run: dotnet publish OreimoTranslateToolCLI -c Release -r win-x64 -o ./build/OreimoTranslateTool-Windows-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+
       - name: Publish GUI for Windows (x64)
-        run: dotnet publish OreimoTranslateToolAvalonia -c Release -r win-x64 -o ./build/OreimoTranslateTool-Windows-x64/GUI --self-contained
+        run: dotnet publish OreimoTranslateToolAvalonia -c Release -r win-x64 -o ./build/OreimoTranslateTool-Windows-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+      
+      - name: Publish CLI for Windows (ARM64)
+        run: dotnet publish OreimoTranslateToolCLI -c Release -r win-arm64 -o ./build/OreimoTranslateTool-Windows-ARM64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+        
       - name: Publish GUI for Windows (ARM64)
-        run: dotnet publish OreimoTranslateToolAvalonia -c Release -r win-arm64 -o ./build/OreimoTranslateTool-Windows-ARM64/GUI --self-contained
-      - name: Copy assets to Windows x64 build
-        run: |
-          New-Item -ItemType Directory -Force -Path ./build/OreimoTranslateTool-Windows-x64/Assets
-          New-Item -ItemType Directory -Force -Path ./build/OreimoTranslateTool-Windows-x64/Data
-          Copy-Item -Recurse Assets/* ./build/OreimoTranslateTool-Windows-x64/Assets/
-          Copy-Item Data/Translation.json ./build/OreimoTranslateTool-Windows-x64/Data/
-      - name: Copy assets to Windows ARM64 build
-        run: |
-          New-Item -ItemType Directory -Force -Path ./build/OreimoTranslateTool-Windows-ARM64/Assets
-          New-Item -ItemType Directory -Force -Path ./build/OreimoTranslateTool-Windows-ARM64/Data
-          Copy-Item -Recurse Assets/* ./build/OreimoTranslateTool-Windows-ARM64/Assets/
-          Copy-Item Data/Translation.json ./build/OreimoTranslateTool-Windows-ARM64/Data/
+        run: dotnet publish OreimoTranslateToolAvalonia -c Release -r win-arm64 -o ./build/OreimoTranslateTool-Windows-ARM64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+      
       - name: Create Windows packages
         run: |
           New-Item -ItemType Directory -Force -Path releases

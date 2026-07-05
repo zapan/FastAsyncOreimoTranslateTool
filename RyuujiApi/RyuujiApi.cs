@@ -66,7 +66,7 @@ public class RyuujiApi(string startUpPath) {
     }
 
     public async Task StartGame() {
-        string filename = Path.Join(startUpPath, "StartGame.conf");
+        string filename = Path.Join(startUpPath, "Resources", "StartGame.conf");
         
         if (!File.Exists(filename) || new FileInfo(filename).Length == 0) {
             File.Create(filename);

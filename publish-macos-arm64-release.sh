@@ -1,5 +1,5 @@
 #!/bin/bash
-# Build script for macOS ARM64 release
+# Build script for macOS ARM64 release with .app bundles
 set -e
 
 echo "=== FastAsyncOreimoTranslateTool - macOS ARM64 Release Build ==="
@@ -19,15 +19,10 @@ rm -rf ./build/OreimoTranslateTool-macOS-ARM64
 echo "Publishing for macOS ARM64..."
 dotnet publish -c Release -r osx-arm64 -o ./build/OreimoTranslateTool-macOS-ARM64 --self-contained 2>&1 | grep "OreimoTranslateToolAvalonia ->\|OreimoTranslateToolCLI ->"
 
-# Create Assets and Data directories
-echo "Creating Assets and Data directories..."
-mkdir -p ./build/OreimoTranslateTool-macOS-ARM64/Assets
-mkdir -p ./build/OreimoTranslateTool-macOS-ARM64/Data
-
-# Copy assets
-echo "Copying assets..."
-cp Assets/* ./build/OreimoTranslateTool-macOS-ARM64/Assets/
-cp Data/Translation.json ./build/OreimoTranslateTool-macOS-ARM64/Data/
+# Create app bundles
+echo ""
+echo "Creating .app bundles..."
+./create-macos-app-bundle.sh ./build/OreimoTranslateTool-macOS-ARM64 ARM64
 
 # Create releases directory if it doesn't exist
 mkdir -p ./releases
@@ -38,6 +33,7 @@ if [ -f "releases/OreimoTranslateTool-macOS-ARM64.tar.gz" ]; then
 fi
 
 # Package everything
+echo ""
 echo "Packaging release..."
 cd ./build
 tar -czf ../releases/OreimoTranslateTool-macOS-ARM64.tar.gz OreimoTranslateTool-macOS-ARM64/
@@ -50,3 +46,8 @@ echo ""
 ls -lh releases/OreimoTranslateTool-macOS-ARM64.tar.gz
 echo ""
 echo "✅ macOS ARM64 release ready: releases/OreimoTranslateTool-macOS-ARM64.tar.gz"
+echo ""
+echo "Package contents:"
+tar -tzf releases/OreimoTranslateTool-macOS-ARM64.tar.gz | head -20
+echo "..."
+
