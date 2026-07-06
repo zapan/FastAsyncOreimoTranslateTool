@@ -2,6 +2,14 @@
 
 All notable changes to FastAsyncOreimoTranslateTool are documented in this file.
 
+## [v1.6.1] - 2026-07-06
+
+### 🔧 Maintenance
+- Cleaned up build warnings across the solution
+- Reduced nullability noise in `TenoriTool`, `TranslateCLI`, `RyuujiApi`, and the Avalonia GUI
+- Fixed duplicated `using` directives and a few unused locals
+- Added public parameterless constructors for Avalonia windows so the XAML loader can resolve them cleanly
+
 ## [v1.6.0] - 2026-07-04
 
 ### 🎉 Major Features
