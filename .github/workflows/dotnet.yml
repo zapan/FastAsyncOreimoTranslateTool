@@ -60,12 +60,41 @@ jobs:
         run: bash ./create-macos-app-bundle.sh ./build/OreimoTranslateTool-macOS-x64 x64
       - name: Create .app bundles for macOS ARM64
         run: bash ./create-macos-app-bundle.sh ./build/OreimoTranslateTool-macOS-ARM64 ARM64
-      - name: Create macOS packages
+
+      - name: Instalar create-dmg
+        run: brew install create-dmg
+
+      - name: Crear archivos DMG
         run: |
           mkdir -p ./releases
-          cd ./build
-          tar -czf ../releases/OreimoTranslateTool-macOS-x64.tar.gz OreimoTranslateTool-macOS-x64/
-          tar -czf ../releases/OreimoTranslateTool-macOS-ARM64.tar.gz OreimoTranslateTool-macOS-ARM64/
+          rm -f "./releases/*.dmg"  
+
+      - name: Crear archivo DMG ARM64
+        run: |
+          create-dmg \
+            --volname "Oreimo Translate Tool" \
+            --window-pos 200 120 \
+            --window-size 600 400 \
+            --icon-size 100 \
+            --icon "OreimoTranslateTool.app" 175 120 \
+            --hide-extension "OreimoTranslateTool.app" \
+            --app-drop-link 425 120 \
+            "./releases/OreimoTranslateTool-macOS-ARM64.dmg" \
+            "./build/OreimoTranslateTool-macOS-ARM64/OreimoTranslateTool.app"
+
+      - name: Crear archivo DMG x64
+        run: |
+          create-dmg \
+            --volname "Oreimo Translate Tool" \
+            --window-pos 200 120 \
+            --window-size 600 400 \
+            --icon-size 100 \
+            --icon "OreimoTranslateTool.app" 175 120 \
+            --hide-extension "OreimoTranslateTool.app" \
+            --app-drop-link 425 120 \
+            "./releases/OreimoTranslateTool-macOS-x64.dmg" \
+            "./build/OreimoTranslateTool-macOS-x64/OreimoTranslateTool.app"
+
       - name: Upload macOS artifacts
         uses: actions/upload-artifact@v4
         with:

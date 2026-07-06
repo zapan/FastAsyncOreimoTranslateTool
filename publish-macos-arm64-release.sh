@@ -27,27 +27,26 @@ echo "Creating .app bundles..."
 # Create releases directory if it doesn't exist
 mkdir -p ./releases
 
-# Remove old release file if exists
-if [ -f "releases/OreimoTranslateTool-macOS-ARM64.tar.gz" ]; then
-    rm releases/OreimoTranslateTool-macOS-ARM64.tar.gz
-fi
-
 # Package everything
 echo ""
 echo "Packaging release..."
-cd ./build
-tar -czf ../releases/OreimoTranslateTool-macOS-ARM64.tar.gz OreimoTranslateTool-macOS-ARM64/
-cd ..
+create-dmg \
+  --overwrite \
+  --volname "Oreimo Translate Tool" \
+  --window-pos 200 120 \
+  --window-size 600 400 \
+  --icon-size 100 \
+  --icon "OreimoTranslateTool.app" 175 120 \
+  --hide-extension "OreimoTranslateTool.app" \
+  --app-drop-link 425 120 \
+  "./releases/OreimoTranslateTool-macOS-ARM64.dmg" \
+  "./build/OreimoTranslateTool-macOS-ARM64/OreimoTranslateTool.app" 2>/dev/null
 
 # Display results
 echo ""
 echo "=== Build Complete ==="
 echo ""
-ls -lh releases/OreimoTranslateTool-macOS-ARM64.tar.gz
+ls -lh releases/OreimoTranslateTool-macOS-ARM64.dmg
 echo ""
-echo "✅ macOS ARM64 release ready: releases/OreimoTranslateTool-macOS-ARM64.tar.gz"
+echo "✅ macOS ARM64 release ready: releases/OreimoTranslateTool-macOS-ARM64.dmg"
 echo ""
-echo "Package contents:"
-tar -tzf releases/OreimoTranslateTool-macOS-ARM64.tar.gz | head -20
-echo "..."
-
