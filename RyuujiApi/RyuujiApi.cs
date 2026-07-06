@@ -84,7 +84,7 @@ public class RyuujiApi(string startUpPath) {
         process.StartInfo = new()
         {
             FileName = fileContents[0],
-            Arguments = args + " " + Path.Combine(startUpPath, "Data", "Iso")
+            Arguments = args + " \"" + Path.Combine(startUpPath, "Data", "Iso") + "\""
         };
         Console.WriteLine(process.StartInfo.FileName + " " + process.StartInfo.Arguments);
         process.Start();
