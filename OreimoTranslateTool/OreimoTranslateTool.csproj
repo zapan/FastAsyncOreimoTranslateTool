@@ -19,8 +19,7 @@
         <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.2"/>
         <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.2"/>
         <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.2"/>
-        <!-- Override transitive vulnerable version of Tmds.DBus.Protocol -->
-        <PackageReference Include="Tmds.DBus.Protocol" Version="0.22.0"/>
+        <PackageReference Include="Tmds.DBus.Protocol" Version="0.92.0" />
     </ItemGroup>
 
     <ItemGroup>
