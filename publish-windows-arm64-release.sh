@@ -20,6 +20,9 @@ echo "Publishing for Windows ARM64..."
 dotnet publish OreimoTranslateToolCLI -c Release -r win-arm64 -o ./build/OreimoTranslateTool-Windows-ARM64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
 dotnet publish OreimoTranslateTool -c Release -r win-arm64 -o ./build/OreimoTranslateTool-Windows-ARM64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
 
+#StartGame for windows
+cp ./RyuujiApi/Resources/StartGame.Windows.conf ./build/OreimoTranslateTool-Windows-ARM64/Resources/StartGame.conf
+
 # Create releases directory if it doesn't exist
 mkdir -p ./releases
 

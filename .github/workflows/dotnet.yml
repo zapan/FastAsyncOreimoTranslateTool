@@ -127,12 +127,20 @@ jobs:
         
       - name: Publish GUI for Windows (ARM64)
         run: dotnet publish OreimoTranslateTool -c Release -r win-arm64 -o ./build/OreimoTranslateTool-Windows-ARM64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+
+      - name: Copy assets to Windows x64 build
+        run: |
+          Copy-Item RyuujiApi/Resources/StartGame.Windows.conf ./build/OreimoTranslateTool-Windows-x64/Resources/StartGame.conf
+          
+      - name: Copy assets to Windows ARM64 build
+        run: |
+          Copy-Item RyuujiApi/Resources/StartGame.Windows.conf ./build/OreimoTranslateTool-Windows-ARM64/Resources/StartGame.conf
       
       - name: Create Windows packages
         run: |
           New-Item -ItemType Directory -Force -Path releases
           cd build
-          powershell -Command "Compress-Archive -Path OreimoTranslateTool-Windows-x64 -DestinationPath ../releases/OreimoTranslateTool-Windows-x64.zip"
+          powershell -Command "Compress-Archive -Path OreimoTranslateTool-Windows-x64   -DestinationPath ../releases/OreimoTranslateTool-Windows-x64.zip"
           powershell -Command "Compress-Archive -Path OreimoTranslateTool-Windows-ARM64 -DestinationPath ../releases/OreimoTranslateTool-Windows-ARM64.zip"
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
