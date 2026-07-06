@@ -92,8 +92,8 @@ class ObjTools {
         JObject mainFile = JObject.Parse(await File.ReadAllTextAsync(MainFilePath(startupPath)));
 
         Dictionary<string, string> translatedNames = new(); // Dictionary with pairs of original and translated names
-        if (mainFile["names"] != null)
-            foreach (JProperty name in mainFile["names"].Children())
+        if (mainFile["names"] is JContainer namesContainer)
+            foreach (JProperty name in namesContainer.Children())
                 if (name.Value.ToString() != "") // If a translation for that name exists
                     translatedNames.Add(name.Name, name.Value.ToString());
 
@@ -122,21 +122,21 @@ class ObjTools {
         }
     }
 
-    public static async Task RepackObj(string startupPath, string name, JToken translation, Dictionary<string, string> translatedNames) {
+    public static async Task RepackObj(string startupPath, string name, JToken? translation, Dictionary<string, string> translatedNames) {
         string filepath = Path.Combine(startupPath, "Data", "Obj", name, name);
         ObjHelper myHelper = new(await File.ReadAllBytesAsync(filepath));
         string[] scriptStrings = myHelper.Import();
-        Dictionary<int, string> scriptNames = myHelper.Actors;
+        Dictionary<int, string?> scriptNames = myHelper.Actors ?? new Dictionary<int, string?>();
 
         bool haveTranslation = translation != null;
         for (int i = 0; i < scriptStrings.Length; i++) {
-            if (haveTranslation && translation[i.ToString()] is { } words) {
-                string translatedString = words.ToString(); // not null bleeehhh
+            if (haveTranslation && translation?[i.ToString()] is { } words) {
+                string translatedString = words.ToString();
                 if (translatedString != "")
                     scriptStrings[i] = translatedString;
             }
 
-            if (scriptNames[i] != null && translatedNames.TryGetValue(scriptNames[i], out string value))
+            if (scriptNames[i] != null && translatedNames.TryGetValue(scriptNames[i]!, out string? value) && value != null)
                 scriptNames[i] = value;
         }
 
@@ -165,12 +165,12 @@ class ObjTools {
         await Task.WhenAll(tasklist);
     }
 
-    public static async Task RepackTxt(string startupPath, string name, JToken translation) {
+    public static async Task RepackTxt(string startupPath, string name, JToken? translation) {
         string filepath = Path.Combine(startupPath, "Data", "Txt", name, name);
         string[] fileLines = await File.ReadAllLinesAsync(filepath, new UnicodeEncoding(false, false));
 
         for (int i = 0; i < fileLines.Length; i++) {
-            string translatedString = translation[i.ToString()]!.ToString(); // not nullll blehhhh
+            string translatedString = translation?[i.ToString()]?.ToString() ?? "";
             if (!string.IsNullOrEmpty(translatedString))
                 fileLines[i] = translatedString;
         }

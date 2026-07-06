@@ -37,7 +37,7 @@ public class ArchiveInfo {
 }
 
 public class ArchiveEntryInfo {
-    public string EntryName { get; set; }
+    public string EntryName { get; set; } = string.Empty;
     public ulong EntryOffset { get; set; }
     public uint EntrySize { get; set; }
     public uint EntryNameOffset { get; set; }

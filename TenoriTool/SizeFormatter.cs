@@ -8,7 +8,7 @@ namespace tenoriTool;
 
 public class FileSizeFormatProvider : IFormatProvider, ICustomFormatter
 {
-    public object GetFormat(Type formatType)
+    public object? GetFormat(Type? formatType)
     {
         if ( formatType == typeof(ICustomFormatter) ) return this;
         return null;
@@ -21,7 +21,7 @@ public class FileSizeFormatProvider : IFormatProvider, ICustomFormatter
     private const decimal OneGigaByte = OneMegaByte * 1024M;
     private const decimal OneGigaByteThreshold = OneMegaByteThreshold * 1024M;
 
-    public string Format(string format, object arg, IFormatProvider formatProvider)
+    public string Format(string? format, object? arg, IFormatProvider? formatProvider)
     {
         if ( format == null || !format.StartsWith(fileSizeFormat) )
         {
@@ -36,7 +36,7 @@ public class FileSizeFormatProvider : IFormatProvider, ICustomFormatter
         {
             size = Convert.ToDecimal(arg);
         }
-        catch ( InvalidCastException )
+        catch ( Exception )
         {
             return defaultFormat(format, arg, formatProvider);
         }
@@ -68,13 +68,13 @@ public class FileSizeFormatProvider : IFormatProvider, ICustomFormatter
         return string.Format(CultureInfo.InvariantCulture, "{0:N" + precision + "}{1}", size, suffix);
     }
 
-    private static string defaultFormat(string format, object arg, IFormatProvider formatProvider)
+    private static string defaultFormat(string? format, object? arg, IFormatProvider? formatProvider)
     {
-        IFormattable formattableArg = arg as IFormattable;
+        IFormattable? formattableArg = arg as IFormattable;
         if ( formattableArg != null )
         {
             return formattableArg.ToString(format, formatProvider);
         }
-        return arg.ToString();
+        return arg?.ToString() ?? string.Empty;
     }
 }

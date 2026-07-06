@@ -30,7 +30,7 @@ public partial class MainWindow : Window {
             .GetExecutingAssembly()
             .GetName()
             .Version
-            .ToString(3);
+            ?.ToString(3) ?? "0.0.0";
 
         // Animated "Working..." timer
         _timerWork = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(500) };

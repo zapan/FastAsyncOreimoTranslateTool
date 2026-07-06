@@ -13,17 +13,17 @@ public static class TenoriToolApi {
         public bool Success = true;
         public readonly List<string> FileNames = [];
         public bool SpacePadded;
-        public string MakeGpdaFileContent;
+        public string MakeGpdaFileContent = string.Empty;
     }
     
     public class TenoriCallbacks {
-        public Action<ulong> ArchiveSize;
-        public Action<uint> Entries;
-        public Action<bool> PaddedWithSpace;
-        public Action<string> FormatMask;
-        public Action<(int index, ArchiveEntryInfo entry)> EntriesInfo;
-        public Action<string> ProcessingFilepathCallback;
-        public Action<string> ProcessedFilepathCallback;
+        public Action<ulong> ArchiveSize = _ => { };
+        public Action<uint> Entries = _ => { };
+        public Action<bool> PaddedWithSpace = _ => { };
+        public Action<string> FormatMask = _ => { };
+        public Action<(int index, ArchiveEntryInfo entry)> EntriesInfo = _ => { };
+        public Action<string> ProcessingFilepathCallback = _ => { };
+        public Action<string> ProcessedFilepathCallback = _ => { };
 
         public static TenoriCallbacks None() {
             return new TenoriCallbacks {
@@ -37,7 +37,7 @@ public static class TenoriToolApi {
             };
         }
 
-        public static TenoriCallbacks Default(TextWriter output = null, ConsoleColor highlightColor = ConsoleColor.Yellow) {
+        public static TenoriCallbacks Default(TextWriter? output = null, ConsoleColor highlightColor = ConsoleColor.Yellow) {
             output ??= Console.Error;
             return new TenoriCallbacks{
                 ArchiveSize = size => _ = output.WriteLineAsync(string.Format(new FileSizeFormatProvider(), "    Declared size: {0} ({0:fs})", size)),
@@ -60,7 +60,7 @@ public static class TenoriToolApi {
     
     public delegate Task<string> ExtractDelegate(string outputDirectory, bool verbose, string baseSubdirectory, Stream inputStream, ArchiveEntryInfo entryinfo, Action<string> processingFilepath, Action<string> processedFilepath);
 
-    public static async Task<ProcessReturn> ProcessIndividualExtract(string listPath, string outputDirectory, bool use32Mode, bool verbose, string baseSubdirectory, string path, TenoriCallbacks output = null, ExtractDelegate extract = null) {
+    public static async Task<ProcessReturn> ProcessIndividualExtract(string listPath, string outputDirectory, bool use32Mode, bool verbose, string baseSubdirectory, string path, TenoriCallbacks? output = null, ExtractDelegate? extract = null) {
         extract ??= ExtractEntry;
         output ??= TenoriCallbacks.None();
         

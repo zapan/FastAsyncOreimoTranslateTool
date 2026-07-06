@@ -91,7 +91,7 @@ public class TranslationProjectCli
             string filepath = Path.Combine(BasePath, "Data", "Obj", CurrentFile, CurrentFile);
             ObjHelper myHelper = new(File.ReadAllBytes(filepath));
             myStrings = myHelper.Import();
-            myNames = myHelper.Actors;
+            myNames = myHelper.Actors ?? new Dictionary<int, string?>();
         }
         else
         {
