@@ -19,6 +19,10 @@ public partial class NamesWindow : Window
     private readonly string MainFilePath;
     private readonly ObservableCollection<NameRow> _rows = [];
 
+    public NamesWindow() : this(AppContext.BaseDirectory, [])
+    {
+    }
+
     public NamesWindow(string basePath, List<string> originalNames)
     {
         InitializeComponent();

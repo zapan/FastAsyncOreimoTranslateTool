@@ -280,7 +280,7 @@ public static class IsoTools {
                     break;
             }
             Console.WriteLine($"Detected {game} Iso.");
-        } catch (Exception e) {
+        } catch (Exception) {
             Console.WriteLine($"Unable to detect Iso game. Using {game} as default.");
         }
 

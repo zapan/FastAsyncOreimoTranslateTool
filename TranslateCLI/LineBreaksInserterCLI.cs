@@ -108,7 +108,7 @@ public class LineBreaksInserterCLI
     public string InsertLineBreaks(string insertTo, bool isSpeech)
     {
         string newString = "";
-        string secondString = null;
+        string? secondString = null;
         if (insertTo.Contains("[") && insertTo.Contains("]"))
         {
             secondString = Regex.Match(insertTo, @"\[(.*?)\]").Groups[1].Value;

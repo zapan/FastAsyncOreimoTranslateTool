@@ -47,7 +47,7 @@ public partial class MainWindow : Window {
         catImage.Source = gameName switch {
             "Oreimo" => new Avalonia.Media.Imaging.Bitmap(AssetLoader.Open(new Uri("avares://OreimoTranslateTool/Assets/kuroneko" + randomNumber + ".png"))),
             "Toradora" => new Avalonia.Media.Imaging.Bitmap(AssetLoader.Open(new Uri("avares://OreimoTranslateTool/Assets/Taiga.png"))),
-            "" => new Avalonia.Media.Imaging.Bitmap(AssetLoader.Open(new Uri("avares://OreimoTranslateTool/Assets/kuroneko1.png"))),
+            _ => new Avalonia.Media.Imaging.Bitmap(AssetLoader.Open(new Uri("avares://OreimoTranslateTool/Assets/kuroneko2.png"))),
         };
     }
 

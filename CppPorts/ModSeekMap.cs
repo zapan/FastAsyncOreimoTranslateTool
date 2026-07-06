@@ -99,7 +99,7 @@ public static class ModSeekMap {
         // Not sure what the third number in the seekmap is, so I'll just copy the existing one
         // 25/12/29 It's likely a custom Crc32 hash
         void ReadUnknown() {
-            string? line = inputMapReader.ReadLine();
+            var line = inputMapReader.ReadLine();
             if (string.IsNullOrWhiteSpace(line))
                 throw new EndOfStreamException();
 

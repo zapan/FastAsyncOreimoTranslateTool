@@ -53,6 +53,10 @@ public partial class TranslationWindow : Window {
 
     // ── Constructor ───────────────────────────────────────────────────────────
 
+    public TranslationWindow() : this(AppContext.BaseDirectory)
+    {
+    }
+
     public TranslationWindow(string basePath)
     {
         InitializeComponent();

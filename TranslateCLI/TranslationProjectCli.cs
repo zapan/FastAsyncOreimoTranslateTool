@@ -84,7 +84,7 @@ public class TranslationProjectCli
 
         CurrentFile = filename;
         string[] myStrings;
-        Dictionary<int, string> myNames = new();
+        Dictionary<int, string?> myNames = new();
 
         if (Path.GetExtension(CurrentFile).Equals(".obj", StringComparison.OrdinalIgnoreCase))
         {
@@ -261,7 +261,7 @@ public class TranslationProjectCli
             string filepath = Path.Combine(BasePath, "Data", "Obj", file.FileName, file.FileName);
             ObjHelper myHelper = new(File.ReadAllBytes(filepath));
             myHelper.Import();
-            Dictionary<int, string> myNames = myHelper.Actors;
+            Dictionary<int, string?> myNames = myHelper.Actors ?? new Dictionary<int, string?>();
 
             for (int i = 0; i < myNames.Count; i++)
             {

@@ -33,8 +33,9 @@ public static class MakeGpda {
             if (firstChar == 'Y')
                 delim = true;
 
-            while (!reader.EndOfStream) {
-                string line = await reader.ReadLineAsync();
+            while (true) {
+                var line = await reader.ReadLineAsync();
+                if (line == null) break;
                 if (string.IsNullOrWhiteSpace(line)) continue;
 
                 string[] parts = line.Split('\t');

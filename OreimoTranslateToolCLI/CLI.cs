@@ -149,12 +149,6 @@ public static class Cli {
         string? path = null;
         while (true) {
             try {
-                if(save){
-                    string posix =  "POSIX path of (choose file name with prompt \"Guardar como\")";
-                } else {
-                    string posix = "POSIX path of (choose file with prompt \"Selecciona un archivo\")";
-                }
-
                 var psi = new ProcessStartInfo
                 {
                     FileName = "osascript",

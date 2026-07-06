@@ -156,7 +156,7 @@ public class Obj(byte[] script) {
                     script.CopyTo(newBlock, i + 4, textOffset);
 
                     string phrase = strings[id++];
-                    string secondPhrase = null;
+                    string? secondPhrase = null;
                     if (phrase.Contains("[DEL]"))
                     {
                         List<int> jumpInfo = [x, -1];

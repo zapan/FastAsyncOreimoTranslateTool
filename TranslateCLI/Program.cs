@@ -1,18 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Linq;
-using OBJEditor;
-using Newtonsoft.Json.Linq;
-using System.Reflection;
-using NanoXLSX;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Text;
-using NativeFileDialogSharp;
-using OBJEditor;
-
 namespace TranslateCLI;
 
 public static class Program {
