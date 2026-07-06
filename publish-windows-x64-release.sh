@@ -18,7 +18,7 @@ rm -rf ./build/OreimoTranslateTool-Windows-x64
 # Publish both CLI and GUI to the same directory
 echo "Publishing for Windows x64..."
 dotnet publish OreimoTranslateToolCLI -c Release -r win-x64 -o ./build/OreimoTranslateTool-Windows-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
-dotnet publish OreimoTranslateToolAvalonia -c Release -r win-x64 -o ./build/OreimoTranslateTool-Windows-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+dotnet publish OreimoTranslateTool -c Release -r win-x64 -o ./build/OreimoTranslateTool-Windows-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
 
 # Create releases directory if it doesn't exist
 mkdir -p ./releases

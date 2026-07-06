@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
-namespace OreimoTranslateToolAvalonia;
+namespace OreimoTranslateTool;
 
 public partial class ImportDialog : Window
 {

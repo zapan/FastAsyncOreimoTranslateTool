@@ -13,12 +13,12 @@
       "group": "build"
     },
     {
-      "label": "build OreimoTranslateToolAvalonia",
+      "label": "build OreimoTranslateTool",
       "type": "process",
       "command": "dotnet",
       "args": [
         "build",
-        "${workspaceFolder}/OreimoTranslateToolAvalonia/OreimoTranslateToolAvalonia.csproj"
+        "${workspaceFolder}/OreimoTranslateTool/OreimoTranslateTool.csproj"
       ],
       "problemMatcher": "$msCompile",
       "group": "build"

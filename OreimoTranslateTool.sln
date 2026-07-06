@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MakeGpda.Cli", "MakeGpda.Cl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModSeekmap.Cli", "ModSeekmap.Cli\ModSeekmap.Cli.csproj", "{C98DEF93-AD68-46FC-84D5-2F9AB5879CE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OreimoTranslateToolAvalonia", "OreimoTranslateToolAvalonia\OreimoTranslateToolAvalonia.csproj", "{2DA57A62-375F-4D59-840C-D5F4335238A3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OreimoTranslateTool", "OreimoTranslateTool\OreimoTranslateTool.csproj", "{2DA57A62-375F-4D59-840C-D5F4335238A3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TranslateCLI", "TranslateCLI\TranslateCLI.csproj", "{6D74296E-EED7-4A23-8C4E-82516C7D8DC7}"
 EndProject

@@ -50,13 +50,13 @@ dotnet build OreimoTranslateToolCLI -c Release
 
 # Build the GUI
 echo "Building GUI..."
-dotnet build OreimoTranslateToolAvalonia -c Release
+dotnet build OreimoTranslateTool -c Release
 
 echo ""
 echo "=== Build Complete ==="
 echo ""
 echo "To run the CLI: dotnet run --project OreimoTranslateToolCLI"
-echo "To run the GUI: dotnet run --project OreimoTranslateToolAvalonia"
+echo "To run the GUI: dotnet run --project OreimoTranslateTool"
 echo ""
 echo "Make sure to set up mkisofs.conf if mkisofs is not in your PATH:"
 echo "  echo 'path/to/mkisofs' > mkisofs.conf"

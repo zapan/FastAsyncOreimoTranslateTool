@@ -12,7 +12,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using TranslateCLI;
 
-namespace OreimoTranslateToolAvalonia;
+namespace OreimoTranslateTool;
 
 public partial class TranslationWindow : Window {
     // ── Observable wrappers for Avalonia binding ─────────────────────────────

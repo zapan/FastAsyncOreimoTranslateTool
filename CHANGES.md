@@ -79,7 +79,7 @@ All notable changes to FastAsyncOreimoTranslateTool are documented in this file.
 ### 📦 New Files
 
 #### GUI
-**`OreimoTranslateToolAvalonia/`** (entire project)
+**`OreimoTranslateTool/`** (entire project)
 - New Avalonia-based cross-platform GUI
 - Replaces Windows Forms implementation
 - Full macOS native support with proper file dialogs and UI conventions
@@ -134,7 +134,7 @@ dotnet restore
 dotnet build -c Release
 
 # Build specific projects
-dotnet build OreimoTranslateToolAvalonia -c Release
+dotnet build OreimoTranslateTool -c Release
 dotnet build OreimoTranslateToolCLI -c Release
 ```
 
@@ -142,7 +142,7 @@ dotnet build OreimoTranslateToolCLI -c Release
 
 ```bash
 # GUI (Avalonia)
-dotnet run --project OreimoTranslateToolAvalonia
+dotnet run --project OreimoTranslateTool
 
 # CLI
 dotnet run --project OreimoTranslateToolCLI

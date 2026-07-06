@@ -9,7 +9,7 @@ Name inspired by the [FastAsyncWorldEdit](https://www.spigotmc.org/resources/fas
 - Improved game file repacking time by 2,037.40 %!
   - old time 189438 ms vs new time 8863 ms
 - Reworked file structure! Allows you to easily delete all generated resources
-- **Ported GUI to Avalonia** (OreimoTranslateToolAvalonia) for native macOS support
+- **Ported GUI to Avalonia** (OreimoTranslateTool) for native macOS support
 - **Extended CLI** with macOS support and new standalone options
 
 ### Why?
@@ -32,7 +32,7 @@ After you got the ISO file, you can choose between:
 
 ### Option 1: GUI (Avalonia - Cross-platform)
 
-Open the Avalonia GUI application (OreimoTranslateToolAvalonia), which works on Windows, macOS, and Linux. The interface guides you through each step with help buttons explaining each section.
+Open the Avalonia GUI application (OreimoTranslateTool), which works on Windows, macOS, and Linux. The interface guides you through each step with help buttons explaining each section.
 
 ### Option 2: CLI (Command-line - Standalone)
 
@@ -100,14 +100,14 @@ for arch you have to run `pacman -S cdrtools` to install because its cool.
 - You! Thanks for reading even if you don't plan on using the software. :3
 
 ## Screenshots
-![Main window](OreimoTranslateToolAvalonia/Assets/mainWindow.png)
-![Translation window](OreimoTranslateToolAvalonia/Assets/translateWindow.png)
+![Main window](OreimoTranslateTool/Assets/mainWindow.png)
+![Translation window](OreimoTranslateTool/Assets/translateWindow.png)
 
 ## macOS Support
 
 This tool has been adapted to work natively on macOS with both GUI and CLI options:
 
-### GUI (Avalonia - OreimoTranslateToolAvalonia)
+### GUI (Avalonia - OreimoTranslateTool)
 
 The original GUI has been ported to Avalonia, providing a native cross-platform experience on macOS, Windows, and Linux.
 
@@ -142,7 +142,7 @@ dotnet restore
 dotnet build -c Release
 
 # Or build just the GUI (Avalonia)
-dotnet build OreimoTranslateToolAvalonia -c Release
+dotnet build OreimoTranslateTool -c Release
 
 # Or build just the CLI
 dotnet build OreimoTranslateToolCLI -c Release
@@ -152,7 +152,7 @@ dotnet build OreimoTranslateToolCLI -c Release
 
 ```bash
 # Run the GUI (Avalonia)
-dotnet run --project OreimoTranslateToolAvalonia
+dotnet run --project OreimoTranslateTool
 
 # Or run the CLI
 dotnet run --project OreimoTranslateToolCLI

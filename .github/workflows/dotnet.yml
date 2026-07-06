@@ -53,9 +53,9 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
       - name: Publish solution for macOS (x64)
-        run: dotnet publish -c Release -r osx-x64 -o ./build/OreimoTranslateTool-macOS-x64 --self-contained 2>&1 | grep "OreimoTranslateToolAvalonia ->\|OreimoTranslateToolCLI ->"
+        run: dotnet publish -c Release -r osx-x64 -o ./build/OreimoTranslateTool-macOS-x64 --self-contained 2>&1 | grep "OreimoTranslateTool ->\|OreimoTranslateToolCLI ->"
       - name: Publish solution for macOS (ARM64)
-        run: dotnet publish -c Release -r osx-arm64 -o ./build/OreimoTranslateTool-macOS-ARM64 --self-contained 2>&1 | grep "OreimoTranslateToolAvalonia ->\|OreimoTranslateToolCLI ->"
+        run: dotnet publish -c Release -r osx-arm64 -o ./build/OreimoTranslateTool-macOS-ARM64 --self-contained 2>&1 | grep "OreimoTranslateTool ->\|OreimoTranslateToolCLI ->"
       - name: Create .app bundles for macOS x64
         run: bash ./create-macos-app-bundle.sh ./build/OreimoTranslateTool-macOS-x64 x64
       - name: Create .app bundles for macOS ARM64
@@ -91,13 +91,13 @@ jobs:
         run: dotnet publish OreimoTranslateToolCLI -c Release -r win-x64 -o ./build/OreimoTranslateTool-Windows-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
 
       - name: Publish GUI for Windows (x64)
-        run: dotnet publish OreimoTranslateToolAvalonia -c Release -r win-x64 -o ./build/OreimoTranslateTool-Windows-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+        run: dotnet publish OreimoTranslateTool -c Release -r win-x64 -o ./build/OreimoTranslateTool-Windows-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
       
       - name: Publish CLI for Windows (ARM64)
         run: dotnet publish OreimoTranslateToolCLI -c Release -r win-arm64 -o ./build/OreimoTranslateTool-Windows-ARM64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
         
       - name: Publish GUI for Windows (ARM64)
-        run: dotnet publish OreimoTranslateToolAvalonia -c Release -r win-arm64 -o ./build/OreimoTranslateTool-Windows-ARM64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+        run: dotnet publish OreimoTranslateTool -c Release -r win-arm64 -o ./build/OreimoTranslateTool-Windows-ARM64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
       
       - name: Create Windows packages
         run: |

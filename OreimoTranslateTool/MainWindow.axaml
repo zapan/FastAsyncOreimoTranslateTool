@@ -1,8 +1,8 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Class="OreimoTranslateToolAvalonia.MainWindow"
+        x:Class="OreimoTranslateTool.MainWindow"
         Title="Toradora &amp; Oreimo Translate Tool"
-        Icon="avares://OreimoTranslateToolAvalonia/Assets/white.ico"
+        Icon="avares://OreimoTranslateTool/Assets/white.ico"
         Width="650" Height="410"
         MinWidth="650" MinHeight="410"
         CanResize="False"
@@ -29,7 +29,7 @@
         <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2"
                 BorderBrush="#CCCCCC" BorderThickness="1"
                 Margin="10,10,5,10">
-            <Image x:Name="catImage" Source="avares://OreimoTranslateToolAvalonia/Assets/kuroneko2.png" Stretch="Uniform"/>
+            <Image x:Name="catImage" Source="avares://OreimoTranslateTool/Assets/kuroneko2.png" Stretch="Uniform"/>
         </Border>
 
         <!-- Right: control panel -->

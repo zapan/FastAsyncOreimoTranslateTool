@@ -13,11 +13,11 @@
       "console": "integratedTerminal"
     },
     {
-      "name": ".NET Launch OreimoTranslateToolAvalonia",
+      "name": ".NET Launch OreimoTranslateTool",
       "type": "coreclr",
       "request": "launch",
-      "preLaunchTask": "build OreimoTranslateToolAvalonia",
-      "program": "${workspaceFolder}/OreimoTranslateToolAvalonia/bin/Debug/net10.0/OreimoTranslateToolAvalonia.dll",
+      "preLaunchTask": "build OreimoTranslateTool",
+      "program": "${workspaceFolder}/OreimoTranslateTool/bin/Debug/net10.0/OreimoTranslateTool.dll",
       "args": [],
       "cwd": "${workspaceFolder}",
       "stopAtEntry": false,

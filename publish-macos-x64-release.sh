@@ -17,7 +17,7 @@ rm -rf ./build/OreimoTranslateTool-macOS-x64
 
 # Publish both CLI and GUI to the same directory
 echo "Publishing for macOS x64..."
-dotnet publish -c Release -r osx-x64 -o ./build/OreimoTranslateTool-macOS-x64 --self-contained 2>&1 | grep "OreimoTranslateToolAvalonia ->\|OreimoTranslateToolCLI ->"
+dotnet publish -c Release -r osx-x64 -o ./build/OreimoTranslateTool-macOS-x64 --self-contained 2>&1 | grep "OreimoTranslateTool ->\|OreimoTranslateToolCLI ->"
 
 # Create app bundles
 echo ""

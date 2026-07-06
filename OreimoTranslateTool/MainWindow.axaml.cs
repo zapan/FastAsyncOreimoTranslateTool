@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 
-namespace OreimoTranslateToolAvalonia;
+namespace OreimoTranslateTool;
 
 public partial class MainWindow : Window {
     public static string StartupPath { get; private set; } = AppContext.BaseDirectory;
@@ -45,9 +45,9 @@ public partial class MainWindow : Window {
         string gameName = api.DetectGameFromIso(Path.Combine(DataDir, "Iso"));
         string randomNumber = RandomNumberGenerator.GetInt32(1,3).ToString();
         catImage.Source = gameName switch {
-            "Oreimo" => new Avalonia.Media.Imaging.Bitmap(AssetLoader.Open(new Uri("avares://OreimoTranslateToolAvalonia/Assets/kuroneko" + randomNumber + ".png"))),
-            "Toradora" => new Avalonia.Media.Imaging.Bitmap(AssetLoader.Open(new Uri("avares://OreimoTranslateToolAvalonia/Assets/Taiga.png"))),
-            "" => new Avalonia.Media.Imaging.Bitmap(AssetLoader.Open(new Uri("avares://OreimoTranslateToolAvalonia/Assets/kuroneko1.png"))),
+            "Oreimo" => new Avalonia.Media.Imaging.Bitmap(AssetLoader.Open(new Uri("avares://OreimoTranslateTool/Assets/kuroneko" + randomNumber + ".png"))),
+            "Toradora" => new Avalonia.Media.Imaging.Bitmap(AssetLoader.Open(new Uri("avares://OreimoTranslateTool/Assets/Taiga.png"))),
+            "" => new Avalonia.Media.Imaging.Bitmap(AssetLoader.Open(new Uri("avares://OreimoTranslateTool/Assets/kuroneko1.png"))),
         };
     }
 

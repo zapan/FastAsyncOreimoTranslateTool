@@ -40,11 +40,11 @@ EOF
     chmod +x "$bundle_path/Contents/Resources/$executable_name"
     
     # Copy icon
-    cp OreimoTranslateToolAvalonia/Assets/AppIcon.icns "$bundle_path/Contents/Resources/AppIcon.icns"
+    cp OreimoTranslateTool/Assets/AppIcon.icns "$bundle_path/Contents/Resources/AppIcon.icns"
     
     # Copy Assets and Data
-    cp -r Assets "$bundle_path/Contents/Resources/" 2>/dev/null || true
-    cp -r Data "$bundle_path/Contents/Resources/" 2>/dev/null || true
+    cp -r RyuujiApi/Resources "$bundle_path/Contents/Resources/" 2>/dev/null || true
+    echo "***********************************************"
     
     # Copy ALL .NET files (dlls, so, dylib, pdb, configs, etc.) from original build dir to Resources
     # Use cp instead of mv so both bundles get the files
@@ -108,10 +108,10 @@ echo ""
 
 # Create bundles
 create_app_bundle "OreimoTranslateTool" "OreimoTranslateToolCLI" "$build_dir"
-create_app_bundle "OreimoTranslateTool" "OreimoTranslateToolAvalonia" "$build_dir"
+create_app_bundle "OreimoTranslateTool" "OreimoTranslateTool" "$build_dir"
 
 # Clean up individual executables (they're now inside the bundles)
-rm -f "$build_dir/OreimoTranslateToolAvalonia"
+rm -f "$build_dir/OreimoTranslateTool"
 rm -f "$build_dir/OreimoTranslateToolCLI"
 
 # Remove other CLI tools that we don't need in the release
