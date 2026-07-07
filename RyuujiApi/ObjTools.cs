@@ -105,19 +105,26 @@ class ObjTools {
 
         string startPointPathOrigin = Path.Combine(startupPath, "Resources", "DebugMode", "original_000scriptAASTARTPOINT.obj.gz");
         string startPointPathDestiny = Path.Combine(startupPath, "Data", "Extracted", "RES", "script", "AASTARTPOINT", "000", "000scriptAASTARTPOINT.obj.gz");
+        
+        string scriptPathOrigin = Path.Combine(startupPath, "Resources", "DebugMode", "000scriptAKYO_0000A.obj.gz");
+        string scriptPathDestiny = Path.Combine(startupPath, "Data", "Extracted", "RES", "script", "AKYO_0000A", "000", "000scriptAKYO_0000A.obj.gz");
+        
         if (debugMode) {
             if (File.Exists(startPointPathDestiny)) {
-                File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "000scriptAKYO_0000A.obj.gz"), Path.Combine(startupPath, "Data", "Extracted", "RES", "script", "000scriptAKYO_0000A", "000scriptAKYO_0000A.0001", "000scriptAKYO_0000A.obj.gz"), true); // This file enables debug mode
+                File.Copy(scriptPathOrigin, scriptPathDestiny, true); // This file enables debug mode
                 File.Copy(startPointPathOrigin, startPointPathDestiny, true); // Restore original debug menu
             } else {
-                File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "_0000ESS1.obj.gz"), Path.Combine(startupPath, "Data", "Extracted", "resource", "script", "_0000ESS1", "_0000ESS1.0001", "_0000ESS1.obj.gz"), true); // This file enables debug mode
-                File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "STARTPOINT.obj.gz"), Path.Combine(startupPath, "Data", "Extracted", "resource", "script", "STARTPOINT", "STARTPOINT.0001", "STARTPOINT.obj.gz"), true); // This is pretranslated debug menu
+                File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "_0000ESS1.obj.gz"), 
+                            Path.Combine(startupPath, "Data", "Extracted", "resource", "script", "_0000ESS1", "_0000ESS1.0001", "_0000ESS1.obj.gz"), true); // This file enables debug mode
+                File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "STARTPOINT.obj.gz"), 
+                            Path.Combine(startupPath, "Data", "Extracted", "resource", "script", "STARTPOINT", "STARTPOINT.0001", "STARTPOINT.obj.gz"), true); // This is pretranslated debug menu
             }
         } else {
             if (File.Exists(startPointPathDestiny)) {
                 File.Copy(startPointPathOrigin, startPointPathDestiny, true); // Restore original debug menu
             } else {
-                File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "original_STARTPOINT.obj.gz"), Path.Combine(startupPath, "Data", "Extracted", "resource", "script", "STARTPOINT", "STARTPOINT.0001", "STARTPOINT.obj.gz"), true); // Restore original debug menu
+                File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "original_STARTPOINT.obj.gz"), 
+                            Path.Combine(startupPath, "Data", "Extracted", "resource", "script", "STARTPOINT", "STARTPOINT.0001", "STARTPOINT.obj.gz"), true); // Restore original debug menu
             }
         }
     }
