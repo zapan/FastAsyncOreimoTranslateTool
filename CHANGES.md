@@ -2,6 +2,13 @@
 
 All notable changes to FastAsyncOreimoTranslateTool are documented in this file.
 
+## [v1.6.2] - 2026-07-07
+
+### 🎯 Features
+- Debug mode for Oreimo Disc 1
+- Add StartGame configuration for Windows builds and macOS compatibility
+- Quote path in process arguments to handle spaces correctly
+
 ## [v1.6.1] - 2026-07-06
 
 ### 🔧 Maintenance
