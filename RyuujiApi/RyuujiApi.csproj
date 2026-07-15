@@ -340,6 +340,14 @@
         <None Update="Resources\DebugMode\000scriptAKYO_0000A.obj.gz">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+
+        <None Update="Resources\DebugMode\000script_AASTARTPOINT.obj.gz">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Resources\DebugMode\000script_AKYO_0000A.obj.gz">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+
         <None Update="Resources\fontmap.txt">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
