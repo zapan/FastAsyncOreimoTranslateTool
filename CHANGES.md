@@ -1,6 +1,13 @@
 # Changelog
 
 All notable changes to FastAsyncOreimoTranslateTool are documented in this file.
+
+## [v1.6.4] - 2026-07-15
+
+### 🎯 Features
+- Debug mode for Oreimo Disc 2
+- Improve game version detection for Oreimo disc 1 & 2
+
 ## [v1.6.3] - 2026-07-15
 
 ### 🔧 Maintenance
