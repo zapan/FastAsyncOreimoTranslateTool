@@ -265,16 +265,21 @@ public static class IsoTools {
             string[] parts = line.Split('|', StringSplitOptions.RemoveEmptyEntries);
 
             switch (parts[0]) {
-                case "NPJH-50568":
-                case "NPJH-50569":
                 case "ULJS-00490":
-                case "ULJS-00491":
                 case "ULJS-00492":
-                case "ULJS-00493":
                 case "ULJS-19086":
+                case "NPJH-50568":
                 case "ULJS-00358":
-                    game = "Oreimo";
+                    game = "OreimoDisc1";
                     break;
+
+                case "ULJS-00491":
+                case "ULJS-00493":
+                case "ULJS-19087":
+                case "NPJH-50569":
+                    game = "OreimoDisc2";
+                    break;
+                
                 default:
                     game = "Toradora";
                     break;
