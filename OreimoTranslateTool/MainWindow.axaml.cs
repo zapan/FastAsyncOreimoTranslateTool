@@ -40,14 +40,17 @@ public partial class MainWindow : Window {
         Closing += MainWindow_Closing;
     }
 
-    private void UpdateImage()
-    {
+    private void UpdateImage() {
         string gameName = api.DetectGameFromIso(Path.Combine(DataDir, "Iso"));
         catImage.Source = gameName switch {
-            "OreimoDisc1" => new Avalonia.Media.Imaging.Bitmap(AssetLoader.Open(new Uri("avares://OreimoTranslateTool/Assets/kuroneko1.png"))),
-            "OreimoDisc2" => new Avalonia.Media.Imaging.Bitmap(AssetLoader.Open(new Uri("avares://OreimoTranslateTool/Assets/kuroneko2.png"))),
-            "Toradora" => new Avalonia.Media.Imaging.Bitmap(AssetLoader.Open(new Uri("avares://OreimoTranslateTool/Assets/Taiga.png"))),
-            _ => new Avalonia.Media.Imaging.Bitmap(AssetLoader.Open(new Uri("avares://OreimoTranslateTool/Assets/kuroneko2.png"))),
+            "OreimoDisc1" => new Avalonia.Media.Imaging.Bitmap(
+                AssetLoader.Open(new Uri("avares://OreimoTranslateTool/Assets/kuroneko1.png"))),
+            "OreimoDisc2" => new Avalonia.Media.Imaging.Bitmap(
+                AssetLoader.Open(new Uri("avares://OreimoTranslateTool/Assets/kuroneko2.png"))),
+            "Toradora" => new Avalonia.Media.Imaging.Bitmap(
+                AssetLoader.Open(new Uri("avares://OreimoTranslateTool/Assets/Taiga.png"))),
+            _ => new Avalonia.Media.Imaging.Bitmap(
+                AssetLoader.Open(new Uri("avares://OreimoTranslateTool/Assets/kuroneko2.png"))),
         };
     }
 
@@ -61,10 +64,10 @@ public partial class MainWindow : Window {
         if (isoExtracted) {
             buttonExtractGame.IsEnabled = true;
             buttonExtractGame.IsVisible = true;
-            
+
             buttonDeleteGenRes.IsEnabled = false;
             buttonDeleteGenRes.IsVisible = false;
-            
+
             buttonStartGame.IsEnabled = true;
         }
 
@@ -74,7 +77,7 @@ public partial class MainWindow : Window {
         if (gameExtracted) {
             buttonExtractGame.IsEnabled = false;
             buttonExtractGame.IsVisible = false;
-            
+
             buttonDeleteGenRes.IsEnabled = true;
             buttonDeleteGenRes.IsVisible = true;
 
@@ -92,7 +95,7 @@ public partial class MainWindow : Window {
         buttonRepackGame.IsEnabled = false;
         buttonStartGame.IsEnabled = false;
         buttonExportGame.IsEnabled = false;
-        
+
         buttonExtractGame.IsVisible = true;
         buttonDeleteGenRes.IsVisible = false;
     }
@@ -242,15 +245,25 @@ public partial class MainWindow : Window {
 
             bool repacked = File.Exists(Path.Combine(DataDir, "Extracted", "-"));
             var tasks = new Task[] {
-                Task.Run(() => { if (Directory.Exists(Path.Combine(DataDir, "Extracted"))) Directory.Delete(Path.Combine(DataDir, "Extracted"), true); }),
-                Task.Run(() => { if (Directory.Exists(Path.Combine(DataDir, "Obj"))) Directory.Delete(Path.Combine(DataDir, "Obj"), true); }),
-                Task.Run(() => { if (Directory.Exists(Path.Combine(DataDir, "Txt"))) Directory.Delete(Path.Combine(DataDir, "Txt"), true); }),
+                Task.Run(() => {
+                    if (Directory.Exists(Path.Combine(DataDir, "Extracted")))
+                        Directory.Delete(Path.Combine(DataDir, "Extracted"), true);
+                }),
+                Task.Run(() => {
+                    if (Directory.Exists(Path.Combine(DataDir, "Obj")))
+                        Directory.Delete(Path.Combine(DataDir, "Obj"), true);
+                }),
+                Task.Run(() => {
+                    if (Directory.Exists(Path.Combine(DataDir, "Txt")))
+                        Directory.Delete(Path.Combine(DataDir, "Txt"), true);
+                }),
                 Task.CompletedTask
             };
 
             if (repacked)
                 tasks[3] = Task.Run(() => {
-                    if (Directory.Exists(Path.Combine(DataDir, "Iso"))) Directory.Delete(Path.Combine(DataDir, "Iso"), true);
+                    if (Directory.Exists(Path.Combine(DataDir, "Iso")))
+                        Directory.Delete(Path.Combine(DataDir, "Iso"), true);
                 });
 
             await Task.WhenAll(tasks);

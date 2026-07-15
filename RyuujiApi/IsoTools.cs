@@ -133,8 +133,10 @@ public static class IsoTools {
         });
     }*/
 
-    public static async Task ExtractIso(string isoFilePath, string extractionDirectory, Action<string>? fileCallback = null, Action<byte>? progressCallback = null) {
-        await using FileStream stream = new(isoFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, 1024 * 1024, FileOptions.SequentialScan);
+    public static async Task ExtractIso(string isoFilePath, string extractionDirectory,
+        Action<string>? fileCallback = null, Action<byte>? progressCallback = null) {
+        await using FileStream stream = new(isoFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, 1024 * 1024,
+            FileOptions.SequentialScan);
         using CDReader reader = new(stream, true);
 
         long totalBytes = CalculateTotalSize("");
@@ -173,7 +175,8 @@ public static class IsoTools {
             Directory.CreateDirectory(Path.GetDirectoryName(extractFilePath)!);
 
             await using Stream isoStream = reader.OpenFile(file, FileMode.Open);
-            await using FileStream outputFile = new(extractFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, FileOptions.SequentialScan);
+            await using FileStream outputFile = new(extractFilePath, FileMode.Create, FileAccess.Write, FileShare.None,
+                1024 * 1024, FileOptions.SequentialScan);
 
             byte[] buffer = new byte[1024 * 1024];
             int readCount;
@@ -215,13 +218,15 @@ public static class IsoTools {
         cdBuilder.Build(isoStream);
     }*/
 
-    public static void RepackIso(string mkisofs, string isoDirectory, string outputPath, Action<float>? progressCallback = null) {
+    public static void RepackIso(string mkisofs, string isoDirectory, string outputPath,
+        Action<float>? progressCallback = null) {
         if (!Directory.Exists(isoDirectory)) {
             throw new DirectoryNotFoundException($"iso directory not found: {isoDirectory}");
         }
 
         var gameName = DetectGameFromIso(isoDirectory);
-        string command = "-iso-level 4 -xa -A \"PSP GAME\" -V \"" + gameName + "\" -sysid \"PSP GAME\" -volset \"" + gameName + "\" -p \"\" -publisher \"\" -o \"" + outputPath + "\" \"" + isoDirectory + "\"";
+        string command = "-iso-level 4 -xa -A \"PSP GAME\" -V \"" + gameName + "\" -sysid \"PSP GAME\" -volset \"" +
+                         gameName + "\" -p \"\" -publisher \"\" -o \"" + outputPath + "\" \"" + isoDirectory + "\"";
         using Process myProc = new();
         myProc.StartInfo.FileName = "mkisofs";
         myProc.StartInfo.Arguments = command;
@@ -231,7 +236,8 @@ public static class IsoTools {
         myProc.StartInfo.UseShellExecute = false;
 
 
-        Console.WriteLine("Repacking ISO with command: " + myProc.StartInfo.FileName + " " + myProc.StartInfo.Arguments);
+        Console.WriteLine("Repacking ISO with command: " + myProc.StartInfo.FileName + " " +
+                          myProc.StartInfo.Arguments);
 
         if (progressCallback != null)
             myProc.ErrorDataReceived += (_, args) => {
@@ -245,15 +251,14 @@ public static class IsoTools {
             myProc.Start();
             if (progressCallback != null) myProc.BeginErrorReadLine();
             myProc.WaitForExit();
-        }
-        catch (Exception) {
-            Console.WriteLine("Chances are you dont have cdrtools installed, \n\nto rebuild the iso you need to provide the mkisofs path in mkisofs.conf in the root directory of the application.");
+        } catch (Exception) {
+            Console.WriteLine(
+                "Chances are you dont have cdrtools installed, \n\nto rebuild the iso you need to provide the mkisofs path in mkisofs.conf in the root directory of the application.");
             throw;
         }
     }
 
-    public static string DetectGameFromIso(string isoDirectory)
-    {
+    public static string DetectGameFromIso(string isoDirectory) {
         string game = "";
         try {
             FileStream inputResStream = File.OpenRead(Path.Combine(isoDirectory, "UMD_DATA.BIN"));
@@ -279,11 +284,12 @@ public static class IsoTools {
                 case "NPJH-50569":
                     game = "OreimoDisc2";
                     break;
-                
+
                 default:
                     game = "Toradora";
                     break;
             }
+
             Console.WriteLine($"Detected {game} Iso.");
         } catch (Exception) {
             Console.WriteLine($"Unable to detect Iso game. Using {game} as default.");

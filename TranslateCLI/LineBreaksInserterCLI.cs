@@ -109,7 +109,7 @@ public class LineBreaksInserterCLI {
             secondString = Regex.Match(insertTo, @"\[(.*?)\]").Groups[1].Value;
             insertTo = insertTo.Replace("[" + secondString + "]", "");
         }
-        
+
         int scaledMaxLineLength = (int)Math.Ceiling(maxLineLength * (1 + (100 - fontSizePct) / 100.0));
         if (GetStringLength(insertTo, isSpeech) > scaledMaxLineLength && !insertTo.Contains('＿')) {
             string[] words = insertTo.Split();
