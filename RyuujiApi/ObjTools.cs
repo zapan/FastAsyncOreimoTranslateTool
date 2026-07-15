@@ -87,6 +87,7 @@ class ObjTools {
         List<string> directories = [];
         foreach (string path in Directory.GetDirectories(Path.Combine(startupPath, "Data", "Obj")))
             directories.Add(Path.GetFileName(path));
+        directories.Sort();
 
         if (!File.Exists(MainFilePath(startupPath))) await File.WriteAllTextAsync(MainFilePath(startupPath), "{ }");
         JObject mainFile = JObject.Parse(await File.ReadAllTextAsync(MainFilePath(startupPath)));

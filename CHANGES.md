@@ -1,6 +1,16 @@
 # Changelog
 
 All notable changes to FastAsyncOreimoTranslateTool are documented in this file.
+## [v1.6.3] - 2026-07-15
+
+### 🔧 Maintenance
+- Debug Mode translated to Spanish.
+- Fix for Oreimo line splitting.
+- Automatic line splitting for longest lines.
+- TextReplacer for handling special characters.
+- Refactor dialogue handling and improve line break insertion logic.
+- Refactor line break insertion logic to incorporate dynamic font size scaling.
+- Handle exceptions in glyph width calculation and improve line break insertion logic.
 
 ## [v1.6.2] - 2026-07-07
 

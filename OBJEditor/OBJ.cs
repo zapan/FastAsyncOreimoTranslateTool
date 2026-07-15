@@ -150,9 +150,7 @@ public class Obj(byte[] script) {
                 case Dialogue:
                     newBlock = new MemoryStream();
                     int textOffset = 0x6; // Toradora
-                    if (Version == vOREIMO) {
-                        textOffset = 0x7; // Oreimo
-                    }
+                    textOffset = Version == vOREIMO ? 0x7 : 0x6;
                     script.CopyTo(newBlock, i + 4, textOffset);
 
                     string phrase = strings[id++];
@@ -181,7 +179,7 @@ public class Obj(byte[] script) {
                     if (secondPhrase != null)
                     {
                         newBlock = new MemoryStream();
-                        script.CopyTo(newBlock, i + 4, 0x2);
+                        script.CopyTo(newBlock, i + 4, Version == vOREIMO? 0x3 : 0x2);
                         newBlock.Write([0xFF, 0xFF, 0xFF, 0xFF], 0, 4);
 
                         secondPhrase.WriteTo(newBlock);
@@ -331,6 +329,7 @@ public class Obj(byte[] script) {
         string result = input.Replace("＿", " ");
         return result;
     }
+    
     public void WriteBlock(Stream content, Stream output)
     {
         int newLen = (int)content.Length + 4;

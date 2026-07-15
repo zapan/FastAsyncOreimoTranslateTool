@@ -7,31 +7,28 @@ using System.Text.RegularExpressions;
 
 namespace TranslateCLI;
 
-public class LineBreaksInserterCLI
-{
+public class LineBreaksInserterCLI {
     private readonly Dictionary<char, int> glyphsWidth;
-    private readonly int maxLineLength;
+    private int maxLineLength;
+    private int fontSizePct;
 
-    public LineBreaksInserterCLI(string pathToDumpedFont, int maxLineLength)
-    {
+    public LineBreaksInserterCLI(string pathToDumpedFont, int maxLineLength) {
         glyphsWidth = new Dictionary<char, int>();
 
         LoadDumpedFont(pathToDumpedFont);
         this.maxLineLength = maxLineLength;
+        this.fontSizePct = 100;
     }
 
-    private void LoadDumpedFont(string pathToDumpedFont)
-    {
+    private void LoadDumpedFont(string pathToDumpedFont) {
         string[] dumpedFontLines = File.ReadAllLines(pathToDumpedFont);
 
-        for (int i = 0; i < dumpedFontLines.Length; i++)
-        {
+        for (int i = 0; i < dumpedFontLines.Length; i++) {
             string line = dumpedFontLines[i];
             if (string.IsNullOrWhiteSpace(line))
                 continue;
 
-            if (TryParseJsonFontLine(line, out char curChar, out int charWidthAccurate))
-            {
+            if (TryParseJsonFontLine(line, out char curChar, out int charWidthAccurate)) {
                 glyphsWidth[curChar] = charWidthAccurate;
                 continue;
             }
@@ -50,8 +47,7 @@ public class LineBreaksInserterCLI
         }
     }
 
-    private static bool TryParseJsonFontLine(string line, out char curChar, out int charWidthAccurate)
-    {
+    private static bool TryParseJsonFontLine(string line, out char curChar, out int charWidthAccurate) {
         curChar = '\0';
         charWidthAccurate = 0;
 
@@ -66,61 +62,59 @@ public class LineBreaksInserterCLI
 
         curChar = prefix.Length > 0 ? prefix[0] : '\0';
 
-        try
-        {
+        try {
             using JsonDocument document = JsonDocument.Parse(jsonCandidate);
             JsonElement root = document.RootElement;
 
-            if (root.TryGetProperty("advance", out JsonElement advance) && advance.TryGetProperty("x", out JsonElement advanceX))
-            {
+            if (root.TryGetProperty("advance", out JsonElement advance) &&
+                advance.TryGetProperty("x", out JsonElement advanceX)) {
                 charWidthAccurate = (int)Math.Ceiling(advanceX.GetDouble());
                 return true;
             }
 
-            if (root.TryGetProperty("width", out JsonElement width))
-            {
+            if (root.TryGetProperty("width", out JsonElement width)) {
                 charWidthAccurate = (int)Math.Ceiling(width.GetDouble());
                 return true;
             }
-        }
-        catch (JsonException)
-        {
+        } catch (JsonException) {
             return false;
         }
 
         return false;
     }
 
-    private int GetStringLength(string str, bool isSpeech)
-    {
+    private int GetStringLength(string str, bool isSpeech) {
         char[] strChars = str.ToCharArray();
         int length = 0;
 
-        for (int i = 0; i < strChars.Length; i++)
-            length += glyphsWidth[strChars[i]];           
-            
+        for (int i = 0; i < strChars.Length; i++) {
+            try {
+                length += glyphsWidth[strChars[i]];
+            } catch (Exception e) {
+                Console.WriteLine(e.Message + " Fallback to 0. STRING: " + str);
+                length += glyphsWidth['0'];
+            }
+        }
+
         if (isSpeech)
             length += glyphsWidth['「'];
 
         return length;
     }
 
-    public string InsertLineBreaks(string insertTo, bool isSpeech)
-    {
+    public string InsertLineBreaks(string insertTo, bool isSpeech) {
         string newString = "";
         string? secondString = null;
-        if (insertTo.Contains("[") && insertTo.Contains("]"))
-        {
+        if (insertTo.Contains('[') && insertTo.Contains(']')) {
             secondString = Regex.Match(insertTo, @"\[(.*?)\]").Groups[1].Value;
             insertTo = insertTo.Replace("[" + secondString + "]", "");
         }
-
-        if (GetStringLength(insertTo, isSpeech) > maxLineLength && !insertTo.Contains('＿'))
-        {
+        
+        int scaledMaxLineLength = (int)Math.Ceiling(maxLineLength * (1 + (100 - fontSizePct) / 100.0));
+        if (GetStringLength(insertTo, isSpeech) > scaledMaxLineLength && !insertTo.Contains('＿')) {
             string[] words = insertTo.Split();
 
-            for (int j = 0; j < words.Length; j++)
-            {
+            for (int j = 0; j < words.Length; j++) {
                 string tempString;
                 if (newString.Contains('＿'))
                     // Symbol '＿' should be included in new line, because it affects the length of the line, although it is not visible
@@ -128,19 +122,23 @@ public class LineBreaksInserterCLI
                 else
                     tempString = newString + " " + words[j];
 
-                if (GetStringLength(tempString, isSpeech) > maxLineLength)
+                if (GetStringLength(tempString, isSpeech) > scaledMaxLineLength)
                     newString += "＿" + words[j];
                 else
                     newString += " " + words[j];
             }
+
             newString = newString.Trim();
-        }
-        else
+        } else
             newString = insertTo;
 
         if (secondString != null)
             newString += "[" + InsertLineBreaks(secondString, isSpeech) + "]";
 
         return newString;
+    }
+
+    public void UpdateFontSizeScale(int fontSizePct) {
+        this.fontSizePct = fontSizePct;
     }
 }
