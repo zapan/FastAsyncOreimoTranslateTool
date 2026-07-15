@@ -16,6 +16,7 @@ class ObjTools {
             Directory.CreateDirectory(objDir);
 
         string[] archives = Directory.GetFiles(directoryPath, "*.obj.gz", SearchOption.AllDirectories);
+        archives.Sort();
 
         List<Task> taskList = [];
         foreach (string archive in archives)
@@ -25,12 +26,24 @@ class ObjTools {
     }
 
     public static async Task ProcessArchive(string startupPath, string archive, string objDir) {
-        if (Path.GetFileName(archive) == "STARTPOINT.obj.gz") { // Save the original debug menu because it will be replaced by the one I translated
-            File.Copy(archive, Path.Combine(startupPath, "Resources", "DebugMode", "original_STARTPOINT.obj.gz"), true);
+        if (Path.GetFileName(archive) == "STARTPOINT.obj.gz") {
+            // Save the original debug menu because it will be replaced by the one I translated
+            File.Copy(archive, 
+                Path.Combine(startupPath, "Resources", "DebugMode", "original_STARTPOINT.obj.gz"), true);
             return;
         }
-        if (Path.GetFileName(archive) == "000scriptAASTARTPOINT.obj.gz") { // Save the original debug menu because it will be replaced by the one I translated
-            File.Copy(archive, Path.Combine(startupPath, "Resources", "DebugMode", "original_000scriptAASTARTPOINT.obj.gz"), true);
+
+        if (Path.GetFileName(archive) == "000scriptAASTARTPOINT.obj.gz") {
+            // Save the original debug menu because it will be replaced by the one I translated
+            File.Copy(archive,
+                Path.Combine(startupPath, "Resources", "DebugMode", "original_000scriptAASTARTPOINT.obj.gz"), true);
+            return;
+        }
+
+        if (Path.GetFileName(archive) == "000script_AASTARTPOINT.obj.gz") {
+            // Save the original debug menu because it will be replaced by the one I translated
+            File.Copy(archive,
+                Path.Combine(startupPath, "Resources", "DebugMode", "original_000script_AASTARTPOINT.obj.gz"), true);
             return;
         }
 
@@ -41,7 +54,9 @@ class ObjTools {
         File.Copy(archive, gzCopyPath, true);
 
         string relTxtPath = Path.Combine(objFolder, Path.GetFileNameWithoutExtension(archive) + ".txt");
-        await File.WriteAllTextAsync(relTxtPath, archive.Replace(startupPath, "")); // Write relative path to the original file in Data\Obj\%obj name%\%obj name%.txt
+        await File.WriteAllTextAsync(relTxtPath,
+            archive.Replace(startupPath,
+                "")); // Write relative path to the original file in Data\Obj\%obj name%\%obj name%.txt
 
         string decompressedPath = Path.Combine(objFolder, Path.GetFileNameWithoutExtension(archive));
         await using FileStream input = File.OpenRead(gzCopyPath);
@@ -98,37 +113,64 @@ class ObjTools {
                 if (name.Value.ToString() != "") // If a translation for that name exists
                     translatedNames.Add(name.Name, name.Value.ToString());
 
+        string gameName = IsoTools.DetectGameFromIso(Path.Combine(startupPath, "Data", "Iso"));
+        const byte vTORADORA = 0, vOREIMO = 1;
+        byte version = gameName == "Toradora" ? vTORADORA : vOREIMO;
         List<Task> taskList = [];
         foreach (string name in directories)
-            taskList.Add(RepackObj(startupPath, name, mainFile[name], translatedNames));
+            taskList.Add(RepackObj(startupPath, name, mainFile[name], translatedNames, version));
 
         await Task.WhenAll(taskList);
-        
-        string toradoraStartPointPathDestiny = Path.Combine(startupPath, "Data", "Extracted", "resource", "script", "STARTPOINT", "STARTPOINT.0001", "STARTPOINT.obj.gz");
-        bool isToradora = File.Exists(toradoraStartPointPathDestiny);
-        if (isToradora) {
-            string toradoraScriptPathDestiny = Path.Combine(startupPath, "Data", "Extracted", "resource", "script", "_0000ESS1", "_0000ESS1.0001", "_0000ESS1.obj.gz");
-            if (debugMode) {
-                File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "_0000ESS1.obj.gz"), toradoraScriptPathDestiny, true); // This file enables debug mode
-                File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "STARTPOINT.obj.gz"), toradoraStartPointPathDestiny, true); // This is pretranslated debug menu
-            } else {
-                File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "original_STARTPOINT.obj.gz"), toradoraStartPointPathDestiny, true); // Restore original debug menu
-            }
-        } else {
-            string oreimoScriptPathDestiny = Path.Combine(startupPath, "Data", "Extracted", "RES", "script", "AKYO_0000A", "000", "000scriptAKYO_0000A.obj.gz");
-            string oreimoStartPointPathDestiny = Path.Combine(startupPath, "Data", "Extracted", "RES", "script", "AASTARTPOINT", "000", "000scriptAASTARTPOINT.obj.gz");
-            if (debugMode) {
-                File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "000scriptAKYO_0000A.obj.gz"), oreimoScriptPathDestiny, true); // This file enables debug mode
-                File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "000scriptAASTARTPOINT.obj.gz"), oreimoStartPointPathDestiny, true); // Restore original debug menu
-            } else {
-                File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "original_000scriptAASTARTPOINT.obj.gz"), oreimoStartPointPathDestiny, true); // Restore original debug menu
-            }
+
+        switch (gameName) {
+            case "Toradora": 
+                string toradoraStartPointPathDestiny = Path.Combine(startupPath, "Data", "Extracted", "resource", "script", "STARTPOINT", "STARTPOINT.0001", "STARTPOINT.obj.gz");
+                string toradoraScriptPathDestiny = Path.Combine(startupPath, "Data", "Extracted", "resource", "script", "_0000ESS1", "_0000ESS1.0001", "_0000ESS1.obj.gz");
+                if (debugMode) {
+                    File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "_0000ESS1.obj.gz"),
+                        toradoraScriptPathDestiny, true); // This file enables debug mode
+                    File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "STARTPOINT.obj.gz"),
+                        toradoraStartPointPathDestiny, true); // This is pretranslated debug menu
+                } else {
+                    File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "original_STARTPOINT.obj.gz"),
+                        toradoraStartPointPathDestiny, true); // Restore original debug menu
+                }
+                break;
+            case "OreimoDisc1": 
+                string oreimoScriptPathDestiny = Path.Combine(startupPath, "Data", "Extracted", "RES", "script", "AKYO_0000A", "000", "000scriptAKYO_0000A.obj.gz");
+                string oreimoStartPointPathDestiny = Path.Combine(startupPath, "Data", "Extracted", "RES", "script", "AASTARTPOINT", "000", "000scriptAASTARTPOINT.obj.gz");
+                if (debugMode) {
+                    File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "000scriptAKYO_0000A.obj.gz"),
+                        oreimoScriptPathDestiny, true); // This file enables debug mode
+                    File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "000scriptAASTARTPOINT.obj.gz"),
+                        oreimoStartPointPathDestiny, true); // Restore original debug menu
+                } else {
+                    File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "original_000scriptAASTARTPOINT.obj.gz"),
+                        oreimoStartPointPathDestiny, true); // Restore original debug menu
+                }
+                break;
+            case "OreimoDisc2": 
+                string oreimo2ScriptPathDestiny = Path.Combine(startupPath, "Data", "Extracted", "RES", "script", "_AKYO_0000A", "000", "000script_AKYO_0000A.obj.gz");
+                string oreimo2StartPointPathDestiny = Path.Combine(startupPath, "Data", "Extracted", "RES", "script", "_AASTARTPOINT", "000", "000script_AASTARTPOINT.obj.gz");
+                if (debugMode) {
+                    File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "000script_AKYO_0000A.obj.gz"),
+                        oreimo2ScriptPathDestiny, true); // This file enables debug mode
+                    File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "000script_AASTARTPOINT.obj.gz"),
+                        oreimo2StartPointPathDestiny, true); // Restore original debug menu
+                } else {
+                    File.Copy(Path.Combine(startupPath, "Resources", "DebugMode", "original_000script_AASTARTPOINT.obj.gz"),
+                        oreimo2StartPointPathDestiny, true); // Restore original debug menu
+                }
+                break;
+            default:
+                throw new Exception("Unknown game detected, cannot repack debug mode files");
         }
+
     }
 
-    public static async Task RepackObj(string startupPath, string name, JToken? translation, Dictionary<string, string> translatedNames) {
+    public static async Task RepackObj(string startupPath, string name, JToken? translation, Dictionary<string, string> translatedNames, byte version) {
         string filepath = Path.Combine(startupPath, "Data", "Obj", name, name);
-        ObjHelper myHelper = new(await File.ReadAllBytesAsync(filepath));
+        ObjHelper myHelper = new(await File.ReadAllBytesAsync(filepath), version);
         string[] scriptStrings = myHelper.Import();
         Dictionary<int, string?> scriptNames = myHelper.Actors ?? new Dictionary<int, string?>();
 
@@ -199,7 +241,7 @@ class ObjTools {
             myProc.StartInfo.RedirectStandardOutput = true;
             myProc.ErrorDataReceived += (_, args) => { if (args.Data != null) Console.WriteLine(args.Data); };
             myProc.OutputDataReceived += (_, args) => { if (args.Data != null) Console.WriteLine(args.Data); };
-            
+
             myProc.Start();
             await myProc.WaitForExitAsync();
         }*/

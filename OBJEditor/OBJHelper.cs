@@ -3,17 +3,15 @@ using System.Collections.Generic;
 
 namespace OBJEditor;
 
-public class ObjHelper(byte[] script) {
+public class ObjHelper(byte[] script, byte version) {
     public Dictionary<int, string?>? Actors;
-    private Obj editor = new(script);
+    private Obj editor = new(script, version);
 
     //Ryuuji「(Aaaaaaaaagh!!!!)」
     public string[] Import()
     {
         string[] strings = editor.Import();
-
 //         Console.WriteLine($"Import: strings.Length={strings.Length}");
-
         Actors = new();
         for (int i = 0; i < strings.Length; i++)
         {

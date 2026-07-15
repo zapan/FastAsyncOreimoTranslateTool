@@ -3,10 +3,14 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using NanoXLSX;
 using OBJEditor;
+using RyuujiApi;
 
 namespace TranslateCLI;
 
 public class TranslationProjectCli {
+    const byte vTORADORA = 0, vOREIMO = 1;
+    byte Version = vTORADORA;
+
     public string? CurrentFile { get; private set; }
     public string BasePath { get; }
     public string MainFilePath { get; }
@@ -17,7 +21,13 @@ public class TranslationProjectCli {
         BasePath = basePath ?? AppContext.BaseDirectory;
         MainFilePath = Path.Combine(BasePath, "Data", "Translation.json");
         EnsureDataFiles();
+        DetectVersion();
         LoadFileList();
+    }
+
+    private void DetectVersion() {
+        string gameName = IsoTools.DetectGameFromIso(Path.Combine(BasePath, "Data", "Iso"));
+        Version = gameName == "Toradora" ? vTORADORA : vOREIMO;
     }
 
     public void EnsureDataFiles() {
@@ -78,7 +88,7 @@ public class TranslationProjectCli {
 
         if (Path.GetExtension(CurrentFile).Equals(".obj", StringComparison.OrdinalIgnoreCase)) {
             string filepath = Path.Combine(BasePath, "Data", "Obj", CurrentFile, CurrentFile);
-            ObjHelper myHelper = new(File.ReadAllBytes(filepath));
+            ObjHelper myHelper = new(File.ReadAllBytes(filepath), Version);
             myStrings = myHelper.Import();
             myNames = myHelper.Actors ?? new Dictionary<int, string?>();
         } else {
@@ -199,6 +209,7 @@ public class TranslationProjectCli {
         if (!(result.Contains('｛') && result.Contains('｝') && result.Contains('：'))) {
             result = result.Replace("：", ":");
         }
+
         return result;
     }
 
@@ -235,7 +246,7 @@ public class TranslationProjectCli {
                 continue;
 
             string filepath = Path.Combine(BasePath, "Data", "Obj", file.FileName, file.FileName);
-            ObjHelper myHelper = new(File.ReadAllBytes(filepath));
+            ObjHelper myHelper = new(File.ReadAllBytes(filepath), Version);
             myHelper.Import();
             Dictionary<int, string?> myNames = myHelper.Actors ?? new Dictionary<int, string?>();
 
@@ -256,18 +267,22 @@ public class TranslationProjectCli {
             string[] parts = newString.Split('＿');
             if (parts.Length >= 4) {
                 int keySeparator = (parts.Length == 4) ? 2 : 3;
-                currentString = string.Join('＿', parts[..keySeparator]) + "[" + string.Join('＿', parts[keySeparator..]) + "]";
+                currentString = string.Join('＿', parts[..keySeparator]) + "[" +
+                                string.Join('＿', parts[keySeparator..]) + "]";
                 currentString = currentString.Replace("＿", " ");
                 newString = inserter.InsertLineBreaks(currentString, isSpeech);
             }
+
             Strings[i].Translated = newString;
         }
     }
 
-    private static string ScaleFontSizeString(LineBreaksInserterCLI inserter, string currentString, bool isSpeech, int fontSizePct) {
+    private static string ScaleFontSizeString(LineBreaksInserterCLI inserter, string currentString, bool isSpeech,
+        int fontSizePct) {
         if (currentString.Contains('｛') && currentString.Contains('｝') && currentString.Contains('：')) {
             currentString = RemoveSizeControl(currentString);
         }
+
         currentString = currentString.Replace("＿", " ");
         inserter.UpdateFontSizeScale(fontSizePct - 15);
         string newString = inserter.InsertLineBreaks(currentString, isSpeech);
@@ -275,9 +290,8 @@ public class TranslationProjectCli {
         newString = "｛" + fontSizePct.ToString() + "：" + newString + "｝";
         return newString;
     }
-    
-    public static string RemoveSizeControl(string textoOriginal)
-    {
+
+    public static string RemoveSizeControl(string textoOriginal) {
         string pattern = @"｛\d{1,2}：|｝";
         string newString = Regex.Replace(textoOriginal, pattern, "");
         // Console.WriteLine(newString);
